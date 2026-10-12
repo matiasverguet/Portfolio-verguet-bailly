@@ -1,0 +1,54 @@
+---
+/* Aperçu « À propos » de l'accueil : ma photo (déjà intégrée dans un dossier)
+   à gauche, ma présentation à droite. */
+const stats = [
+  { value: "2ème", label: "Année MMI" },
+  { value: "3+", label: "Projets" },
+];
+---
+
+<section class="grid items-start gap-10 px-[6%] pb-[min(6vw,86.4px)] sm:grid-cols-[46%_1fr] sm:gap-0 sm:pl-[10.7%]" aria-labelledby="about-title">
+  <!-- translate : décale la photo un peu vers la gauche et vers le haut, sans bouger le texte -->
+  <img
+    src="/img/avatar.png"
+    alt="Portrait de Matias Verguet--Bailly sortant d'un dossier bleu"
+    width="542"
+    height="694"
+    loading="lazy"
+    class="mx-auto w-[clamp(14rem,37vw,33.3rem)] sm:mx-0 sm:-translate-x-[min(4vw,57.6px)] sm:-translate-y-[min(2vw,28.8px)]"
+  />
+
+  <div class="sm:pt-[min(2vw,28.8px)] sm:pl-[1%]">
+    <h2 id="about-title" class="font-display text-[clamp(2.25rem,5vw,4.5rem)] leading-none font-bold uppercase">
+      À propos
+    </h2>
+    <p class="mt-[min(1.8vw,25.9px)] max-w-[clamp(18rem,44vw,40rem)] text-[clamp(0.9rem,1.65vw,1.5rem)] leading-snug font-semibold">
+      Je m'appelle Verguet--Bailly Matias, j'ai 19 ans et je suis actuellement en deuxième année de BUT
+      Métiers du Multimédia et de l'Internet. Je souhaite me spécialiser dans le webdesign et le
+      graphisme.
+    </p>
+
+    <!-- Même grille de 2 colonnes pour les chiffres et les contacts : ils restent alignés -->
+    <dl class="mt-[min(2.5vw,36px)] grid grid-cols-[clamp(6rem,17.6vw,16rem)_1fr]">
+      {
+        stats.map((stat) => (
+          <div class="flex flex-col-reverse">
+            <dt class="text-[clamp(0.9rem,1.85vw,1.65rem)] leading-none font-bold">{stat.label}</dt>
+            <dd class="font-display text-[clamp(2rem,5.2vw,4.75rem)] leading-none text-electric">{stat.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <div class="mt-[min(4vw,57.6px)] grid grid-cols-[clamp(6rem,17.6vw,16rem)_1fr] text-[clamp(0.85rem,1.9vw,1.7rem)] leading-snug">
+      <p><span class="block font-bold">Tel:</span><a href="tel:+33783941205" class="hover:text-electric">07 83 94 12 05</a></p>
+      <p><span class="block font-bold">Email:</span><a href="mailto:matiasverguet@gmail.com" class="break-all hover:text-electric">matiasverguet@gmail.com</a></p>
+    </div>
+
+    <div class="mt-[min(3vw,43.2px)] text-right sm:mr-[6%]">
+      <a href="/about" class="inline-flex items-center gap-[0.6em] rounded-full bg-electric px-[1.2em] py-[0.75em] text-[clamp(0.75rem,1.4vw,1.25rem)] font-bold text-white uppercase hover:bg-ink">
+        Me découvrir <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</section>

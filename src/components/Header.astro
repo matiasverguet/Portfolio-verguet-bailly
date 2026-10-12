@@ -1,0 +1,47 @@
+---
+/* En-tête : logo, menu, mention « Portfolio-2026 ».
+   Astro.url.pathname donne l'adresse de la page en cours :
+   on s'en sert pour ajouter aria-current="page" sur le bon lien. */
+const path = Astro.url.pathname;
+
+const links = [
+  { href: "/projets", label: "Projet" },
+  { href: "/about", label: "About" },
+];
+---
+
+<!-- sticky top-0 : le header reste collé en haut de l'écran pendant le défilement -->
+<header
+  class="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-y-3 border-b border-ink/40 bg-paper px-[3.7%] py-[clamp(0.75rem,1.6vw,1.5rem)]"
+>
+  <a
+    href="/"
+    class="font-heavy text-[clamp(1.5rem,3vw,2.75rem)] leading-none font-black tracking-[-0.12em]"
+    aria-label="Accueil — Matias Verguet--Bailly">MB</a
+  >
+
+  <nav aria-label="Navigation principale" class="order-3 w-full sm:order-none sm:w-auto">
+    <ul class="flex items-center justify-between gap-[clamp(1.5rem,8vw,7rem)] text-[clamp(0.8rem,1.35vw,1.2rem)] font-bold uppercase">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              aria-current={path.startsWith(link.href) ? "page" : undefined}
+              class="hover:text-electric aria-[current=page]:underline aria-[current=page]:underline-offset-4"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a href="/contact" class="rounded-[0.5em] bg-ink px-[0.5em] py-[0.3em] text-white hover:bg-electric">
+          Contact
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <p class="text-[clamp(0.8rem,1.35vw,1.2rem)] font-bold uppercase text-electric">Portfolio-2026</p>
+</header>

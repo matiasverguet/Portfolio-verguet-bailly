@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme {
+  /* Couleurs de la maquette */
+  --color-paper: #e3e3e3;        /* gris de fond */
+  --color-grid: #d0d0d0;         /* lignes de la grille de fond */
+  --color-footer: #d6d6d6;
+  --color-ink: #111111;          /* texte */
+  --color-electric: #0533ff;     /* bleu électrique (accents, boutons) */
+  --color-folder: #4fc3f7;       /* avant des dossiers */
+  --color-folder-dark: #1b8fd8;  /* arrière + onglet des dossiers */
+
+  /* Polices (chargées depuis Google Fonts dans Layout.astro) */
+  --font-display: "Antonio", "Arial Narrow", sans-serif;   /* titres condensés */
+  --font-heavy: "Archivo", "Arial Black", sans-serif;      /* nom du hero */
+  --font-serif: "Instrument Serif", Georgia, serif;        /* « Designer graphique » */
+  --font-sans: "Inter", system-ui, sans-serif;             /* texte courant (par défaut) */
+
+  /* Animation de flottement des dossiers : classe animate-float */
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes float {
+    50% { transform: translateY(-10px); }
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    /* Grille de fond dessinée avec 2 dégradés : aucune image à charger */
+    background-image:
+      linear-gradient(to right, var(--color-grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Focus bien visible au clavier (accessibilité) */
+  :focus-visible {
+    outline: 3px solid var(--color-electric);
+    outline-offset: 3px;
+  }
+
+  /* Enlève le triangle par défaut des <summary> (accordéon des compétences) */
+  summary { list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+
+  /* Respecte le réglage « réduire les animations » du système */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}

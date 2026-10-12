@@ -1,0 +1,23 @@
+---
+/* Page d'accueil : on assemble les sections, chacune est un composant */
+import Layout from "../layouts/Layout.astro";
+import Hero from "../components/Hero.astro";
+import Skills from "../components/Skills.astro";
+import AboutPreview from "../components/AboutPreview.astro";
+import ProjectsPreview from "../components/ProjectsPreview.astro";
+---
+
+<Layout
+  title="Matias Verguet--Bailly — Designer graphique"
+  description="Portfolio de Matias Verguet--Bailly, étudiant en BUT MMI et designer graphique : UI/UX, graphisme, développement web et identité de marque. À la recherche d'un stage du 29 mars au 4 juin 2026."
+>
+  <!-- Le hero prend toute la largeur de l'écran -->
+  <Hero />
+
+  <!-- Le reste est limité à 1440px (largeur de la maquette) et centré sur les grands écrans -->
+  <div class="mx-auto max-w-[1440px]">
+    <Skills />
+    <AboutPreview />
+    <ProjectsPreview />
+  </div>
+</Layout>

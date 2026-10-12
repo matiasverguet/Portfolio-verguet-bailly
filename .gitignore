@@ -1,0 +1,14 @@
+# Dépendances et build Astro
+node_modules/
+dist/
+.astro/
+# PocketBase (base locale et fichiers envoyés : ne pas versionner)
+pb_data/
+pocketbase.exe
+# Système
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+# Config locale de Claude Code
+.claude/

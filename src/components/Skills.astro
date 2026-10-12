@@ -1,0 +1,41 @@
+---
+/* Compétences : accordéon fait avec <details> / <summary>.
+   Le navigateur gère seul l'ouverture et la fermeture (pas de JavaScript)
+   et c'est accessible au clavier par défaut.
+   Le chevron pointe vers le bas, puis vers le haut quand l'élément est ouvert
+   (classe Tailwind group-open:rotate-180). */
+import { skills } from "../data/skills.js";
+---
+
+<section class="px-[9%] pt-[min(5vw,72px)] pb-[min(10vw,144px)]" aria-labelledby="skills-title">
+  <h2 id="skills-title" class="font-display text-[clamp(2.25rem,5.4vw,4.9rem)] leading-none font-bold uppercase">
+    Mes compétences
+  </h2>
+  <p class="mt-[min(1.5vw,21.6px)] max-w-[min(56vw,806.4px)] text-[clamp(0.95rem,1.85vw,1.65rem)] leading-snug">
+    Je combine créativité et maîtrise technique pour développer des projets en web design, UX/UI et
+    identité de marque.
+  </p>
+
+  <div class="mt-[min(3vw,43.2px)] max-w-[clamp(18rem,52vw,47rem)] sm:ml-[4.5%]">
+    {
+      skills.map((skill, index) => (
+        <details class="group">
+          <summary class="flex cursor-pointer items-center justify-between gap-4 py-[clamp(0.45rem,1.3vw,1.2rem)] font-display text-[clamp(1.25rem,3vw,2.7rem)] leading-none font-bold hover:text-electric">
+            <span class="flex gap-[0.4em]">
+              <span>{index + 1}.</span>
+              <span>{skill.title}</span>
+            </span>
+            <svg class="w-[0.6em] shrink-0 transition-transform group-open:rotate-180" viewBox="0 0 24 14" aria-hidden="true">
+              <path d="M2 2l10 10 10-10" fill="none" stroke="currentColor" stroke-width="2" />
+            </svg>
+          </summary>
+
+          <!-- Le retrait (padding-left) aligne la liste sur le titre, après le numéro -->
+          <ul class="flex flex-col gap-[clamp(0.6rem,1.4vw,1.25rem)] pt-[min(0.5vw,7.2px)] pb-[min(2.5vw,36px)] pl-[clamp(1.9rem,5.2vw,4.7rem)] text-[clamp(0.85rem,1.4vw,1.25rem)] leading-snug font-semibold">
+            {skill.items.map((item) => <li>{item}</li>)}
+          </ul>
+        </details>
+      ))
+    }
+  </div>
+</section>

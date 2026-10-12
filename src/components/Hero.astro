@@ -1,0 +1,52 @@
+---
+/* Hero de l'accueil : mon nom dans un cadre de sélection façon Figma,
+   entouré de dossiers qui flottent.
+   - Textes et dossiers : en vw (pourcentage de la largeur d'écran) pour garder
+     les proportions de la maquette ; clamp() fixe un minimum et un maximum (taille à 1440px).
+   - Positions horizontales : en % de la largeur du hero, qui prend tout l'écran.
+     Sur un grand écran, le cadre s'élargit et les dossiers s'écartent, sans que le texte grossisse. */
+import Folder from "./Folder.astro";
+
+// Les 4 poignées carrées aux coins du cadre
+const handles = ["-top-1 -left-1", "-top-1 -right-1", "-bottom-1 -left-1", "-bottom-1 -right-1"];
+
+// Taille commune des dossiers décoratifs
+const size = "w-[clamp(4.5rem,12.7vw,11.5rem)] h-[clamp(3.3rem,9.4vw,8.5rem)]";
+---
+
+<section class="relative pt-[clamp(5rem,13.4vw,12rem)] pb-[clamp(5rem,12vw,11rem)]" aria-labelledby="hero-title">
+  <Folder class={`top-[min(5vw,72px)] left-[6%] z-10 -rotate-3 ${size}`} />
+  <!-- Dossier avec les logos de mes outils qui dépassent -->
+  <Folder class={`top-[min(3.8vw,54.7px)] left-[60%] z-10 rotate-6 ${size}`} delay="-1.5s">
+    <img src="/img/affinity.svg" alt="" class="absolute -top-[12%] left-[14%] w-[50%] -rotate-12" />
+    <img src="/img/figma.svg" alt="" class="absolute -top-[20%] left-[62%] w-[26%] rotate-[18deg]" />
+  </Folder>
+  <Folder class={`top-[min(22vw,316.8px)] left-[86%] z-10 -rotate-[15deg] ${size}`} delay="-3s" />
+  <Folder class={`top-[min(37vw,532.8px)] left-[17%] z-10 hidden sm:block rotate-[10deg] ${size}`} delay="-4.5s" />
+
+  <!-- Cadre de sélection -->
+  <div class="relative mr-[8.5%] ml-[10%] border-2 border-dotted border-electric px-[min(2.3vw,33.1px)] pt-[min(4vw,57.6px)] pb-[min(2.4vw,34.6px)]">
+    {handles.map((pos) => (
+      <span class:list={["absolute size-2 border border-electric bg-white", pos]} aria-hidden="true" />
+    ))}
+
+    <h1 id="hero-title" class="font-heavy text-[clamp(1.4rem,7.05vw,6.35rem)] leading-[0.92] font-black whitespace-nowrap uppercase">
+      <span class="block text-electric">Matias</span>
+      <span class="block">Verguet--Bailly</span>
+    </h1>
+    <p class="font-serif text-[clamp(1.1rem,3.2vw,2.9rem)] leading-tight">Designer graphique</p>
+
+    <!-- Curseur bleu posé sur la poignée bas-droite du cadre.
+         top-full / left-full : le coin haut-gauche du SVG est placé sur le coin du cadre.
+         La pointe de la flèche est à (14, 14) dans un SVG de 40 × 40, soit 35 % :
+         on recule donc le SVG de 35 % pour que la pointe tombe pile sur la poignée. -->
+    <svg class="absolute top-full left-full w-[clamp(1.75rem,5.5vw,5rem)] -translate-x-[35%] -translate-y-[35%] text-electric" viewBox="0 0 40 40" aria-hidden="true">
+      <path d="M14 14l22 9-9 3-3 10z" fill="currentColor" />
+      <path d="M8 6l3 4M4 12l4 1M13 3l1 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+    </svg>
+  </div>
+
+  <p class="mt-[min(2.5vw,36px)] mr-[10.5%] ml-[10%] text-right font-display text-[clamp(0.9rem,2vw,1.8rem)]">
+    À la recherche d'un stage du 29 mars au 4 juin 2026
+  </p>
+</section>

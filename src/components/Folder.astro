@@ -1,0 +1,27 @@
+---
+/* Dossier décoratif (fil rouge graphique du site), dessiné en 3 blocs :
+   onglet + arrière (foncés) et avant (clair).
+   Props :
+   - class : position, taille et rotation, choisies par le parent
+   - delay : décalage de l'animation pour que les dossiers ne bougent pas ensemble
+   Contenu (slot) : ce qu'on met entre les balises <Folder>…</Folder> est glissé
+   entre l'arrière et l'avant, il a donc l'air de sortir du dossier. */
+interface Props {
+  class?: string;
+  delay?: string;
+}
+
+const { class: className = "", delay = "0s" } = Astro.props;
+---
+
+<!-- La rotation est sur le conteneur, le flottement sur l'enfant :
+     les deux transformations ne s'écrasent pas -->
+<div class:list={["absolute", className]} aria-hidden="true">
+  <div class="relative size-full animate-float" style={`animation-delay: ${delay}`}>
+    <div class="absolute top-0 left-0 h-1/3 w-2/5 rounded-t-lg bg-folder-dark"></div>
+    <div class="absolute inset-x-0 top-[12%] bottom-0 rounded-lg bg-folder-dark shadow-[-6px_8px_3px_rgba(0,0,0,0.12)]"></div>
+    <slot />
+    <!-- Ombre peu floue (3px) : un décalage net, comme sur la maquette -->
+    <div class="absolute inset-x-0 top-[24%] bottom-0 rounded-lg bg-folder shadow-[-6px_8px_3px_rgba(0,0,0,0.12)]"></div>
+  </div>
+</div>

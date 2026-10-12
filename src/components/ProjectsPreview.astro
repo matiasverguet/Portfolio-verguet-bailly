@@ -1,0 +1,21 @@
+---
+/* Section « Mes projets » de l'accueil : une carte par projet du fichier data/projets.js */
+import ProjectCard from "./ProjectCard.astro";
+import { projets } from "../data/projets.js";
+---
+
+<section class="pr-[6%] pb-[min(13vw,187.2px)] pl-[9.6%]" aria-labelledby="projects-title">
+  <h2 id="projects-title" class="ml-[2%] font-display text-[clamp(2.25rem,5vw,4.5rem)] leading-none font-bold uppercase">
+    Mes projets
+  </h2>
+
+  <div class="mt-[clamp(4rem,12vw,10.8rem)] grid gap-x-[min(4vw,57.6px)] gap-y-10 sm:grid-cols-3">
+    {projets.map((projet) => <ProjectCard {...projet} />)}
+  </div>
+
+  <div class="mt-[min(4vw,57.6px)] text-right">
+    <a href="/projets" class="inline-flex items-center gap-[0.6em] rounded-full bg-electric px-[1.2em] py-[0.75em] text-[clamp(0.75rem,1.4vw,1.25rem)] font-bold text-white uppercase hover:bg-ink">
+      Plus de projets <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</section>
