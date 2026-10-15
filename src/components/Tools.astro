@@ -1,0 +1,129 @@
+---
+/* Carte « Outils » façon liste du Finder + fiche détaillée à droite.
+   - Survol, focus clavier ou clic sur un outil : l'outil passe en bleu
+     et sa fiche apparaît à droite (petit script en bas du fichier).
+   Toutes les fiches sont générées dans le HTML, cachées avec l'attribut hidden ;
+   le script ne fait qu'afficher la bonne.
+   Hauteurs : c'est la carte Outils qui fixe la hauteur de la ligne.
+   Sur ordinateur, les fiches sont en position absolute (inset-0) dans la colonne de droite :
+   elles ne poussent pas la ligne et prennent exactement la hauteur de la carte Outils. */
+import { outils } from "../data/about.js";
+
+// Pastilles décoratives (comme les étiquettes de couleur du Finder)
+const pastilles = ["#ff5f57", "#ff9f0a", "#ffcc00", "#28c840", "#0533ff", "#8e8e93", "#c7c7cc"];
+---
+
+<section
+  data-tools
+  class="grid items-stretch gap-[min(6vw,86.4px)] px-[10%] pb-[min(8vw,115.2px)] sm:grid-cols-[clamp(15rem,29vw,26rem)_1fr]"
+  aria-labelledby="tools-title"
+>
+  <!-- ===== Carte (liste des outils) ===== -->
+  <div class="relative">
+    <!-- Bloc gris décalé en haut à gauche : donne l'impression d'une pile de fenêtres -->
+    <div class="absolute inset-0 -translate-x-[min(1.4vw,20px)] -translate-y-[min(1.4vw,20px)] rounded-2xl bg-grid" aria-hidden="true"></div>
+
+    <div class="relative h-full rounded-2xl bg-white px-[min(2vw,28.8px)] pt-[min(1.8vw,26px)] pb-[min(1.8vw,26px)]">
+      <h2
+        id="tools-title"
+        class="px-[0.3em] py-[0.15em] font-display text-[clamp(1.4rem,2.7vw,2.4rem)] leading-none font-bold"
+      >
+        Outils
+      </h2>
+      <ul class="mt-[0.3em] font-display text-[clamp(0.95rem,1.6vw,1.45rem)]">
+        {
+          outils.map((outil, index) => (
+            <li class="border-b border-ink/15 py-[0.1em]">
+              <!-- Un bouton : accessible au clavier (Tab) et au clic sur mobile.
+                   aria-expanded indique aux lecteurs d'écran si la fiche est affichée ;
+                   la classe aria-expanded:bg-electric le colore en bleu dans ce cas. -->
+              <button
+                type="button"
+                data-tool={index}
+                aria-controls={`outil-${index}`}
+                aria-expanded="false"
+                class="w-full cursor-pointer rounded-md px-[0.3em] py-[0.12em] text-left transition-colors aria-expanded:bg-electric aria-expanded:text-white"
+              >
+                {outil.nom}
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+      <ul class="mt-[min(1.2vw,17.3px)] flex gap-[min(0.9vw,13px)] pl-[0.3em]" aria-hidden="true">
+        {pastilles.map((couleur) => <li class="size-[clamp(0.6rem,1.2vw,1.05rem)] rounded-full" style={`background-color: ${couleur}`} />)}
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== Fiches détaillées (cartes blanches) : toutes dans la même case de la grille, une seule visible.
+       Ombre : un box-shadow sans flou, décalé en haut à gauche, de la couleur du bloc gris
+       de la carte Outils (même effet de pile, et il suit les coins arrondis). ===== -->
+  <div class="relative grid">
+    {
+      outils.map((outil, index) => (
+        <article id={`outil-${index}`} data-panel={index} hidden class="col-start-1 row-start-1 overflow-y-auto rounded-2xl bg-white p-[clamp(1.25rem,2.2vw,2rem)] shadow-[calc(min(1.4vw,20px)*-1)_calc(min(1.4vw,20px)*-1)_0_var(--color-grid)] sm:absolute sm:inset-0">
+          <p class="text-[clamp(0.65rem,0.95vw,0.85rem)] font-bold text-electric uppercase">{outil.categorie}</p>
+          <h3 class="mt-[0.2em] font-display text-[clamp(2.25rem,4.5vw,4rem)] leading-none font-bold uppercase">{outil.nom}</h3>
+          <p class="mt-[0.4em] max-w-[36em] text-[clamp(0.9rem,1.35vw,1.2rem)] leading-snug">{outil.description}</p>
+
+          <div class="mt-[min(2vw,28.8px)] grid gap-6 sm:grid-cols-2 sm:gap-[min(4vw,57.6px)]">
+            <div>
+              <h4 class="text-[clamp(0.75rem,1vw,0.9rem)] font-bold">Ce que je produis avec</h4>
+              <ul class="mt-[0.8em] list-disc space-y-[0.6em] pl-[1.2em] text-[clamp(0.75rem,1vw,0.9rem)] leading-snug">
+                {outil.produits.map((produit) => <li>{produit}</li>)}
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-[clamp(0.75rem,1vw,0.9rem)] font-bold">Champs d'intervention</h4>
+              <ul class="mt-[0.8em] flex flex-wrap gap-[0.5em]">
+                {outil.champs.map((champ) => (
+                  <li class="rounded-full bg-electric px-[0.8em] py-[0.25em] text-[clamp(0.7rem,0.95vw,0.85rem)] font-semibold text-white">{champ}</li>
+                ))}
+              </ul>
+              <p class="mt-[min(2vw,28.8px)] text-[clamp(0.75rem,1vw,0.9rem)]">
+                <span class="font-bold">Niveau d'usage</span>
+                <span class="ml-[1.5em] text-electric">{outil.niveau}</span>
+              </p>
+            </div>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  /* Affiche la fiche de l'outil survolé, focalisé au clavier ou cliqué.
+     Le script est traité par Astro : il est chargé une seule fois, en module. */
+  const section = document.querySelector<HTMLElement>("[data-tools]");
+
+  if (section) {
+    const boutons = section.querySelectorAll<HTMLButtonElement>("[data-tool]");
+    const fiches = section.querySelectorAll<HTMLElement>("[data-panel]");
+
+    // id = numéro de l'outil à afficher, ou null pour tout cacher
+    function afficher(id: string | null) {
+      boutons.forEach((bouton) => {
+        bouton.setAttribute("aria-expanded", String(bouton.dataset.tool === id));
+      });
+      fiches.forEach((fiche) => {
+        fiche.hidden = fiche.dataset.panel !== id;
+      });
+    }
+
+    boutons.forEach((bouton) => {
+      const id = bouton.dataset.tool ?? null;
+      bouton.addEventListener("mouseenter", () => afficher(id)); // survol à la souris
+      bouton.addEventListener("focus", () => afficher(id)); // navigation au clavier
+      bouton.addEventListener("click", () => afficher(id)); // tap sur mobile
+    });
+
+    // La fiche disparaît quand la souris quitte la section (carte + fiche),
+    // ou quand on appuie sur Échap
+    section.addEventListener("mouseleave", () => afficher(null));
+    section.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") afficher(null);
+    });
+  }
+</script>

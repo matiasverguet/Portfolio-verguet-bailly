@@ -1,0 +1,44 @@
+---
+/* Haut de la page About : grand titre, présentation et portrait à effet de lignes.
+   portrait : chemin de l'image dans public/img/ (vide = cadre en pointillés) */
+const portrait: string | undefined = "/img/portrait.webp";
+---
+
+<section class="grid items-start gap-10 px-[9.5%] pt-[min(4vw,57.6px)] pb-[min(10vw,144px)] sm:grid-cols-[1fr_47%]" aria-labelledby="page-title">
+  <div>
+    <h1 id="page-title" class="font-display text-[clamp(3rem,10.6vw,9.5rem)] leading-[0.95] font-bold uppercase">
+      À propos
+    </h1>
+    <p class="mt-[min(3vw,43.2px)] font-display text-[clamp(1rem,2vw,1.8rem)] font-bold uppercase">
+      Matias Verguet--Bailly
+    </p>
+
+    <div class="mt-[min(1vw,14.4px)] max-w-[clamp(18rem,46vw,41rem)] space-y-[1em] text-[clamp(0.9rem,1.3vw,1.15rem)] leading-snug">
+      <p>
+        J'ai 19 ans et je suis actuellement en deuxième année de BUT Métiers du Multimédia et de
+        l'Internet (MMI). Passionné par la communication visuelle et le numérique, je me spécialise en
+        design graphique et en conception UI/UX, avec pour ambition de construire une carrière créative
+        mêlant esthétique et stratégie de marque.
+      </p>
+      <p>
+        À travers mes projets, j'ai développé des compétences solides en identité visuelle, design
+        d'interfaces et intégration web. J'aime imaginer des univers graphiques marquants et concevoir
+        des expériences utilisateurs fluides, fonctionnelles et engageantes. Mon objectif est de
+        continuer à explorer les frontières entre créativité et technologie pour donner vie à des
+        projets modernes et porteurs de sens.
+      </p>
+    </div>
+  </div>
+
+  <!-- self-end : le bas de la photo s'aligne sur le bas du texte.
+       origin-bottom-right : le zoom (scale-110) part de ce coin, donc le bas ne bouge pas. -->
+  {
+    portrait ? (
+      <img src={portrait} alt="Portrait de Matias Verguet--Bailly, pouce levé, avec un effet de lignes verticales" width="1198" height="1002" class="w-full sm:origin-bottom-right sm:scale-110 sm:self-end" />
+    ) : (
+      <div class="grid aspect-[5/6] w-full place-items-center rounded-xl border-2 border-dashed border-folder-dark font-display text-xl text-folder-dark uppercase" aria-hidden="true">
+        Portrait
+      </div>
+    )
+  }
+</section>

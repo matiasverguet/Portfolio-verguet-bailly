@@ -3,7 +3,8 @@
 @theme {
   /* Couleurs de la maquette */
   --color-paper: #e3e3e3;        /* gris de fond */
-  --color-grid: #d0d0d0;         /* lignes de la grille de fond */
+  --color-grid: #d0d0d0;         /* gris des blocs décalés (carte Outils) */
+  --color-grid-line: #dbdbdb;    /* lignes de la grille de fond, à peine plus foncées que le fond */
   --color-footer: #d6d6d6;
   --color-ink: #111111;          /* texte */
   --color-electric: #0533ff;     /* bleu électrique (accents, boutons) */
@@ -30,8 +31,8 @@
     color: var(--color-ink);
     /* Grille de fond dessinée avec 2 dégradés : aucune image à charger */
     background-image:
-      linear-gradient(to right, var(--color-grid) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
+      linear-gradient(to right, var(--color-grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-grid-line) 1px, transparent 1px);
     background-size: 40px 40px;
   }
 

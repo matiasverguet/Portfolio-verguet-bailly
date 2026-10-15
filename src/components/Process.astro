@@ -1,0 +1,38 @@
+---
+/* « Concevoir avec créativité » : les 4 étapes de ma méthode.
+   3 cartes sur une ligne, puis la 4e sur toute la largeur.
+   Chaque carte a sa couleur : on la choisit avec l'index de l'étape. */
+import { etapes } from "../data/about.js";
+
+// Couleur de fond + couleur du texte pour chaque carte, dans l'ordre
+const styles = [
+  "bg-white text-ink",
+  "bg-folder text-ink",
+  "bg-electric text-white",
+  "bg-[#333] text-white sm:col-span-3", // la dernière prend les 3 colonnes
+];
+---
+
+<section class="px-[7%] pb-[min(8vw,115.2px)]" aria-labelledby="process-title">
+  <h2 id="process-title" class="ml-[2%] font-display text-[clamp(2rem,4.9vw,4.4rem)] leading-none font-bold uppercase">
+    Concevoir avec créativité
+  </h2>
+
+  <ol class="mt-[min(3vw,43.2px)] grid gap-[min(2.5vw,36px)] sm:grid-cols-3">
+    {
+      etapes.map((etape, index) => (
+        <li class:list={["rounded-2xl p-[clamp(1.25rem,2vw,1.8rem)]", styles[index]]}>
+          <p class="font-display text-[clamp(2.5rem,6vw,5.4rem)] leading-none font-bold">
+            {String(index + 1).padStart(2, "0")}.
+          </p>
+          <h3 class="mt-[min(1.5vw,21.6px)] font-display text-[clamp(1.1rem,2vw,1.8rem)] leading-tight font-bold uppercase">
+            {etape.titre}
+          </h3>
+          <p class:list={["mt-[0.6em] text-[clamp(0.8rem,1.1vw,1rem)] leading-snug", index === 3 && "max-w-[90ch]"]}>
+            {etape.texte}
+          </p>
+        </li>
+      ))
+    }
+  </ol>
+</section>

@@ -1,0 +1,44 @@
+---
+/* Parcours scolaire : une ligne par diplôme (données dans data/about.js),
+   et à droite une carte des lieux dans un cadre blanc.
+   carte : chemin de l'image dans public/img/ (vide = cadre en pointillés) */
+import { parcours } from "../data/about.js";
+
+const carte: string | undefined = "/img/carte.webp";
+---
+
+<section class="px-[9%] pb-[min(10vw,144px)]" aria-labelledby="education-title">
+  <h2 id="education-title" class="font-display text-[clamp(2.25rem,5vw,4.5rem)] leading-none font-bold uppercase">
+    Parcours scolaire
+  </h2>
+
+  <div class="mt-[min(3vw,43.2px)] grid items-center gap-10 sm:grid-cols-[1fr_36%] sm:gap-[min(5vw,72px)]">
+    <!-- Liste ordonnée : du plus récent au plus ancien -->
+    <ol>
+      {
+        parcours.map((etape) => (
+          <li class="flex items-end justify-between gap-4 border-b border-ink py-[clamp(0.75rem,1.5vw,1.35rem)]">
+            <h3 class="font-display text-[clamp(1.4rem,3.4vw,3rem)] leading-none font-bold">{etape.diplome}</h3>
+            <p class="text-right font-display text-[clamp(0.9rem,1.75vw,1.55rem)] leading-tight">
+              <span class="block text-electric">{etape.ecole}</span>
+              <span class="block font-bold">{etape.annees}</span>
+            </p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <!-- Carte dans un cadre blanc -->
+    <div class="rounded-2xl bg-white p-[min(1.2vw,17.3px)]">
+      {
+        carte ? (
+          <img src={carte} alt="Carte satellite reliant Besançon, Montbéliard et Belfort, les villes de mon parcours" width="439" height="279" loading="lazy" class="w-full rounded-lg" />
+        ) : (
+          <div class="grid aspect-[4/3] place-items-center rounded-lg border-2 border-dashed border-folder-dark font-display text-xl text-folder-dark uppercase" aria-hidden="true">
+            Carte
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
