@@ -1,0 +1,134 @@
+---
+/* Page Contact : coordonnées à gauche, formulaire à droite.
+   Pas encore de serveur : à l'envoi, un petit script construit un email pré-rempli
+   (lien mailto:) et ouvre la messagerie du visiteur. */
+import Layout from "../layouts/Layout.astro";
+import SocialLinks from "../components/SocialLinks.astro";
+
+// Types de demande proposés dans le formulaire (boutons radio en forme d'étiquettes)
+const sujets = ["Stage/Alternance", "Identité visuelle", "Autre ?"];
+
+// Classes communes : carte blanche, titres, libellés, valeurs, champs
+const carte = "rounded-2xl bg-white px-[clamp(1.25rem,2vw,1.8rem)] pt-[clamp(1.25rem,2vw,1.8rem)] pb-[clamp(1.5rem,2.5vw,2.25rem)] shadow-[-6px_8px_18px_rgba(0,0,0,0.1)]";
+const titre = "font-display text-[clamp(2rem,4.3vw,3.9rem)] leading-none uppercase";
+const libelle = "block font-display text-[clamp(1.1rem,2.1vw,1.9rem)] leading-tight uppercase";
+const valeur = "font-display text-[clamp(1rem,1.9vw,1.7rem)] leading-tight";
+const champ = "mt-[0.4em] w-full rounded-xl border border-ink bg-white px-[0.8em] py-[0.7em] text-[clamp(0.95rem,1.2vw,1.1rem)]";
+---
+
+<Layout
+  title="Contact — Matias Verguet--Bailly"
+  description="Contactez Matias Verguet--Bailly, designer graphique disponible pour un stage du 29 mars au 4 juin 2026, à Belfort, Montbéliard et alentours."
+>
+  <div class="mx-auto max-w-[1440px] px-[6%] pt-[min(5vw,72px)] pb-[min(8vw,115px)]">
+    <h1 class="text-center font-display text-[clamp(2.5rem,9vw,8.1rem)] leading-none font-bold uppercase">
+      Discutons d'un projet
+    </h1>
+
+    <div class="mx-auto mt-[min(7vw,100px)] grid max-w-[72.6vw] gap-[min(3.7vw,53px)] max-sm:max-w-none sm:grid-cols-2">
+      <!-- ===== Coordonnées ===== -->
+      <section class={carte} aria-labelledby="coord-title">
+        <h2 id="coord-title" class={titre}>Coordonnées</h2>
+
+        <!-- Liste de définitions : chaque info = un terme (dt) + sa valeur (dd) -->
+        <dl class="mt-[min(1.5vw,21px)] mr-[6%]">
+          <div class="border-b border-ink/70 pb-[0.6em]">
+            <dt class={libelle}>Statut</dt>
+            <dd class="mt-[0.4em] inline-block rounded-xl bg-electric px-[0.6em] py-[0.35em] font-display text-[clamp(0.95rem,1.75vw,1.6rem)] text-white uppercase">
+              Disponible stage du 29/03 au 04/06 2026
+            </dd>
+          </div>
+          <div class="border-b border-ink/70 py-[0.6em]">
+            <dt class={libelle}>Email</dt>
+            <dd class={valeur}><a href="mailto:matiasverguet@gmail.com" class="break-all hover:text-electric">matiasverguet@gmail.com</a></dd>
+          </div>
+          <div class="border-b border-ink/70 py-[0.6em]">
+            <dt class={libelle}>Tel</dt>
+            <dd class={valeur}><a href="tel:+33783941205" class="hover:text-electric">07 83 94 12 05</a></dd>
+          </div>
+          <div class="border-b border-ink/70 py-[0.6em]">
+            <dt class={libelle}>Localisation</dt>
+            <dd class={valeur}>Belfort, Montbéliard et les alentours</dd>
+          </div>
+        </dl>
+
+        <SocialLinks class="mt-[min(2vw,29px)] justify-center gap-[min(5vw,72px)]" iconClass="size-[clamp(2.25rem,4vw,3.6rem)]" />
+      </section>
+
+      <!-- ===== Formulaire ===== -->
+      <section class={carte} aria-labelledby="form-title">
+        <h2 id="form-title" class:list={[titre, "mt-[0.3em]"]}>Contactez-moi</h2>
+
+        <!-- required + type="email" : le navigateur vérifie lui-même les champs avant l'envoi -->
+        <form data-contact class="mt-[min(0.6vw,9px)] flex flex-col gap-[min(1.4vw,20px)]">
+          <label class={libelle}>
+            Votre nom
+            <input type="text" name="nom" autocomplete="name" required class={champ} />
+          </label>
+
+          <label class={libelle}>
+            Votre email
+            <input type="email" name="email" autocomplete="email" required class={champ} />
+          </label>
+
+          <!-- Sujet : vrais boutons radio (accessibles), cachés visuellement (sr-only),
+               le <label> qui les entoure sert d'étiquette ; has-checked:bg-electric
+               le colore en bleu quand son bouton radio est coché. -->
+          <fieldset>
+            <legend class="sr-only">Sujet de votre message</legend>
+            <div class="flex flex-wrap gap-[0.5em]">
+              {
+                sujets.map((sujet, index) => (
+                  <label class="cursor-pointer rounded-full border border-ink px-[0.7em] py-[0.3em] font-display text-[clamp(0.85rem,1.4vw,1.25rem)] uppercase transition-colors hover:bg-paper has-checked:bg-electric has-checked:text-white has-focus-visible:outline-3 has-focus-visible:outline-electric">
+                    <input type="radio" name="sujet" value={sujet} checked={index === 0} class="sr-only" />
+                    {sujet}
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <label class={libelle}>
+            Votre message
+            <textarea name="message" rows="4" required class:list={[champ, "resize-y"]}></textarea>
+          </label>
+
+          <button
+            type="submit"
+            class="flex items-center justify-center gap-[0.6em] rounded-full bg-electric py-[0.45em] font-display text-[clamp(1rem,1.4vw,1.25rem)] text-white uppercase hover:bg-ink"
+          >
+            Envoyer le message <span aria-hidden="true">→</span>
+          </button>
+
+          <!-- Message de confirmation, annoncé par les lecteurs d'écran (aria-live) -->
+          <p data-statut aria-live="polite" class="text-[clamp(0.85rem,1.1vw,1rem)]"></p>
+        </form>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  /* Envoi du formulaire sans serveur : on construit un lien mailto:
+     avec l'objet et le texte pré-remplis, puis on l'ouvre.
+     encodeURIComponent protège les accents, espaces et retours à la ligne dans l'URL. */
+  const form = document.querySelector<HTMLFormElement>("[data-contact]");
+  const statut = document.querySelector<HTMLElement>("[data-statut]");
+
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault(); // on gère l'envoi nous-mêmes
+
+    const donnees = new FormData(form);
+    const nom = String(donnees.get("nom"));
+    const email = String(donnees.get("email"));
+    const sujet = String(donnees.get("sujet"));
+    const message = String(donnees.get("message"));
+
+    const objet = `[Portfolio] ${sujet} — ${nom}`;
+    const corps = `${message}\n\n${nom}\n${email}`;
+
+    window.location.href = `mailto:matiasverguet@gmail.com?subject=${encodeURIComponent(objet)}&body=${encodeURIComponent(corps)}`;
+
+    if (statut) statut.textContent = "Votre messagerie s'ouvre avec le message pré-rempli : il ne reste plus qu'à l'envoyer.";
+  });
+</script>

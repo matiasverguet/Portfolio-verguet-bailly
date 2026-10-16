@@ -40,7 +40,12 @@ const links = [
         ))
       }
       <li>
-        <a href="/contact" class="rounded-[0.5em] bg-ink px-[0.5em] py-[0.3em] text-white hover:bg-electric">
+        <!-- Sur la page Contact, le bouton passe en blanc (comme sur la maquette) -->
+        <a
+          href="/contact"
+          aria-current={path.startsWith("/contact") ? "page" : undefined}
+          class="rounded-[0.5em] bg-ink px-[0.5em] py-[0.3em] text-white hover:bg-electric aria-[current=page]:bg-white aria-[current=page]:text-ink aria-[current=page]:shadow-[0_2px_6px_rgba(0,0,0,0.15)]"
+        >
           Contact
         </a>
       </li>

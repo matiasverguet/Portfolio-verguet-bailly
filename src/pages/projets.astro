@@ -1,0 +1,110 @@
+---
+/* Page « Mes projets » : titre, introduction, filtre par catégorie
+   et grille de cartes (même composant ProjectCard que sur l'accueil). */
+import Layout from "../layouts/Layout.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { projets } from "../data/projets.js";
+
+// Catégories du filtre : toutes les étiquettes des projets, sans les années (ex. "2025"),
+// sans doublon grâce à new Set().
+const filtres = [...new Set(projets.flatMap((projet) => projet.tags))].filter((tag) => !/^\d{4}$/.test(tag));
+---
+
+<Layout
+  title="Mes projets — Matias Verguet--Bailly"
+  description="Projets de Matias Verguet--Bailly : identité visuelle, design d'affiche, UI/UX et maquettage."
+>
+  <div class="mx-auto max-w-[1440px]">
+    <section class="px-[9.6%] pt-[min(4vw,57.6px)] pb-[min(3.5vw,50.4px)]" aria-labelledby="page-title">
+      <h1 id="page-title" class="font-display text-[clamp(3rem,10.6vw,9.5rem)] leading-[0.95] font-bold uppercase">
+        Mes projets
+      </h1>
+
+      <div class="mt-[min(4vw,57.6px)] flex flex-wrap items-start justify-between gap-6">
+        <p class="max-w-[clamp(18rem,41vw,37rem)] text-[clamp(1rem,1.65vw,1.5rem)] leading-tight">
+          Entre stratégie et création : je conçois des solutions visuelles pour répondre à des besoins
+          réels avec un design percutant.
+        </p>
+
+        <!-- ===== Filtre =====
+             <details> gère l'ouverture du menu sans JavaScript ;
+             le script en bas de page filtre les cartes au clic sur une catégorie. -->
+        <details data-filtres class="group relative w-full sm:mt-[0.3em] sm:w-[clamp(14rem,25.5vw,23rem)]">
+          <summary class="flex cursor-pointer items-center justify-between rounded-full bg-electric px-[1.3em] py-[0.6em] text-[clamp(0.85rem,1.35vw,1.2rem)] font-bold text-white uppercase hover:bg-ink">
+            <svg class="w-[1em] transition-transform group-open:rotate-180" viewBox="0 0 24 14" aria-hidden="true">
+              <path d="M2 2l10 10 10-10" fill="none" stroke="currentColor" stroke-width="2.5" />
+            </svg>
+            <span>Filtrer<span data-filtre-actif></span></span>
+          </summary>
+
+          <!-- Menu : carte blanche avec un bloc gris décalé (même style que la carte Outils) -->
+          <ul class="absolute inset-x-0 top-full z-20 mt-2 rounded-2xl bg-white p-[0.6em] font-display text-[clamp(1rem,1.6vw,1.45rem)] shadow-[-8px_8px_0_var(--color-grid)]">
+            {
+              ["Tous", ...filtres].map((filtre) => (
+                <li>
+                  <button
+                    type="button"
+                    data-filtre={filtre}
+                    aria-pressed={filtre === "Tous" ? "true" : "false"}
+                    class="w-full cursor-pointer rounded-md px-[0.5em] py-[0.15em] text-left hover:bg-paper aria-pressed:bg-electric aria-pressed:text-white"
+                  >
+                    {filtre}
+                  </button>
+                </li>
+              ))
+            }
+          </ul>
+        </details>
+      </div>
+    </section>
+
+    <!-- ===== Grille des projets ===== -->
+    <section class="pr-[6%] pb-[min(13vw,187.2px)] pl-[9.6%]" aria-label="Liste des projets">
+      <!-- data-tags sur chaque <li> : les étiquettes du projet, lues par le script du filtre -->
+      <ul class="grid gap-x-[min(4vw,57.6px)] gap-y-[min(8vw,115px)] sm:grid-cols-3">
+        {
+          projets.map((projet) => (
+            <li data-tags={projet.tags.join("|")}>
+              <ProjectCard {...projet} />
+            </li>
+          ))
+        }
+      </ul>
+      <!-- aria-live : un lecteur d'écran annonce ce message quand il apparaît -->
+      <p data-vide hidden aria-live="polite" class="font-display text-[clamp(1.25rem,2vw,1.8rem)]">
+        Aucun projet dans cette catégorie pour le moment.
+      </p>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  /* Filtre des projets : au clic sur une catégorie, on cache (hidden) les cartes
+     dont les étiquettes ne la contiennent pas, puis on referme le menu. */
+  const menu = document.querySelector<HTMLDetailsElement>("[data-filtres]");
+  const boutons = document.querySelectorAll<HTMLButtonElement>("[data-filtre]");
+  const cartes = document.querySelectorAll<HTMLElement>("[data-tags]");
+  const messageVide = document.querySelector<HTMLElement>("[data-vide]");
+  const filtreActif = document.querySelector<HTMLElement>("[data-filtre-actif]");
+
+  boutons.forEach((bouton) => {
+    bouton.addEventListener("click", () => {
+      const filtre = bouton.dataset.filtre ?? "Tous";
+      let visibles = 0;
+
+      // Affiche ou cache chaque carte
+      cartes.forEach((carte) => {
+        const tags = (carte.dataset.tags ?? "").split("|");
+        const garder = filtre === "Tous" || tags.includes(filtre);
+        carte.hidden = !garder;
+        if (garder) visibles++;
+      });
+
+      // Met à jour le bouton actif, le libellé « Filtrer : … » et le message si vide
+      boutons.forEach((b) => b.setAttribute("aria-pressed", String(b === bouton)));
+      if (filtreActif) filtreActif.textContent = filtre === "Tous" ? "" : ` : ${filtre}`;
+      if (messageVide) messageVide.hidden = visibles > 0;
+      if (menu) menu.open = false;
+    });
+  });
+</script>
