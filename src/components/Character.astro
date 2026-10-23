@@ -1,0 +1,110 @@
+---
+/* Personnage 3D qui suit la souris, à partir d'une vidéo.
+   La vidéo montre le personnage qui tourne la tête de la gauche vers la droite.
+   Au lieu de la lire, un script choisit l'instant affiché (video.currentTime)
+   selon la position horizontale de la souris : on « fait défiler » la vidéo,
+   ce qui donne un mouvement fluide comme une animation.
+
+   Préparation (ffmpeg + script) : deux passages de la vidéo d'origine mis bout à bout
+   (gauche → face, puis face → droite) pour un seul mouvement continu, recadrage sur le personnage,
+   sans son, une image clé toutes les 4 images (pour que les sauts soient instantanés).
+   Deux fichiers :
+   - perso.webm : fond rendu transparent image par image (canal alpha) ;
+     le personnage passe AU-DESSUS de la grille du site. Lu par Chrome, Firefox, Edge.
+   - perso.mp4 : secours pour Safari (qui ne gère pas la transparence en WebM) ;
+     fond blanc, effacé avec mix-blend-multiply (la grille se voit alors aussi à travers). */
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<!-- Le positionnement et la taille sont choisis par le parent via class -->
+<div data-perso role="img" aria-label="Avatar 3D de Matias qui tourne la tête pour suivre le curseur" class:list={["aspect-[844/800]", className]}>
+  <!-- origin-bottom : la tête s'incline depuis le bas (les épaules) -->
+  <!-- Le navigateur prend la première source qu'il sait lire -->
+  <video
+    data-perso-video
+    poster="/video/perso-face.webp"
+    muted
+    playsinline
+    preload="auto"
+    aria-hidden="true"
+    class="size-full origin-bottom will-change-transform"
+  >
+    <source src="/video/perso.webm" type='video/webm; codecs="vp9"' />
+    <source src="/video/perso.mp4" type="video/mp4" />
+  </video>
+</div>
+
+<script>
+  const TEMPS_FACE = 70 / 30; // seconde de la vidéo où le personnage regarde de face (image 70, à 30 images/s)
+  const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  document.querySelectorAll<HTMLElement>("[data-perso]").forEach((perso) => {
+    const video = perso.querySelector<HTMLVideoElement>("[data-perso-video]")!;
+
+    let cible = TEMPS_FACE; // instant voulu, d'après la souris
+    let actuel = TEMPS_FACE; // instant lissé : il rattrape la cible petit à petit
+    let inclinaison = 0, inclinaisonCible = 0;
+    let visible = false;
+
+    video.addEventListener("loadedmetadata", () => {
+      video.currentTime = TEMPS_FACE;
+      // Version MP4 (Safari) : fond blanc, on l'efface en mode « produit »
+      if (video.currentSrc.endsWith(".mp4")) video.classList.add("mix-blend-multiply");
+    });
+
+    window.addEventListener("pointermove", (event) => {
+      if (!video.duration) return; // vidéo pas encore chargée
+      const r = perso.getBoundingClientRect();
+      const centre = r.left + r.width / 2;
+      const fin = video.duration - 0.05;
+
+      if (event.clientX < centre) {
+        // Souris à gauche du personnage : de 0 s (bord gauche) à TEMPS_FACE (personnage)
+        cible = TEMPS_FACE * (event.clientX / centre);
+      } else {
+        // Souris à droite : de TEMPS_FACE (personnage) à la fin (bord droit)
+        cible = TEMPS_FACE + (fin - TEMPS_FACE) * ((event.clientX - centre) / (window.innerWidth - centre));
+      }
+
+      // Inclinaison : de -1 (souris tout à gauche) à +1 (tout à droite)
+      const dx = (event.clientX - centre) / window.innerWidth;
+      inclinaisonCible = Math.max(-1, Math.min(1, dx * 2));
+    });
+
+    // La souris quitte la fenêtre : il revient de face
+    document.documentElement.addEventListener("mouseleave", () => {
+      cible = TEMPS_FACE;
+      inclinaisonCible = 0;
+    });
+
+    function boucle() {
+      if (!visible) return; // hors de l'écran : on arrête de calculer (économie de batterie)
+
+      // Amorti : on avance de 10 % vers la cible à chaque image (≈ 60 fois par seconde)
+      actuel += (cible - actuel) * 0.1;
+      // On ne demande un nouvel instant que si la vidéo a fini le précédent (seeking)
+      // et si l'écart vaut au moins une demi-image (1/48 s à 24 images/s)
+      if (!video.seeking && Math.abs(video.currentTime - actuel) > 1 / 48) {
+        video.currentTime = actuel;
+      }
+
+      // Légère inclinaison de la tête (désactivée si « réduire les animations » est demandé)
+      if (!reduit) {
+        inclinaison += (inclinaisonCible - inclinaison) * 0.08;
+        video.style.transform = `rotate(${inclinaison * 3}deg)`;
+      }
+
+      requestAnimationFrame(boucle);
+    }
+
+    // On ne lance l'animation que quand le personnage est visible à l'écran
+    new IntersectionObserver(([entree]) => {
+      visible = entree.isIntersecting;
+      if (visible) requestAnimationFrame(boucle);
+    }).observe(perso);
+  });
+</script>

@@ -14,12 +14,14 @@
       avec un petit rebond (courbe cubic-bezier qui dépasse 1 = effet ressort)
       et une ombre qui apparaît sous lui.
    Le délai n'existe qu'à l'entrée (group-hover:delay-80) : à la sortie, tout se referme ensemble. */
+import PbImage from "./PbImage.astro";
+
 interface Props {
   num: string;
   titre: string;
   tags: string[];
   slug: string;
-  image: string;
+  image: string | null; // adresse PocketBase (ou /img/… pour les données de secours)
 }
 
 const { num, titre, tags, slug, image } = Astro.props;
@@ -43,16 +45,16 @@ const spring = "transition-[translate,scale,rotate,filter] duration-[650ms] ease
          depuis son bas, donc vers le haut, comme s'il sortait du dossier.
          Les PNG sont rognés au plus près : object-contain les affiche tous à la même taille,
          object-top aligne leur haut pour qu'ils dépassent tous pareil. -->
-    <img
+    <PbImage
       src={image}
       alt=""
-      loading="lazy"
-      class:list={[
+      nom={slug}
+      class={[
         "absolute -top-[clamp(2.5rem,4.5vw,4rem)] left-1/2 h-[clamp(10rem,19vw,17rem)] w-[90%] -translate-x-1/2 origin-bottom scale-[0.85] -rotate-2 object-contain object-top",
         "group-hover:-translate-y-[10%] group-hover:scale-[1.02] group-hover:rotate-0 group-hover:drop-shadow-[0_10px_8px_rgba(0,0,0,0.2)] group-hover:delay-80",
         "group-focus-visible:-translate-y-[10%] group-focus-visible:scale-[1.02] group-focus-visible:rotate-0 group-focus-visible:drop-shadow-[0_10px_8px_rgba(0,0,0,0.2)] group-focus-visible:delay-80",
-        spring,
-      ]}
+        spring
+      ].join(" ")}
     />
 
     <!-- Avant du dossier : il bascule vers nous en pivotant sur son bord bas -->

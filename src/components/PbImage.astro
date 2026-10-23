@@ -1,0 +1,37 @@
+---
+/* Image venant de PocketBase (ou du dossier public/ pour les données de secours).
+   - Adresse PocketBase (http…) : composant <Image> d'Astro. À la construction du site,
+     Astro télécharge l'image, la convertit en WebP et la met dans le site final :
+     le site en ligne n'a donc pas besoin que PocketBase tourne.
+     inferSize : Astro lit lui-même la largeur et la hauteur de l'image.
+   - SVG ou image de public/ : balise <img> simple, sans optimisation.
+   - Pas d'image : emplacement en pointillés qui indique le nom du fichier à ajouter
+     dans la galerie du projet (dans l'interface de PocketBase). */
+import { Image } from "astro:assets";
+
+interface Props {
+  src: string | null;
+  alt: string;
+  nom?: string; // nom attendu, affiché si l'image manque
+  class?: string;
+  loading?: "lazy" | "eager";
+}
+
+const { src, alt, nom = "", class: className = "", loading = "lazy" } = Astro.props;
+---
+
+{
+  src ? (
+    // Image PocketBase en raster (WebP, PNG, JPG) : optimisée par Astro.
+    // Un SVG est vectoriel : déjà net et léger, on l'affiche tel quel (balise <img> classique).
+    src.startsWith("http") && !src.endsWith(".svg") ? (
+      <Image src={src} alt={alt} inferSize loading={loading} class={className} />
+    ) : (
+      <img src={src} alt={alt} loading={loading} class={className} />
+    )
+  ) : (
+    <div class:list={["grid min-h-40 place-items-center rounded-xl border-2 border-dashed border-folder-dark p-4 text-center text-sm text-folder-dark", className]}>
+      Image à ajouter dans la galerie : <strong>{nom}.webp</strong>
+    </div>
+  )
+}

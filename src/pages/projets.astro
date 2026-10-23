@@ -3,7 +3,10 @@
    et grille de cartes (même composant ProjectCard que sur l'accueil). */
 import Layout from "../layouts/Layout.astro";
 import ProjectCard from "../components/ProjectCard.astro";
-import { projets } from "../data/projets.js";
+import { getProjets } from "../lib/pocketbase.js";
+
+// Tous les projets, lus dans PocketBase
+const projets = await getProjets();
 
 // Catégories du filtre : toutes les étiquettes des projets, sans les années (ex. "2025"),
 // sans doublon grâce à new Set().

@@ -1,0 +1,147 @@
+---
+/* Une section de page projet (données : champ « sections » du projet dans PocketBase).
+   L'affichage dépend de section.mise_en_page :
+   - "image-texte"  : images à gauche, texte à droite
+   - "texte-images" : texte en haut, grille d'images dessous
+   - "images"       : grille d'images seule
+   - "moitie"       : section en demi-largeur (le parent en place deux côte à côte)
+   - "liste"        : liste à puces avec un début en gras (Résultats & compétences)
+   Options : cadre (images dans des cartes blanches), fonds (couleur de carte par image),
+   couleurs (charte), images_bas,
+   legende et lien (bouton). */
+import PbImage from "./PbImage.astro";
+
+interface Props {
+  section: any;
+  numero: number | null; // null = pas de grand chiffre (liste, ou bloc sans titre)
+  projet: string; // nom du projet, pour le texte alternatif des images
+}
+
+const { section, numero, projet } = Astro.props;
+const mise = section.mise_en_page ?? "texte-images";
+const images = section.images ?? [];
+const texte: string[] = section.texte ?? [];
+
+// Nombre de colonnes de la grille d'images : 1, 2 ou 3 selon le nombre d'images
+const colonnes = ["", "sm:grid-cols-1", "sm:grid-cols-2", "sm:grid-cols-3"][Math.min(images.length, 3)] ?? "sm:grid-cols-3";
+
+// Couleur du texte sur une pastille de couleur : blanc sur fond foncé, noir sur fond clair.
+// On calcule la luminosité de la couleur (formule classique : 0,299 R + 0,587 G + 0,114 B).
+function texteSur(hex: string) {
+  const n = parseInt(hex.replace("#", ""), 16);
+  const lum = 0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255);
+  return lum < 150 ? "text-white" : "text-ink";
+}
+
+const alt = (nom: string) => `${projet} — ${section.titre ?? "visuel"} (${nom.replace(/-/g, " ")})`;
+const carteImage = section.cadre ? "rounded-2xl bg-white p-[min(1.5vw,22px)]" : "";
+// Option « fonds » : couleur de carte propre à une image (ex. { "logotype": "#1A2238" })
+// → la carte prend la couleur du fond de l'image au lieu du blanc.
+const fond = (nom: string) => (section.fonds?.[nom] ? `background-color: ${section.fonds[nom]}` : undefined);
+---
+
+<section class="mt-[min(7vw,100px)]">
+  {
+    section.titre && (
+      <h2 class="flex items-end gap-[0.6em] text-[clamp(1rem,1.45vw,1.3rem)] font-bold">
+        {numero !== null && (
+          <span class="font-display text-[clamp(3rem,5.5vw,5rem)] leading-[0.8] font-normal text-electric/45" aria-hidden="true">
+            {numero}
+          </span>
+        )}
+        <span class:list={[numero !== null && "pb-[0.2em]"]}>{section.titre}</span>
+      </h2>
+    )
+  }
+
+  <!-- ===== Images à gauche, texte à droite ===== -->
+  {
+    mise === "image-texte" && (
+      <div class="mt-[min(3vw,43px)] grid items-center gap-8 sm:grid-cols-[1.4fr_1fr] sm:gap-[min(5vw,72px)]">
+        <div class="flex flex-col items-center gap-6">
+          {images.map((img: any) => (
+            <div class={carteImage} style={fond(img.nom)}><PbImage src={img.url} nom={img.nom} alt={alt(img.nom)} class="w-full" /></div>
+          ))}
+        </div>
+        <div class="space-y-[1em] text-[clamp(0.9rem,1.1vw,1rem)] leading-snug">
+          {texte.map((p) => <p>{p}</p>)}
+        </div>
+      </div>
+    )
+  }
+
+  <!-- ===== Texte puis images, ou images seules, ou demi-largeur ===== -->
+  {
+    (mise === "texte-images" || mise === "images" || mise === "moitie") && (
+      <div class="mt-[min(3vw,43px)]">
+        {texte.length > 0 && (
+          <div class="mb-[min(3vw,43px)] max-w-[60rem] space-y-[1em] text-[clamp(0.9rem,1.1vw,1rem)] leading-snug sm:pl-[min(4.5vw,65px)]">
+            {texte.map((p) => <p>{p}</p>)}
+          </div>
+        )}
+        {images.length > 0 && (
+          <div class:list={["grid items-center gap-6", mise === "moitie" ? images.length > 1 && "sm:grid-cols-2" : colonnes]}>
+            {images.map((img: any) => (
+              <div class={carteImage} style={fond(img.nom)}><PbImage src={img.url} nom={img.nom} alt={alt(img.nom)} class="mx-auto w-full" /></div>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  <!-- ===== Couleurs de la charte ===== -->
+  {
+    section.couleurs && (
+      <ul class="mt-6 grid gap-6 sm:grid-cols-3">
+        {section.couleurs.map((c: any) => (
+          <li
+            class:list={["flex aspect-[5/6] flex-col justify-end rounded-2xl p-[min(1.6vw,24px)] font-display text-[clamp(0.85rem,1.2vw,1.1rem)] leading-tight uppercase", texteSur(c.hex), c.hex.toUpperCase() === "#FFFFFF" && "border border-ink"]}
+            style={`background-color: ${c.hex}`}
+          >
+            <span>{c.hex.replace("#", "")}</span>
+            <span>rgb({c.rgb})</span>
+            <span>CMJN({c.cmjn})</span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  <!-- ===== Images en pleine largeur (après les couleurs) ===== -->
+  {
+    section.images_bas?.length > 0 && (
+      <div class="mt-6 flex flex-col gap-6">
+        {section.images_bas.map((img: any) => (
+          <div class="rounded-2xl bg-white p-[min(1.5vw,22px)]"><PbImage src={img.url} nom={img.nom} alt={alt(img.nom)} class="w-full" /></div>
+        ))}
+      </div>
+    )
+  }
+
+  <!-- ===== Liste « Résultats & Compétences acquises » ===== -->
+  {
+    mise === "liste" && (
+      <ul class="mt-[min(2vw,29px)] max-w-[60rem] list-disc space-y-[0.9em] pl-[1.4em] text-[clamp(0.85rem,1.05vw,0.95rem)] leading-snug">
+        {(section.liste ?? []).map((item: any) => (
+          <li><strong>{item.gras} :</strong> {item.texte}</li>
+        ))}
+      </ul>
+    )
+  }
+
+  <!-- ===== Légende et bouton ===== -->
+  {
+    (section.legende || section.lien?.url) && (
+      <div class="mx-auto flex max-w-[44rem] flex-col items-center gap-5 text-center">
+        {section.legende && <p class="text-[clamp(0.85rem,1.1vw,1rem)] italic">{section.legende}</p>}
+        {section.lien?.url && (
+          <a href={section.lien.url} target="_blank" rel="noopener" class="inline-flex items-center gap-[0.6em] rounded-lg bg-ink px-[1.4em] py-[0.5em] text-[clamp(0.8rem,1vw,0.95rem)] text-white hover:bg-electric">
+            {section.lien.texte} <span aria-hidden="true">↗</span>
+            <span class="sr-only">(nouvel onglet)</span>
+          </a>
+        )}
+      </div>
+    )
+  }
+</section>

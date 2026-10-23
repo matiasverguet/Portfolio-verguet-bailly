@@ -1,0 +1,109 @@
+---
+/* Page d'un projet : /projets/chorus-symphonia, /projets/la-cimade…
+   Le [slug] entre crochets dans le nom du fichier = une page par valeur.
+   getStaticPaths() dit à Astro quelles pages créer : une par projet de PocketBase. */
+import Layout from "../../layouts/Layout.astro";
+import PbImage from "../../components/PbImage.astro";
+import ProjectSection from "../../components/ProjectSection.astro";
+import { getProjets } from "../../lib/pocketbase.js";
+
+export async function getStaticPaths() {
+  const projets = await getProjets();
+  return projets.map((projet) => ({ params: { slug: projet.slug } }));
+}
+
+// On relit les projets ici plutôt que de passer par getStaticPaths :
+// en développement, Astro garde getStaticPaths en mémoire, alors que ce code
+// est réexécuté à chaque chargement → une modification dans PocketBase apparaît tout de suite.
+const projets = await getProjets();
+const index = projets.findIndex((p) => p.slug === Astro.params.slug);
+const projet = projets[index];
+// Projet suivant (on revient au premier après le dernier)
+const suivant = projets[(index + 1) % projets.length];
+
+// Les 4 rubriques de l'en-tête (on n'affiche que celles qui sont remplies)
+const rubriques = [
+  { titre: "Contexte", texte: projet.contexte },
+  { titre: "Objectif", texte: projet.objectif },
+  { titre: "Mon rôle", texte: projet.role },
+  { titre: "Outils", texte: projet.outils },
+].filter((r) => r.texte);
+
+// On prépare l'affichage des sections :
+// - numérotation 1, 2, 3… pour les sections qui ont un titre (sauf les listes) ;
+// - deux sections "moitie" à la suite sont regroupées pour être côte à côte.
+let numero = 0;
+const lignes: { moitie: boolean; sections: { section: any; numero: number | null }[] }[] = [];
+for (const section of projet.sections) {
+  const numerotee = section.titre && section.mise_en_page !== "liste";
+  const item = { section, numero: numerotee ? ++numero : null };
+  const derniere = lignes.at(-1);
+  if (section.mise_en_page === "moitie" && derniere?.moitie && derniere.sections.length < 2) {
+    derniere.sections.push(item);
+  } else {
+    lignes.push({ moitie: section.mise_en_page === "moitie", sections: [item] });
+  }
+}
+---
+
+<Layout title={`${projet.titre} — Matias Verguet--Bailly`} description={`${projet.titre} : ${projet.sous_titre}. ${projet.contexte}`}>
+  <article class="mx-auto max-w-[1440px] px-[8%] pt-[min(4vw,57px)] pb-[min(10vw,144px)]">
+    <a href="/projets" class="text-[clamp(0.85rem,1vw,0.95rem)] font-semibold hover:text-electric">
+      <span aria-hidden="true">←</span> Tous les projets
+    </a>
+
+    <!-- ===== En-tête : texte à gauche, catégorie + image à droite ===== -->
+    <header class="mt-[min(2.5vw,36px)] grid gap-10 sm:grid-cols-[1fr_1fr] sm:gap-[min(5vw,72px)]">
+      <div>
+        <h1 class="font-display text-[clamp(2.5rem,4.6vw,4.2rem)] leading-none font-bold uppercase">{projet.titre}</h1>
+        <p class="mt-[0.3em] text-[clamp(0.85rem,1.05vw,1rem)] font-bold">{projet.sous_titre}</p>
+
+        <dl class="mt-[min(2.5vw,36px)] space-y-[min(1.6vw,23px)]">
+          {
+            rubriques.map((r) => (
+              <div>
+                <dt class="font-display text-[clamp(1.3rem,2vw,1.8rem)] leading-tight uppercase">{r.titre}</dt>
+                <dd class="text-[clamp(0.85rem,1.05vw,0.95rem)] leading-snug">{r.texte}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div class="flex flex-col gap-6">
+        <p class="flex items-center justify-end gap-3 text-[clamp(1.1rem,1.8vw,1.6rem)] font-bold uppercase">
+          [{projet.categorie}]
+          {projet.logo_outil && <img src={`/img/${projet.logo_outil}.svg`} alt="" class="h-[1.3em] w-auto" />}
+        </p>
+        <PbImage src={projet.couverture} nom="couverture" alt={`${projet.titre} — visuel principal`} loading="eager" class="w-full" />
+      </div>
+    </header>
+
+    <!-- ===== Sections ===== -->
+    {
+      lignes.map((ligne) =>
+        ligne.moitie ? (
+          <div class="grid gap-x-[min(5vw,72px)] sm:grid-cols-2">
+            {ligne.sections.map(({ section, numero }) => <ProjectSection section={section} numero={numero} projet={projet.titre} />)}
+          </div>
+        ) : (
+          <ProjectSection section={ligne.sections[0].section} numero={ligne.sections[0].numero} projet={projet.titre} />
+        ),
+      )
+    }
+
+    <!-- ===== Projet suivant ===== -->
+    {
+      suivant.slug !== projet.slug && (
+        <nav class="mt-[min(8vw,115px)] flex justify-end border-t border-ink/40 pt-6" aria-label="Projet suivant">
+          <a href={`/projets/${suivant.slug}`} class="group text-right hover:text-electric">
+            <span class="block text-[clamp(0.8rem,1vw,0.9rem)] font-semibold uppercase">Projet suivant</span>
+            <span class="font-display text-[clamp(1.8rem,3.5vw,3.2rem)] leading-none font-bold uppercase">
+              {suivant.titre} <span class="inline-block transition-transform group-hover:translate-x-2" aria-hidden="true">→</span>
+            </span>
+          </a>
+        </nav>
+      )
+    }
+  </article>
+</Layout>

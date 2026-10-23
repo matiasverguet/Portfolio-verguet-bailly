@@ -1,15 +1,20 @@
 ---
-/* Section « Mes projets » de l'accueil : une carte par projet du fichier data/projets.js */
+/* Section « Mes projets » de l'accueil : une carte par projet, lus dans PocketBase.
+   await : le composant attend la réponse de la base avant de s'afficher (côté serveur). */
 import ProjectCard from "./ProjectCard.astro";
-import { projets } from "../data/projets.js";
+import { getProjets } from "../lib/pocketbase.js";
+
+// Sur l'accueil, on montre les 3 premiers projets
+const projets = (await getProjets()).slice(0, 3);
 ---
 
-<section class="pr-[6%] pb-[min(13vw,187.2px)] pl-[9.6%]" aria-labelledby="projects-title">
+<!-- pt : espace au-dessus, pour séparer la section du bloc « À propos » -->
+<section class="pt-[min(8vw,115px)] pr-[6%] pb-[min(13vw,187.2px)] pl-[9.6%]" aria-labelledby="projects-title">
   <h2 id="projects-title" class="ml-[2%] font-display text-[clamp(2.25rem,5vw,4.5rem)] leading-none font-bold uppercase">
     Mes projets
   </h2>
 
-  <div class="mt-[clamp(4rem,12vw,10.8rem)] grid gap-x-[min(4vw,57.6px)] gap-y-10 sm:grid-cols-3">
+  <div class="mt-[clamp(2.5rem,6vw,5.4rem)] grid gap-x-[min(4vw,57.6px)] gap-y-10 sm:grid-cols-3">
     {projets.map((projet) => <ProjectCard {...projet} />)}
   </div>
 

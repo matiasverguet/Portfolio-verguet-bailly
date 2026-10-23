@@ -16,7 +16,13 @@ import Process from "../components/Process.astro";
   <!-- Contenu limité à 1440px (largeur de la maquette) et centré sur les grands écrans -->
   <div class="mx-auto max-w-[1440px]">
     <AboutIntro />
-    <Skills />
+  </div>
+
+  <!-- Compétences en version « dossier noir », sur toute la largeur (comme sur l'accueil) -->
+  <Skills sombre />
+
+  <!-- pt : espace entre le dossier noir et la suite -->
+  <div class="mx-auto max-w-[1440px] pt-[min(9vw,130px)]">
     <Education />
     <Tools />
     <Process />
