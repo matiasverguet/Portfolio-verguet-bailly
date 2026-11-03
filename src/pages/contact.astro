@@ -1,12 +1,18 @@
 ---
 /* Page Contact : coordonnées à gauche, formulaire à droite.
-   Pas encore de serveur : à l'envoi, un petit script construit un email pré-rempli
-   (lien mailto:) et ouvre la messagerie du visiteur. */
+   Le formulaire envoie le message dans la collection « messages » de PocketBase
+   (script en bas de page) ; je le lis ensuite dans l'interface de PocketBase. */
 import Layout from "../layouts/Layout.astro";
 import SocialLinks from "../components/SocialLinks.astro";
+import { PB_URL } from "../lib/pocketbase.js";
 
-// Types de demande proposés dans le formulaire (boutons radio en forme d'étiquettes)
-const sujets = ["Stage/Alternance", "Identité visuelle", "Autre ?"];
+// Types de demande (boutons radio en forme d'étiquettes).
+// valeur = ce qui est enregistré dans PocketBase (doit correspondre aux choix du champ « sujet »)
+const sujets = [
+  { label: "Stage/Alternance", valeur: "Stage/Alternance" },
+  { label: "Identité visuelle", valeur: "Identité visuelle" },
+  { label: "Autre ?", valeur: "Autre" },
+];
 
 // Classes communes : carte blanche, titres, libellés, valeurs, champs
 const carte = "rounded-2xl bg-white px-[clamp(1.25rem,2vw,1.8rem)] pt-[clamp(1.25rem,2vw,1.8rem)] pb-[clamp(1.5rem,2.5vw,2.25rem)] shadow-[-6px_8px_18px_rgba(0,0,0,0.1)]";
@@ -35,7 +41,7 @@ const champ = "mt-[0.4em] w-full rounded-xl border border-ink bg-white px-[0.8em
           <div class="border-b border-ink/70 pb-[0.6em]">
             <dt class={libelle}>Statut</dt>
             <dd class="mt-[0.4em] inline-block rounded-xl bg-electric px-[0.6em] py-[0.35em] font-display text-[clamp(0.95rem,1.75vw,1.6rem)] text-white uppercase">
-              Disponible stage du 29/03 au 04/06 2026
+              Disponible pour un stage du 29/03 au 04/06/2026
             </dd>
           </div>
           <div class="border-b border-ink/70 py-[0.6em]">
@@ -43,7 +49,7 @@ const champ = "mt-[0.4em] w-full rounded-xl border border-ink bg-white px-[0.8em
             <dd class={valeur}><a href="mailto:matiasverguet@gmail.com" class="break-all hover:text-electric">matiasverguet@gmail.com</a></dd>
           </div>
           <div class="border-b border-ink/70 py-[0.6em]">
-            <dt class={libelle}>Tel</dt>
+            <dt class={libelle}>Tél.</dt>
             <dd class={valeur}><a href="tel:+33783941205" class="hover:text-electric">07 83 94 12 05</a></dd>
           </div>
           <div class="border-b border-ink/70 py-[0.6em]">
@@ -60,10 +66,11 @@ const champ = "mt-[0.4em] w-full rounded-xl border border-ink bg-white px-[0.8em
         <h2 id="form-title" class:list={[titre, "mt-[0.3em]"]}>Contactez-moi</h2>
 
         <!-- required + type="email" : le navigateur vérifie lui-même les champs avant l'envoi -->
-        <form data-contact class="mt-[min(0.6vw,9px)] flex flex-col gap-[min(1.4vw,20px)]">
+        <!-- data-pb : adresse de PocketBase, transmise au script depuis la partie serveur -->
+        <form data-contact data-pb={PB_URL} class="mt-[min(0.6vw,9px)] flex flex-col gap-[min(1.4vw,20px)]">
           <label class={libelle}>
             Votre nom
-            <input type="text" name="nom" autocomplete="name" required class={champ} />
+            <input type="text" name="nom" autocomplete="name" required minlength="2" maxlength="100" class={champ} />
           </label>
 
           <label class={libelle}>
@@ -80,8 +87,8 @@ const champ = "mt-[0.4em] w-full rounded-xl border border-ink bg-white px-[0.8em
               {
                 sujets.map((sujet, index) => (
                   <label class="cursor-pointer rounded-full border border-ink px-[0.7em] py-[0.3em] font-display text-[clamp(0.85rem,1.4vw,1.25rem)] uppercase transition-colors hover:bg-paper has-checked:bg-electric has-checked:text-white has-focus-visible:outline-3 has-focus-visible:outline-electric">
-                    <input type="radio" name="sujet" value={sujet} checked={index === 0} class="sr-only" />
-                    {sujet}
+                    <input type="radio" name="sujet" value={sujet.valeur} checked={index === 0} class="sr-only" />
+                    {sujet.label}
                   </label>
                 ))
               }
@@ -90,18 +97,30 @@ const champ = "mt-[0.4em] w-full rounded-xl border border-ink bg-white px-[0.8em
 
           <label class={libelle}>
             Votre message
-            <textarea name="message" rows="4" required class:list={[champ, "resize-y"]}></textarea>
+            <textarea name="message" rows="4" required minlength="10" maxlength="5000" class:list={[champ, "resize-y"]}></textarea>
           </label>
+
+          <!-- Piège à robots (« honeypot ») : champ invisible pour les humains.
+               Un robot qui remplit tous les champs le remplira aussi → le message est ignoré. -->
+          <div class="hidden" aria-hidden="true">
+            <label>Ne pas remplir <input type="text" name="site_web" tabindex="-1" autocomplete="off" /></label>
+          </div>
+
+          <!-- Information RGPD au moment de la collecte -->
+          <p class="text-[clamp(0.75rem,0.9vw,0.85rem)] leading-snug text-ink/75">
+            Vos informations servent uniquement à vous répondre et sont conservées 12 mois au maximum.
+            <a href="/mentions-legales#donnees" class="underline hover:text-electric">Données personnelles</a>
+          </p>
 
           <button
             type="submit"
-            class="flex items-center justify-center gap-[0.6em] rounded-full bg-electric py-[0.45em] font-display text-[clamp(1rem,1.4vw,1.25rem)] text-white uppercase hover:bg-ink"
+            class="flex items-center justify-center gap-[0.6em] rounded-full bg-electric py-[0.45em] font-display text-[clamp(1rem,1.4vw,1.25rem)] text-white uppercase hover:bg-ink disabled:cursor-wait disabled:opacity-60"
           >
             Envoyer le message <span aria-hidden="true">→</span>
           </button>
 
-          <!-- Message de confirmation, annoncé par les lecteurs d'écran (aria-live) -->
-          <p data-statut aria-live="polite" class="text-[clamp(0.85rem,1.1vw,1rem)]"></p>
+          <!-- Message de confirmation ou d'erreur, annoncé par les lecteurs d'écran (aria-live) -->
+          <p data-statut aria-live="polite" class="text-[clamp(0.85rem,1.1vw,1rem)] font-semibold empty:hidden"></p>
         </form>
       </section>
     </div>
@@ -109,26 +128,56 @@ const champ = "mt-[0.4em] w-full rounded-xl border border-ink bg-white px-[0.8em
 </Layout>
 
 <script>
-  /* Envoi du formulaire sans serveur : on construit un lien mailto:
-     avec l'objet et le texte pré-remplis, puis on l'ouvre.
-     encodeURIComponent protège les accents, espaces et retours à la ligne dans l'URL. */
+  /* Envoi du formulaire dans PocketBase avec fetch (sans recharger la page).
+     PocketBase reçoit un POST sur /api/collections/messages/records et vérifie lui-même
+     les champs (obligatoires, email valide, longueurs) avant d'enregistrer. */
   const form = document.querySelector<HTMLFormElement>("[data-contact]");
   const statut = document.querySelector<HTMLElement>("[data-statut]");
+  const bouton = form?.querySelector<HTMLButtonElement>("button[type=submit]");
 
-  form?.addEventListener("submit", (event) => {
-    event.preventDefault(); // on gère l'envoi nous-mêmes
+  function afficher(texte: string, erreur = false) {
+    if (!statut) return;
+    statut.textContent = texte;
+    statut.classList.toggle("text-red-700", erreur);
+    statut.classList.toggle("text-electric", !erreur);
+  }
 
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault(); // on gère l'envoi nous-mêmes, sans quitter la page
     const donnees = new FormData(form);
-    const nom = String(donnees.get("nom"));
-    const email = String(donnees.get("email"));
-    const sujet = String(donnees.get("sujet"));
-    const message = String(donnees.get("message"));
 
-    const objet = `[Portfolio] ${sujet} — ${nom}`;
-    const corps = `${message}\n\n${nom}\n${email}`;
+    // Piège à robots rempli : on fait semblant que tout s'est bien passé, sans rien envoyer
+    if (donnees.get("site_web")) {
+      form.reset();
+      afficher("Merci, votre message a bien été envoyé !");
+      return;
+    }
 
-    window.location.href = `mailto:matiasverguet@gmail.com?subject=${encodeURIComponent(objet)}&body=${encodeURIComponent(corps)}`;
+    if (bouton) bouton.disabled = true; // évite les doubles envois
+    afficher("Envoi en cours…");
 
-    if (statut) statut.textContent = "Votre messagerie s'ouvre avec le message pré-rempli : il ne reste plus qu'à l'envoyer.";
+    try {
+      const reponse = await fetch(`${form.dataset.pb}/api/collections/messages/records`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nom: donnees.get("nom"),
+          email: donnees.get("email"),
+          sujet: donnees.get("sujet"),
+          message: donnees.get("message"),
+        }),
+      });
+
+      if (reponse.status === 429) throw new Error("trop de messages"); // limite anti-spam atteinte
+      if (!reponse.ok) throw new Error(`réponse ${reponse.status}`);
+
+      form.reset();
+      afficher("Merci, votre message a bien été envoyé ! Je vous réponds au plus vite.");
+    } catch (erreur) {
+      console.error("[Contact] envoi impossible :", erreur);
+      afficher("Le message n'a pas pu être envoyé. Écrivez-moi directement à matiasverguet@gmail.com.", true);
+    } finally {
+      if (bouton) bouton.disabled = false;
+    }
   });
 </script>

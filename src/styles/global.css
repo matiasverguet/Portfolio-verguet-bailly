@@ -62,3 +62,43 @@
     }
   }
 }
+
+/* Transitions entre les pages (View Transitions du navigateur, sans JavaScript).
+   Le navigateur fait un fondu entre deux pages ; les éléments qui portent le même
+   view-transition-name sur les deux pages (visuel et titre d'un projet) se transforment
+   de l'un à l'autre : la carte projet s'agrandit pour devenir l'en-tête de la page du projet.
+   Seulement si l'utilisateur n'a pas demandé à réduire les animations.
+   Navigateurs sans support (Firefox pour l'instant) : la page change normalement. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-group(*) {
+    animation-duration: 0.5s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+/* Curseur personnalisé façon Figma (souris uniquement : pointer fine = pas sur écran tactile).
+   Hors @layer : ces règles passent devant les classes Tailwind cursor-pointer.
+   Le chiffre « 3 3 » = position de la pointe dans l'image. En secours : curseur du système. */
+@media (pointer: fine) {
+  html {
+    cursor: url("/curseurs/fleche.svg") 3 3, auto;
+  }
+
+  a, button, summary, label, select, [role="button"] {
+    cursor: url("/curseurs/lien.svg") 3 3, pointer;
+  }
+
+  /* Cartes projets : flèche + étiquette « Voir le projet » */
+  .curseur-projet, .curseur-projet * {
+    cursor: url("/curseurs/projet.svg") 3 3, pointer;
+  }
+
+  /* Champs de saisie : on garde la barre de texte, plus pratique pour écrire */
+  input:not([type="radio"]):not([type="checkbox"]), textarea {
+    cursor: text;
+  }
+}

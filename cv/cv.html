@@ -1,0 +1,283 @@
+<!doctype html>
+<!-- CV de Matias Verguet--Bailly, dans la DA du portfolio (grille, cadre de sélection Figma,
+     bleu électrique, dossier noir). Source du fichier public/cv.pdf :
+     pour le régénérer après une modification, lancer « npm run cv ». -->
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>CV — Matias Verguet--Bailly</title>
+<style>
+  /* Polices du portfolio, lues directement dans node_modules (paquets Fontsource) */
+  @font-face { font-family: "Antonio"; font-weight: 300; src: url("../node_modules/@fontsource/antonio/files/antonio-latin-300-normal.woff2"); }
+  @font-face { font-family: "Antonio"; font-weight: 400; src: url("../node_modules/@fontsource/antonio/files/antonio-latin-400-normal.woff2"); }
+  @font-face { font-family: "Antonio"; font-weight: 700; src: url("../node_modules/@fontsource/antonio/files/antonio-latin-700-normal.woff2"); }
+  @font-face { font-family: "Archivo"; font-weight: 900; src: url("../node_modules/@fontsource/archivo/files/archivo-latin-900-normal.woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 400; src: url("../node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 600; src: url("../node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 700; src: url("../node_modules/@fontsource/inter/files/inter-latin-700-normal.woff2"); }
+  @font-face { font-family: "Instrument Serif"; font-weight: 400; src: url("../node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2"); }
+
+  /* Charte du portfolio (mêmes valeurs que src/styles/global.css) */
+  :root {
+    --paper: #e3e3e3; --grid-line: #d6d6d6; --ink: #111111; --night: #1c1c1c;
+    --electric: #0533ff; --folder: #4fc3f7; --folder-dark: #1b8fd8;
+  }
+
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 210mm; height: 297mm; }
+  body {
+    font-family: "Inter", sans-serif; font-size: 8.6pt; line-height: 1.4; color: var(--ink);
+    background-color: var(--paper);
+    /* Grille de fond du site */
+    background-image:
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: 7mm 7mm;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    overflow: hidden; position: relative;
+  }
+  a { color: inherit; text-decoration: none; }
+  sup { text-transform: none; font-size: 0.6em; }
+
+  /* ===== En-tête : nom dans le cadre de sélection + portrait dans le dossier ===== */
+  .entete { position: relative; height: 80mm; padding: 13mm 0 0 13mm; }
+  .cadre {
+    position: relative; display: inline-block;
+    border: 2px dotted var(--electric); padding: 5mm 6mm 3.5mm;
+  }
+  .poignee { position: absolute; width: 2.6mm; height: 2.6mm; border: 1.5px solid var(--electric); background: #fff; }
+  .p1 { top: -1.4mm; left: -1.4mm; } .p2 { top: -1.4mm; right: -1.4mm; }
+  .p3 { bottom: -1.4mm; left: -1.4mm; } .p4 { bottom: -1.4mm; right: -1.4mm; }
+  .curseur { position: absolute; right: -6.5mm; bottom: -6.5mm; width: 8mm; color: var(--electric); }
+  h1 { font-family: "Archivo", sans-serif; font-weight: 900; font-size: 31pt; line-height: 0.92; text-transform: uppercase; }
+  h1 .prenom { display: block; color: var(--electric); }
+  .metier { font-family: "Instrument Serif", serif; font-size: 17pt; line-height: 1.2; }
+
+  .sous-titre { margin-top: 5mm; font-family: "Antonio", sans-serif; font-weight: 700; font-size: 11pt; text-transform: uppercase; letter-spacing: 0.02em; }
+  .pastille {
+    margin-top: 2.5mm; display: inline-flex; align-items: center; gap: 2mm;
+    background: #fff; border: 1px solid rgba(17,17,17,0.15); border-radius: 99px;
+    padding: 1.3mm 3.5mm; font-family: "Antonio", sans-serif; font-size: 10pt;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .pastille .point { width: 2.2mm; height: 2.2mm; border-radius: 50%; background: var(--electric); box-shadow: 0 0 0 1mm rgba(5,51,255,0.2); }
+  .pastille strong { font-weight: 700; }
+
+  .portrait { position: absolute; right: 10mm; top: 6mm; height: 74mm; }
+
+  /* Petits dossiers décoratifs (comme dans le hero) */
+  .dossier { position: absolute; z-index: 5; width: 15mm; height: 11mm; }
+  .dossier::before { content: ""; position: absolute; top: 0; left: 0; width: 40%; height: 4.5mm; background: var(--folder-dark); border-radius: 1mm 1mm 0 0; }
+  .dossier::after { content: ""; position: absolute; top: 2mm; left: 0; right: 0; bottom: 0; background: var(--folder); border-radius: 1.2mm; box-shadow: -1px 1.5px 1px rgba(0,0,0,0.12); }
+  .d1 { top: 7mm; left: 7mm; transform: rotate(-4deg); }
+  .d2 { top: 56mm; left: 94mm; transform: rotate(8deg); }
+
+  /* ===== Corps : dossier noir à gauche, contenu à droite ===== */
+  .corps { position: absolute; top: 88mm; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 70mm 1fr; }
+
+  .colonne-noire { position: relative; background: var(--night); color: #fff; border-top-right-radius: 5mm; padding: 9mm 7mm 0 13mm; }
+  /* Onglet du dossier noir, collé au-dessus */
+  .colonne-noire::before { content: ""; position: absolute; left: 0; bottom: calc(100% - 1px); width: 55%; height: 7mm; background: var(--night); border-radius: 4mm 4mm 0 0; }
+
+  h2 {
+    font-family: "Antonio", sans-serif; font-weight: 700; font-size: 14pt; line-height: 1;
+    text-transform: uppercase; margin-bottom: 3mm;
+  }
+  h2 .num { color: var(--electric); margin-right: 1.5mm; }
+  .colonne-noire h2 .num { color: var(--folder); }
+  .bloc + .bloc { margin-top: 6mm; }
+
+  .liste-contact { list-style: none; display: grid; gap: 1.8mm; }
+  .liste-contact li { display: flex; gap: 2.5mm; align-items: center; }
+  .liste-contact svg { width: 3.6mm; height: 3.6mm; flex-shrink: 0; color: var(--folder); }
+
+  .outils { list-style: none; display: grid; gap: 1.2mm; }
+  .outils li { display: flex; justify-content: space-between; align-items: baseline; gap: 2mm; }
+  .outils .niveau { font-size: 7pt; color: rgba(255,255,255,0.6); white-space: nowrap; }
+
+  .etiquettes { display: flex; flex-wrap: wrap; gap: 1.5mm; list-style: none; }
+  .etiquettes li { border: 1px solid rgba(255,255,255,0.55); border-radius: 99px; padding: 0.4mm 2.4mm; font-size: 7.8pt; }
+
+  .colonne-droite { padding: 9mm 13mm 0 9mm; }
+  .entree { position: relative; padding-left: 4mm; border-left: 2px solid var(--electric); }
+  .entree + .entree { margin-top: 3.6mm; }
+  .entree .ligne { display: flex; justify-content: space-between; gap: 3mm; align-items: baseline; }
+  .entree h3 { font-size: 9.2pt; font-weight: 700; line-height: 1.25; }
+  .entree .date { font-family: "Antonio", sans-serif; font-size: 9.5pt; white-space: nowrap; color: var(--electric); font-weight: 700; }
+  .entree .lieu { font-size: 8pt; color: rgba(17,17,17,0.7); }
+  .entree ul { margin-top: 1mm; padding-left: 3.5mm; }
+  .entree li { margin-top: 0.4mm; }
+  .badge { display: inline-block; margin-left: 1.5mm; background: var(--electric); color: #fff; font-size: 6.8pt; font-weight: 700; text-transform: uppercase; border-radius: 99px; padding: 0.2mm 2mm; vertical-align: 1px; }
+
+  /* Compétences : 4 petites cartes en forme de dossier */
+  .competences { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+  .carte { position: relative; background: var(--folder); border-radius: 2mm; padding: 2.6mm 3.2mm 3mm; margin-top: 2.5mm; box-shadow: -1.5px 2px 1px rgba(0,0,0,0.12); }
+  .carte::before { content: ""; position: absolute; z-index: -1; left: 0; top: -2.5mm; width: 38%; height: 5mm; background: var(--folder-dark); border-radius: 1.5mm 1.5mm 0 0; }
+  .carte h3 { font-family: "Antonio", sans-serif; font-weight: 700; font-size: 10.5pt; text-transform: uppercase; line-height: 1.1; margin-bottom: 1mm; }
+  .carte p { font-size: 7.6pt; line-height: 1.35; }
+
+  .pied { position: absolute; left: 83mm; right: 13mm; bottom: 7mm; display: flex; justify-content: space-between; font-family: "Antonio", sans-serif; font-size: 8.5pt; text-transform: uppercase; border-top: 1px solid rgba(17,17,17,0.5); padding-top: 1.8mm; }
+  .pied .bleu { color: var(--electric); font-weight: 700; }
+</style>
+</head>
+<body>
+
+  <!-- ===== En-tête ===== -->
+  <header class="entete">
+    <span class="dossier d1" aria-hidden="true"></span>
+    <span class="dossier d2" aria-hidden="true"></span>
+
+    <div class="cadre">
+      <span class="poignee p1"></span><span class="poignee p2"></span>
+      <span class="poignee p3"></span><span class="poignee p4"></span>
+      <h1><span class="prenom">Matias</span>Verguet--Bailly</h1>
+      <p class="metier">Designer graphique</p>
+      <svg class="curseur" viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M14 14l22 9-9 3-3 10z" fill="currentColor" />
+        <path d="M8 6l3 4M4 12l4 1M13 3l1 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      </svg>
+    </div>
+
+    <p class="sous-titre">Étudiant en 2<sup>e</sup> année de BUT MMI</p>
+    <p class="pastille"><span class="point"></span><span><strong>Recherche un stage</strong> · du 29 mars au 4 juin 2026</span></p>
+
+    <img class="portrait" src="../public/img/avatar.webp" alt="" />
+  </header>
+
+  <!-- ===== Corps ===== -->
+  <main class="corps">
+
+    <!-- Colonne de gauche : le dossier noir -->
+    <aside class="colonne-noire">
+      <section class="bloc">
+        <h2>Contact</h2>
+        <ul class="liste-contact">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+            <a href="tel:+33783941205">07 83 94 12 05</a>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+            <a href="mailto:matiasverguet@gmail.com">matiasverguet@gmail.com</a>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Valdoie (90)
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+            <a href="https://verguet-bailly.fr">verguet-bailly.fr</a>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.3c0-1.3 0-2.9-1.8-2.9s-2 1.4-2 2.8V21h-4z"/></svg>
+            <a href="https://www.linkedin.com/in/matias-verguet-bailly-558491333">Matias Verguet-Bailly</a>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.2 11.3c.9-.4 1.4-1.2 1.4-2.3C9.6 6.9 8 6 5.9 6H1v12h5.1c2.1 0 4-1 4-3.4 0-1.5-.7-2.6-1.9-3.3zM3.6 8h1.9c.8 0 1.5.2 1.5 1.1 0 .8-.6 1.1-1.3 1.1H3.6zm2.2 8H3.6v-3.4h2.2c1 0 1.6.4 1.6 1.7 0 1.2-.8 1.7-1.6 1.7zM15 7.5h5v1.4h-5zm2.6 2.3c-2.9 0-4.6 2.1-4.6 4.6 0 2.7 1.6 4.6 4.6 4.6 2.2 0 3.7-1 4.4-3.1h-2.3c-.3.8-1.2 1.2-2 1.2-1.5 0-2.3-.9-2.3-2.4h6.8c.1-2.9-1.6-4.9-4.6-4.9zm-2.2 3.8c.1-1.2.9-2 2.1-2 1.3 0 1.9.7 2 2z"/></svg>
+            <a href="https://www.behance.net/matiasverguet">behance.net/matiasverguet</a>
+          </li>
+        </ul>
+      </section>
+
+      <section class="bloc">
+        <h2>Logiciels</h2>
+        <ul class="outils">
+          <li><span>Figma</span><span class="niveau">Avancé</span></li>
+          <li><span>Affinity</span><span class="niveau">Régulier</span></li>
+          <li><span>Canva</span><span class="niveau">Autonome</span></li>
+          <li><span>DaVinci Resolve</span><span class="niveau">Bonne maîtrise</span></li>
+          <li><span>HTML / CSS · Astro</span><span class="niveau">Maîtrise</span></li>
+          <li><span>WordPress</span><span class="niveau">Maîtrise</span></li>
+          <li><span>SQL</span><span class="niveau">Opérationnel</span></li>
+        </ul>
+      </section>
+
+      <section class="bloc">
+        <h2>Langues</h2>
+        <ul class="etiquettes">
+          <li>Français · natif</li>
+          <li>Anglais</li>
+          <li>Espagnol</li>
+        </ul>
+      </section>
+
+      <section class="bloc">
+        <h2>Savoir-être</h2>
+        <ul class="etiquettes">
+          <li>Gestion du temps</li>
+          <li>Organisation</li>
+          <li>Communication</li>
+          <li>Gestion de projet</li>
+          <li>Gestion financière</li>
+        </ul>
+      </section>
+
+      <section class="bloc">
+        <h2>Centres d'intérêt</h2>
+        <ul class="etiquettes">
+          <li>Design</li>
+          <li>Football</li>
+          <li>Sport automobile</li>
+          <li>Lecture</li>
+        </ul>
+      </section>
+    </aside>
+
+    <!-- Colonne de droite -->
+    <div class="colonne-droite">
+      <section class="bloc">
+        <h2><span class="num">01.</span>Formation</h2>
+        <div class="entree">
+          <div class="ligne"><h3>BUT Métiers du Multimédia et de l'Internet <span class="badge">2<sup>e</sup> année</span></h3><span class="date">2025 – 2028</span></div>
+          <p class="lieu">IUT Nord Franche-Comté, Montbéliard</p>
+        </div>
+        <div class="entree">
+          <div class="ligne"><h3>BUT Génie mécanique et productique</h3><span class="date">2024 – 2025</span></div>
+          <p class="lieu">IUT Besançon-Vesoul</p>
+        </div>
+        <div class="entree">
+          <div class="ligne"><h3>Bac général · spécialités physique-chimie et sciences de l'ingénieur</h3><span class="date">2024</span></div>
+          <p class="lieu">Lycée Raoul-Follereau, Belfort</p>
+        </div>
+      </section>
+
+      <section class="bloc">
+        <h2><span class="num">02.</span>Expérience professionnelle</h2>
+        <div class="entree">
+          <div class="ligne"><h3>Équipier polyvalent · McDonald's</h3><span class="date">Depuis oct. 2026</span></div>
+          <p class="lieu">Emploi étudiant, en parallèle de ma formation</p>
+          <ul>
+            <li>Accueil, prise de commande et service client</li>
+            <li>Préparation en cuisine et travail en équipe pendant les rushs</li>
+            <li>Respect strict des normes d'hygiène et de qualité</li>
+          </ul>
+        </div>
+        <div class="entree">
+          <div class="ligne"><h3>Agent de blanchisserie hospitalière</h3><span class="date">Été 2025</span></div>
+          <p class="lieu">Hôpital Nord Franche-Comté, Trévenans</p>
+          <ul>
+            <li>Respect des protocoles d'hygiène et de sécurité</li>
+            <li>Gestion des flux, contrôle qualité et conditionnement</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="bloc">
+        <h2><span class="num">03.</span>Compétences</h2>
+        <div class="competences">
+          <div class="carte"><h3>Design UI/UX</h3><p>Wireframes, prototypes interactifs, interfaces web et mobiles.</p></div>
+          <div class="carte"><h3>Graphisme</h3><p>Logos, affiches, visuels réseaux sociaux, illustration vectorielle.</p></div>
+          <div class="carte"><h3>Développement web</h3><p>Sites responsives en HTML, CSS, JavaScript et Astro.</p></div>
+          <div class="carte"><h3>Identité de marque</h3><p>Chartes graphiques, typographies, palettes et déclinaisons.</p></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="pied">
+    <span>Portfolio · <span class="bleu">verguet-bailly.fr</span></span>
+    <span>CV-2026</span>
+  </footer>
+</body>
+</html>

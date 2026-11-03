@@ -5,7 +5,7 @@
 export const parcours = [
   { diplome: "BUT MMI", ecole: "IUT de Montbéliard", annees: "2025-2028" },
   { diplome: "BUT GMP", ecole: "IUT de Besançon", annees: "2024-2025" },
-  { diplome: "Bac Général", ecole: "Lycée Follereau Belfort", annees: "2021-2024" },
+  { diplome: "Bac Général", ecole: "Lycée Raoul-Follereau, Belfort", annees: "2021-2024" },
 ];
 
 // Logiciels et langages que j'utilise, avec la fiche affichée au survol
@@ -27,7 +27,7 @@ export const outils = [
   {
     nom: "Affinity",
     categorie: "Création vectorielle & assets",
-    description: "Création d'illustrations vectorielles précises, conception d'icônes sur-mesure et retouche photographique.",
+    description: "Création d'illustrations vectorielles précises, conception d'icônes sur mesure et retouche photographique.",
     produits: [
       "Dessin vectoriel avec courbes de Bézier optimisées.",
       "Préparation et export d'assets SVG légers pour le web.",
@@ -38,7 +38,7 @@ export const outils = [
   },
   {
     nom: "Canva",
-    categorie: "Communication visuelle & social",
+    categorie: "Communication visuelle & réseaux sociaux",
     description: "Génération rapide de déclinaisons de bannières marketing, supports pour réseaux sociaux et présentations visuelles express.",
     produits: [
       "Déclinaisons multi-formats en un temps record.",
@@ -65,7 +65,7 @@ export const outils = [
     categorie: "CMS & gestion de contenu",
     description: "Mise en place de sites vitrines et éditoriaux administrables en toute autonomie par les clients finaux.",
     produits: [
-      "Intégration de maquettes sur-mesure avec ACF (Advanced Custom Fields).",
+      "Intégration de maquettes sur mesure avec ACF (Advanced Custom Fields).",
       "Configuration SEO, sécurité et performance de mise en cache.",
       "Interfaces d'administration simplifiées pour l'utilisateur final.",
     ],
@@ -99,7 +99,7 @@ export const outils = [
   {
     nom: "SQL",
     categorie: "Base de données & structure",
-    description: "Modélisation de bases relationnelles, écriture de requêtes optimisées et manipulation intègre de volumes de données.",
+    description: "Modélisation de bases relationnelles, écriture de requêtes optimisées et manipulation fiable de grands volumes de données.",
     produits: [
       "Conception de schémas relationnels clairs et normalisés.",
       "Requêtes complexes (jointures, agrégations, sous-requêtes).",
@@ -113,7 +113,7 @@ export const outils = [
 // Les 4 étapes de ma méthode de travail (section « Concevoir avec créativité »)
 export const etapes = [
   {
-    titre: "Recherche et stratégie",
+    titre: "Recherche & stratégie",
     texte:
       "Cette phase initiale pose les fondations du projet. Elle débute par une analyse rigoureuse du brief, un audit complet de l'existant et un benchmark concurrentiel approfondi. L'objectif est de cerner précisément les attentes des utilisateurs cibles, d'identifier les freins d'usage et de définir des objectifs stratégiques clairs pour guider l'ensemble des choix visuels et techniques.",
   },

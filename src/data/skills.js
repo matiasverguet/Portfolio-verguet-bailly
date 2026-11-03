@@ -33,7 +33,7 @@ export const skills = [
     items: [
       "Création de chartes graphiques complètes",
       "Choix des typographies et des palettes de couleurs",
-      "Déclinaison de l'identité sur supports print et digitaux",
+      "Déclinaison de l'identité sur supports imprimés et numériques",
     ],
   },
 ];

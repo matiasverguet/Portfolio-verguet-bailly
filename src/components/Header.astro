@@ -11,7 +11,9 @@ const links = [
 ---
 
 <!-- sticky top-0 : le header reste collé en haut de l'écran pendant le défilement -->
+<!-- view-transition-name : le header reste en place pendant le changement de page (pas de fondu) -->
 <header
+  style="view-transition-name: entete"
   class="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-y-3 border-b border-ink/40 bg-paper px-[3.7%] py-[clamp(0.75rem,1.6vw,1.5rem)]"
 >
   <!-- Logo en SVG intégré : fill="currentColor" lui donne la couleur du texte du lien,
@@ -39,6 +41,15 @@ const links = [
           </li>
         ))
       }
+      <li>
+        <!-- CV en PDF : download = le navigateur propose de l'enregistrer, avec ce nom de fichier -->
+        <a href="/cv.pdf" download="CV-Matias-Verguet-Bailly.pdf" class="inline-flex items-center gap-[0.3em] hover:text-electric">
+          CV
+          <svg class="size-[0.9em]" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M8 2v9M4 7l4 4 4-4M2 14h12" />
+          </svg>
+        </a>
+      </li>
       <li>
         <!-- Sur la page Contact, le bouton passe en blanc (comme sur la maquette) -->
         <a

@@ -23,11 +23,24 @@ const portrait: string | undefined = "/img/portrait.webp";
       <p>
         À travers mes projets, j'ai développé des compétences solides en identité visuelle, design
         d'interfaces et intégration web. J'aime imaginer des univers graphiques marquants et concevoir
-        des expériences utilisateurs fluides, fonctionnelles et engageantes. Mon objectif est de
+        des expériences utilisateur fluides, fonctionnelles et engageantes. Mon objectif est de
         continuer à explorer les frontières entre créativité et technologie pour donner vie à des
         projets modernes et porteurs de sens.
       </p>
     </div>
+
+    <!-- Téléchargement du CV (fichier public/cv.pdf) -->
+    <a
+      href="/cv.pdf"
+      download="CV-Matias-Verguet-Bailly.pdf"
+      class="mt-[min(3vw,43.2px)] inline-flex items-center gap-[0.6em] rounded-full bg-electric px-[1.2em] py-[0.75em] text-[clamp(0.75rem,1.2vw,1.1rem)] font-bold text-white uppercase hover:bg-ink"
+    >
+      Télécharger mon CV
+      <svg class="size-[1.1em]" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M8 2v9M4 7l4 4 4-4M2 14h12" />
+      </svg>
+      <span class="sr-only">(PDF)</span>
+    </a>
   </div>
 
   <!-- self-end : le bas de la photo s'aligne sur le bas du texte.

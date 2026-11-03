@@ -15,9 +15,10 @@ interface Props {
   nom?: string; // nom attendu, affiché si l'image manque
   class?: string;
   loading?: "lazy" | "eager";
+  style?: string; // ex. view-transition-name pour l'animation entre les pages
 }
 
-const { src, alt, nom = "", class: className = "", loading = "lazy" } = Astro.props;
+const { src, alt, nom = "", class: className = "", loading = "lazy", style } = Astro.props;
 ---
 
 {
@@ -25,12 +26,12 @@ const { src, alt, nom = "", class: className = "", loading = "lazy" } = Astro.pr
     // Image PocketBase en raster (WebP, PNG, JPG) : optimisée par Astro.
     // Un SVG est vectoriel : déjà net et léger, on l'affiche tel quel (balise <img> classique).
     src.startsWith("http") && !src.endsWith(".svg") ? (
-      <Image src={src} alt={alt} inferSize loading={loading} class={className} />
+      <Image src={src} alt={alt} inferSize loading={loading} class={className} style={style} />
     ) : (
-      <img src={src} alt={alt} loading={loading} class={className} />
+      <img src={src} alt={alt} loading={loading} class={className} style={style} />
     )
   ) : (
-    <div class:list={["grid min-h-40 place-items-center rounded-xl border-2 border-dashed border-folder-dark p-4 text-center text-sm text-folder-dark", className]}>
+    <div style={style} class:list={["grid min-h-40 place-items-center rounded-xl border-2 border-dashed border-folder-dark p-4 text-center text-sm text-folder-dark", className]}>
       Image à ajouter dans la galerie : <strong>{nom}.webp</strong>
     </div>
   )

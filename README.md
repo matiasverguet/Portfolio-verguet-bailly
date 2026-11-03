@@ -45,3 +45,15 @@ pocketbase/pb_migrations/  structure et contenu de départ de la base (versionn�
 IA.md                      déclaration d'usage de l'IA
 JOURNAL.md                 journal de bord
 ```
+
+## Mise en ligne
+| Rôle | Service |
+|---|---|
+| Nom de domaine `verguet-bailly.fr` (DNS) | Infomaniak |
+| Site statique (pages générées par Astro) | Netlify, déployé automatiquement à chaque push sur `main` (`netlify.toml`) |
+| PocketBase (projets, images, messages du formulaire) | VPS de l'IUT, sur `https://api.verguet-bailly.fr` |
+
+- Variable d'environnement à régler dans Netlify : `PB_URL=https://api.verguet-bailly.fr` (voir `.env.example`).
+- Les pages projet sont générées **au moment du build** : après une modification dans PocketBase,
+  relancer un déploiement Netlify (bouton « Trigger deploy » ou *build hook*).
+- Le formulaire de contact écrit directement dans PocketBase : le VPS doit être en ligne et en HTTPS.

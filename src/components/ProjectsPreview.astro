@@ -1,26 +1,59 @@
 ---
 /* Section « Mes projets » de l'accueil : une carte par projet, lus dans PocketBase.
-   await : le composant attend la réponse de la base avant de s'afficher (côté serveur). */
+   await : le composant attend la réponse de la base avant de s'afficher (côté serveur).
+
+   Prop « sombre » (accueil) : la section devient le grand dossier noir avec un onglet
+   en haut à gauche, sur lequel est posé le personnage du hero (même principe que Skills). */
 import ProjectCard from "./ProjectCard.astro";
 import { getProjets } from "../lib/pocketbase.js";
+
+interface Props {
+  sombre?: boolean;
+}
+
+const { sombre = false } = Astro.props;
 
 // Sur l'accueil, on montre les 3 premiers projets
 const projets = (await getProjets()).slice(0, 3);
 ---
 
-<!-- pt : espace au-dessus, pour séparer la section du bloc « À propos » -->
-<section class="pt-[min(8vw,115px)] pr-[6%] pb-[min(13vw,187.2px)] pl-[9.6%]" aria-labelledby="projects-title">
-  <h2 id="projects-title" class="ml-[2%] font-display text-[clamp(2.25rem,5vw,4.5rem)] leading-none font-bold uppercase">
-    Mes projets
-  </h2>
+<section
+  class:list={["relative", sombre && "rounded-tr-[2rem] bg-night text-white"]}
+  aria-labelledby="projects-title"
+>
+  <!-- Onglet du dossier (version sombre) : collé au-dessus de la section, à gauche -->
+  {
+    sombre && (
+      <div class="absolute bottom-[calc(100%-1px)] left-0 h-[clamp(3rem,5.5vw,5rem)] w-[40%] rounded-t-[2.5rem] bg-night" aria-hidden="true" />
+    )
+  }
 
-  <div class="mt-[clamp(2.5rem,6vw,5.4rem)] grid gap-x-[min(4vw,57.6px)] gap-y-10 sm:grid-cols-3">
-    {projets.map((projet) => <ProjectCard {...projet} />)}
-  </div>
+  <!-- Contenu limité à 1440px et centré, même si le dossier prend toute la largeur -->
+  <div
+    class:list={[
+      "mx-auto max-w-[1440px] pr-[6%] pl-[9.6%]",
+      sombre ? "pt-[min(5vw,72px)] pb-[min(10vw,144px)]" : "pt-[min(8vw,115px)] pb-[min(13vw,187.2px)]",
+    ]}
+  >
+    <h2 id="projects-title" class="ml-[2%] font-display text-[clamp(2.25rem,5vw,4.5rem)] leading-none font-bold uppercase">
+      Mes projets
+    </h2>
 
-  <div class="mt-[min(4vw,57.6px)] text-right">
-    <a href="/projets" class="inline-flex items-center gap-[0.6em] rounded-full bg-electric px-[1.2em] py-[0.75em] text-[clamp(0.75rem,1.4vw,1.25rem)] font-bold text-white uppercase hover:bg-ink">
-      Plus de projets <span aria-hidden="true">→</span>
-    </a>
+    <div class="mt-[clamp(2.5rem,6vw,5.4rem)] grid gap-x-[min(4vw,57.6px)] gap-y-10 sm:grid-cols-3">
+      {projets.map((projet) => <ProjectCard {...projet} />)}
+    </div>
+
+    <div class="mt-[min(4vw,57.6px)] text-right">
+      <!-- Au survol : noir sur fond clair, blanc sur le dossier noir (sinon le bouton disparaîtrait) -->
+      <a
+        href="/projets"
+        class:list={[
+          "inline-flex items-center gap-[0.6em] rounded-full bg-electric px-[1.2em] py-[0.75em] text-[clamp(0.75rem,1.4vw,1.25rem)] font-bold text-white uppercase",
+          sombre ? "hover:bg-white hover:text-ink" : "hover:bg-ink",
+        ]}
+      >
+        Plus de projets <span aria-hidden="true">→</span>
+      </a>
+    </div>
   </div>
 </section>

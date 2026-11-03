@@ -1,0 +1,123 @@
+---
+/* Mentions légales et politique de confidentialité.
+   Obligatoires pour tout site édité en France (loi pour la confiance dans l'économie numérique,
+   LCEN, art. 6) ; la partie « données personnelles » répond au RGPD (le formulaire de contact
+   collecte un nom, un email et un message).
+   Hébergement : site sur Netlify, PocketBase sur le VPS de l'IUT, domaine chez Infomaniak. */
+import Layout from "../layouts/Layout.astro";
+
+const majLe = "23 octobre 2026"; // date de dernière mise à jour
+const h2 = "mt-[min(4vw,56px)] font-display text-[clamp(1.5rem,2.6vw,2.3rem)] leading-tight font-bold uppercase";
+const p = "mt-[0.8em] max-w-[52rem] text-[clamp(0.95rem,1.15vw,1.05rem)] leading-relaxed";
+---
+
+<Layout
+  title="Mentions légales — Matias Verguet--Bailly"
+  description="Mentions légales, hébergement, propriété intellectuelle, crédits et politique de confidentialité du portfolio de Matias Verguet--Bailly."
+>
+  <article class="mx-auto max-w-[1440px] px-[9.5%] pt-[min(4vw,57px)] pb-[min(10vw,144px)]">
+    <h1 class="font-display text-[clamp(2.75rem,8vw,7rem)] leading-[0.95] font-bold uppercase">Mentions légales</h1>
+    <p class="mt-4 text-sm">Dernière mise à jour : {majLe}</p>
+
+    <section aria-labelledby="editeur">
+      <h2 id="editeur" class={h2}>Éditeur du site</h2>
+      <p class={p}>
+        Ce site est le portfolio personnel de <strong>Matias Verguet--Bailly</strong>, étudiant en BUT
+        Métiers du Multimédia et de l'Internet (MMI) à l'IUT de Montbéliard. Il est édité à titre non
+        professionnel et ne poursuit aucun but commercial.
+      </p>
+      <p class={p}>
+        Contact : <a href="mailto:matiasverguet@gmail.com" class="underline hover:text-electric">matiasverguet@gmail.com</a>{" "}
+        · <a href="tel:+33783941205" class="underline hover:text-electric">07 83 94 12 05</a><br />
+        Directeur de la publication : Matias Verguet--Bailly.
+      </p>
+    </section>
+
+    <section aria-labelledby="hebergeur">
+      <h2 id="hebergeur" class={h2}>Hébergement</h2>
+      <!-- TODO : vérifier ces coordonnées (adresse, téléphone) sur les pages légales de chaque prestataire -->
+      <p class={p}>
+        <strong>Site web</strong> : Netlify, Inc. — 101 2nd Street, Suite 1500, San Francisco, CA 94105,
+        États-Unis — <a href="https://www.netlify.com" target="_blank" rel="noopener" class="underline hover:text-electric">netlify.com</a>.
+      </p>
+      <p class={p}>
+        <strong>Base de données et formulaire de contact</strong> (PocketBase) : serveur privé virtuel (VPS)
+        de l'IUT Nord Franche-Comté, Université de Franche-Comté — 4 place Tharradin, 25200 Montbéliard,
+        France.
+      </p>
+      <p class={p}>
+        <strong>Nom de domaine</strong> : Infomaniak Network SA — Rue Eugène-Marziano 25, 1227 Les Acacias
+        (Genève), Suisse — <a href="https://www.infomaniak.com" target="_blank" rel="noopener" class="underline hover:text-electric">infomaniak.com</a>.
+      </p>
+    </section>
+
+    <section aria-labelledby="propriete">
+      <h2 id="propriete" class={h2}>Propriété intellectuelle</h2>
+      <p class={p}>
+        Sauf mention contraire, l'ensemble des contenus de ce site (textes, visuels, maquettes,
+        illustrations, logo « MB », code) est la propriété de Matias Verguet--Bailly. Toute
+        reproduction, même partielle, sans autorisation préalable est interdite.
+      </p>
+      <p class={p}>
+        <strong>Projets étudiants.</strong> Les projets présentés ont été réalisés dans le cadre de ma
+        formation en BUT MMI. Ce sont des exercices pédagogiques, non commandés par les organismes
+        cités : ils ne constituent pas des réalisations officielles et n'engagent pas ces structures.
+        Les noms, logos et marques de tiers qui y apparaissent (notamment La Cimade, le FC
+        Sochaux-Montbéliard, Pays de Montbéliard Agglomération et Pays de Montbéliard Tourisme)
+        restent la propriété de leurs détenteurs respectifs et ne sont utilisés qu'à des fins
+        pédagogiques et de présentation.
+      </p>
+    </section>
+
+    <section aria-labelledby="credits">
+      <h2 id="credits" class={h2}>Crédits</h2>
+      <ul class:list={[p, "list-disc space-y-[0.4em] pl-[1.2em]"]}>
+        <li>Conception, design et développement : Matias Verguet--Bailly.</li>
+        <li>Site construit avec Astro et Tailwind CSS ; contenus des projets gérés avec PocketBase.</li>
+        <li>
+          Polices Antonio, Archivo, Inter et Instrument Serif, sous licence SIL Open Font License,
+          hébergées sur ce site (paquets Fontsource).
+        </li>
+        <li>
+          Avatar 3D et animation du personnage générés avec l'aide d'outils d'intelligence
+          artificielle (Google Gemini), puis retravaillés (montage, détourage).
+        </li>
+        <li>Logos Figma et Affinity : marques de leurs éditeurs respectifs.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="donnees">
+      <h2 id="donnees" class={h2}>Données personnelles</h2>
+      <p class={p}>
+        <strong>Formulaire de contact.</strong> Lorsque vous m'écrivez via le formulaire, je collecte
+        votre nom, votre adresse email, le sujet et votre message. Ces informations servent uniquement
+        à vous répondre (base légale : votre consentement, en envoyant le formulaire). Elles ne sont ni
+        vendues, ni cédées, ni utilisées à des fins publicitaires.
+      </p>
+      <p class={p}>
+        Elles sont enregistrées dans la base de données du site (PocketBase, hébergée sur le serveur de
+        l'IUT, en France), accessible uniquement par moi, et conservées <strong>12 mois</strong> au maximum avant d'être supprimées.
+      </p>
+      <p class={p}>
+        Conformément au RGPD, vous pouvez demander l'accès, la rectification ou la suppression de vos
+        données, ou vous opposer à leur traitement, en écrivant à{" "}
+        <a href="mailto:matiasverguet@gmail.com" class="underline hover:text-electric">matiasverguet@gmail.com</a>.
+        Vous pouvez aussi adresser une réclamation à la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener" class="underline hover:text-electric">cnil.fr</a>).
+      </p>
+    </section>
+
+    <section aria-labelledby="cookies">
+      <h2 id="cookies" class={h2}>Cookies et mesure d'audience</h2>
+      <p class={p}>
+        Ce site ne dépose <strong>aucun cookie</strong> et n'utilise aucun outil de mesure d'audience ni
+        de publicité. Les polices sont hébergées sur le site lui-même : votre navigateur ne contacte
+        aucun service tiers (comme Google Fonts) en consultant ces pages. C'est pourquoi aucun bandeau
+        de consentement n'est affiché.
+      </p>
+      <p class={p}>
+        Les liens vers mes réseaux (Instagram, LinkedIn, Behance) mènent vers des sites tiers, soumis
+        à leurs propres politiques de confidentialité.
+      </p>
+    </section>
+  </article>
+</Layout>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="52" viewBox="0 0 128 52">
+  <!-- Survol d'un projet : flèche bleue + étiquette, comme le curseur d'un collaborateur dans Figma -->
+  <path d="M3 3l21 8.5-9 2.6-2.6 9z" fill="#0533ff" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round"/>
+  <rect x="16" y="24" width="108" height="25" rx="6" fill="#0533ff" stroke="#ffffff" stroke-width="1.5"/>
+  <text x="70" y="41" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#ffffff">Voir le projet</text>
+</svg>

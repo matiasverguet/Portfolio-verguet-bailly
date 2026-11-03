@@ -14,13 +14,14 @@ import ProjectsPreview from "../components/ProjectsPreview.astro";
   <!-- Le hero prend toute la largeur de l'écran -->
   <Hero />
 
-  <!-- Le reste est limité à 1440px (largeur de la maquette) et centré sur les grands écrans -->
-  <!-- Compétences en version « dossier noir », sur toute la largeur :
+  <!-- Projets en version « dossier noir », sur toute la largeur :
        le personnage du hero est posé dessus -->
-  <Skills sombre />
+  <ProjectsPreview sombre />
 
-  <div class="mx-auto max-w-[1440px]">
+  <!-- Le reste est limité à 1440px (largeur de la maquette) et centré sur les grands écrans -->
+  <!-- pt : espace entre le dossier noir et les compétences -->
+  <div class="mx-auto max-w-[1440px] pt-[min(5vw,72px)]">
+    <Skills />
     <AboutPreview />
-    <ProjectsPreview />
   </div>
 </Layout>

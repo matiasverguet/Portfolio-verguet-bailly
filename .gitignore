@@ -12,3 +12,5 @@ desktop.ini
 .vscode/
 # Config locale de Claude Code
 .claude/
+# Variables d environnement locales (adresse PocketBase…)
+.env
