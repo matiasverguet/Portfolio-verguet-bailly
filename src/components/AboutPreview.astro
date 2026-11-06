@@ -1,9 +1,13 @@
 ---
 /* Aperçu « À propos » de l'accueil : ma photo (déjà intégrée dans un dossier)
-   à gauche, ma présentation à droite. */
+   à gauche, ma présentation à droite.
+   Le nombre de projets est compté dans PocketBase : il se met à jour tout seul. */
+import { getProjets } from "../lib/pocketbase.js";
+
+const nombreProjets = (await getProjets()).length;
 const stats = [
   { value: "2ème", label: "Année MMI" },
-  { value: "3+", label: "Projets" },
+  { value: `${nombreProjets}`, label: "Projets" },
 ];
 ---
 
