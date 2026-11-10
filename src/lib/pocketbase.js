@@ -53,7 +53,13 @@ function normaliser(record) {
 // Tous les projets, triés par « ordre ».
 // PocketBase doit être lancé (en local : pocketbase/pocketbase.exe serve).
 // S'il ne répond pas, on arrête avec un message clair plutôt que d'afficher un site vide.
+// En ligne (SSR), chaque visite lirait PocketBase : on garde la réponse 30 secondes en mémoire.
+// En développement, pas de cache : une modification dans PocketBase se voit tout de suite.
+let memoire = null;
+let memoireJusqua = 0;
+
 export async function getProjets() {
+  if (!import.meta.env.DEV && memoire && Date.now() < memoireJusqua) return memoire;
   let reponse;
   try {
     reponse = await fetch(`${PB_URL}/api/collections/projets/records?sort=ordre&perPage=200`);
@@ -62,5 +68,7 @@ export async function getProjets() {
   }
   if (!reponse.ok) throw new Error(`[PocketBase] erreur ${reponse.status} sur ${PB_URL}`);
   const donnees = await reponse.json();
-  return donnees.items.map(normaliser);
+  memoire = donnees.items.map(normaliser);
+  memoireJusqua = Date.now() + 30_000;
+  return memoire;
 }

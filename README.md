@@ -25,9 +25,13 @@ Portfolio de designer graphique (BUT MMI 2e année, IUT de Montbéliard).
 
 Si PocketBase est éteint, le site utilise les données de secours de `src/data/projets.js`.
 
-## Construire le site
-`npm run build` lit PocketBase, crée une page par projet (`/projets/[slug]`) et télécharge
-les images pour les optimiser : le dossier `dist/` est un site statique, indépendant de PocketBase.
+## Construire le site (SSR)
+Le site est en rendu côté serveur (adaptateur `@astrojs/node`, mode standalone) :
+chaque page est fabriquée à la visite avec les données de PocketBase.
+```
+npm run build                          # ou : bun run --bun build
+PORT=3000 bun ./dist/server/entry.mjs  # lance le serveur du site
+```
 
 ## Arborescence
 ```
@@ -50,10 +54,16 @@ JOURNAL.md                 journal de bord
 | Rôle | Service |
 |---|---|
 | Nom de domaine `verguet-bailly.fr` (DNS) | Infomaniak |
-| Site statique (pages générées par Astro) | Netlify, déployé automatiquement à chaque push sur `main` (`netlify.toml`) |
-| PocketBase (projets, images, messages du formulaire) | VPS de l'IUT, sur `https://api.verguet-bailly.fr` |
+| Site Astro en SSR | VPS de l'IUT : service `portfolio` (Bun, port local 3010) derrière Apache, sur `https://verguet-bailly.fr` |
+| PocketBase (projets, images, messages du formulaire) | VPS de l'IUT : service `pb-portfolio` (port local 8091) derrière Apache, sur `https://api.verguet-bailly.fr` |
 
-- Variable d'environnement à régler dans Netlify : `PB_URL=https://api.verguet-bailly.fr` (voir `.env.example`).
-- Les pages projet sont générées **au moment du build** : après une modification dans PocketBase,
-  relancer un déploiement Netlify (bouton « Trigger deploy » ou *build hook*).
-- Le formulaire de contact écrit directement dans PocketBase : le VPS doit être en ligne et en HTTPS.
+```
+Internet → Apache :443 ─┬─ verguet-bailly.fr     → Astro SSR  127.0.0.1:3010
+                        └─ api.verguet-bailly.fr → PocketBase 127.0.0.1:8091
+```
+
+- Sur le VPS, le fichier `/var/www/portfolio/.env` contient `PB_URL=https://api.verguet-bailly.fr` (voir `.env.example`).
+- Une modification faite dans l'interface de PocketBase apparaît sur le site sans rien reconstruire
+  (les projets sont gardés 30 secondes en mémoire).
+- Déploiement automatique : `.github/workflows/deploy.yml` (GitHub Actions) se connecte au VPS en SSH
+  à chaque push sur `main`, met à jour PocketBase (migrations, images), reconstruit le site et redémarre les services.

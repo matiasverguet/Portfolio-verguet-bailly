@@ -1,23 +1,18 @@
 ---
 /* Page d'un projet : /projets/chorus-symphonia, /projets/la-cimade…
    Le [slug] entre crochets dans le nom du fichier = une page par valeur.
-   getStaticPaths() dit à Astro quelles pages créer : une par projet de PocketBase. */
+   Le site est en SSR : la page est fabriquée à chaque visite avec les données de PocketBase,
+   donc un nouveau projet créé dans PocketBase a tout de suite sa page. */
 import Layout from "../../layouts/Layout.astro";
 import PbImage from "../../components/PbImage.astro";
 import ProjectSection from "../../components/ProjectSection.astro";
 import { getProjets } from "../../lib/pocketbase.js";
 
-export async function getStaticPaths() {
-  const projets = await getProjets();
-  return projets.map((projet) => ({ params: { slug: projet.slug } }));
-}
-
-// On relit les projets ici plutôt que de passer par getStaticPaths :
-// en développement, Astro garde getStaticPaths en mémoire, alors que ce code
-// est réexécuté à chaque chargement → une modification dans PocketBase apparaît tout de suite.
 const projets = await getProjets();
 const index = projets.findIndex((p) => p.slug === Astro.params.slug);
 const projet = projets[index];
+// Slug inconnu : page 404
+if (!projet) return Astro.rewrite("/404");
 // Projet suivant (on revient au premier après le dernier)
 const suivant = projets[(index + 1) % projets.length];
 

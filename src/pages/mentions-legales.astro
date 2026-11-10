@@ -3,10 +3,10 @@
    Obligatoires pour tout site édité en France (loi pour la confiance dans l'économie numérique,
    LCEN, art. 6) ; la partie « données personnelles » répond au RGPD (le formulaire de contact
    collecte un nom, un email et un message).
-   Hébergement : site sur Netlify, PocketBase sur le VPS de l'IUT, domaine chez Infomaniak. */
+   Hébergement : site (Astro en SSR) et PocketBase sur le VPS de l'IUT, domaine chez Infomaniak. */
 import Layout from "../layouts/Layout.astro";
 
-const majLe = "23 octobre 2026"; // date de dernière mise à jour
+const majLe = "10 novembre 2026"; // date de dernière mise à jour
 const h2 = "mt-[min(4vw,56px)] font-display text-[clamp(1.5rem,2.6vw,2.3rem)] leading-tight font-bold uppercase";
 const p = "mt-[0.8em] max-w-[52rem] text-[clamp(0.95rem,1.15vw,1.05rem)] leading-relaxed";
 ---
@@ -37,11 +37,7 @@ const p = "mt-[0.8em] max-w-[52rem] text-[clamp(0.95rem,1.15vw,1.05rem)] leading
       <h2 id="hebergeur" class={h2}>Hébergement</h2>
       <!-- TODO : vérifier ces coordonnées (adresse, téléphone) sur les pages légales de chaque prestataire -->
       <p class={p}>
-        <strong>Site web</strong> : Netlify, Inc. — 101 2nd Street, Suite 1500, San Francisco, CA 94105,
-        États-Unis — <a href="https://www.netlify.com" target="_blank" rel="noopener" class="underline hover:text-electric">netlify.com</a>.
-      </p>
-      <p class={p}>
-        <strong>Base de données et formulaire de contact</strong> (PocketBase) : serveur privé virtuel (VPS)
+        <strong>Site web, base de données et formulaire de contact</strong> : serveur privé virtuel (VPS)
         de l'IUT Nord Franche-Comté, Université de Franche-Comté — 4 place Tharradin, 25200 Montbéliard,
         France.
       </p>

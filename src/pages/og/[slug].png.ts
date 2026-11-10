@@ -1,12 +1,13 @@
 /* Image de partage (Open Graph) d'un projet : /og/la-cimade.png, /og/chaleur-en-ville.png…
    C'est l'aperçu affiché quand on partage le lien d'un projet sur LinkedIn, Discord, Messenger…
 
-   Elle est fabriquée à la construction du site avec sharp (déjà installé avec Astro), sans texte
+   Elle est fabriquée à la demande avec sharp (déjà installé avec Astro), sans texte
    (le titre et la description sont dans les balises og:title / og:description) :
    grille grise du site + grand dossier bleu, avec le visuel du projet qui en dépasse,
    comme sur les cartes projets. Format conseillé : 1200 × 630.
 
-   Les images viennent de PocketBase : rien à faire à la main, une image par projet est créée. */
+   Les images viennent de PocketBase : rien à faire à la main, une image par projet est créée
+   (mise en cache une heure par le navigateur et par Apache). */
 import type { APIRoute } from "astro";
 import sharp from "sharp";
 import { getProjets } from "../../lib/pocketbase.js";
@@ -52,12 +53,11 @@ const avant = `<svg xmlns="http://www.w3.org/2000/svg" width="${L}" height="${H}
   <g transform="translate(${dx + 48} ${hautAvant + 54}) scale(2.2) translate(-8 -21)" fill="${ink}">${logo}</g>
 </svg>`;
 
-export async function getStaticPaths() {
+export const GET: APIRoute = async ({ params }) => {
   const projets = await getProjets();
-  return projets.map((projet) => ({ params: { slug: projet.slug }, props: { visuel: projet.image ?? projet.couverture } }));
-}
-
-export const GET: APIRoute = async ({ props }) => {
+  const projet = projets.find((p) => p.slug === params.slug);
+  if (!projet) return new Response("Projet introuvable", { status: 404 });
+  const props = { visuel: projet.image ?? projet.couverture };
   const couches: sharp.OverlayOptions[] = [];
 
   // Visuel du projet : redimensionné pour tenir dans le dossier, aligné en haut,
@@ -80,5 +80,5 @@ export const GET: APIRoute = async ({ props }) => {
   couches.push({ input: Buffer.from(avant), left: 0, top: 0 });
 
   const png = await sharp(Buffer.from(fond)).composite(couches).png({ compressionLevel: 9 }).toBuffer();
-  return new Response(new Uint8Array(png), { headers: { "Content-Type": "image/png" } });
+  return new Response(new Uint8Array(png), { headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=3600" } });
 };

@@ -1,0 +1,55 @@
+# Déploiement automatique (CI/CD) à chaque push sur main, comme vu en TP avec GitHub Actions.
+# GitHub se connecte au VPS en SSH, puis :
+#   1. met à jour le code (git pull) ;
+#   2. met à jour PocketBase : migrations et images des projets ;
+#   3. installe les dépendances et reconstruit le site Astro (SSR) ;
+#   4. redémarre les deux services et vérifie qu'ils répondent.
+# Secrets à créer dans GitHub (Settings → Secrets and variables → Actions) :
+#   SSH_HOST, SSH_USER, SSH_PORT, SSH_PRIVATE_KEY
+name: Déploiement du portfolio
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # permet aussi de le lancer à la main depuis l'onglet Actions
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Déployer sur le VPS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            export PATH="$HOME/.bun/bin:$PATH"
+
+            echo "=== Mise à jour du code ==="
+            cd /var/www/portfolio
+            git pull origin main
+
+            echo "=== Mise à jour de PocketBase (migrations + images) ==="
+            cp -r pocketbase/pb_migrations pocketbase/medias /var/www/pb-portfolio/
+            cd /var/www/pb-portfolio
+            ./pocketbase migrate up
+            sudo systemctl restart pb-portfolio
+            for i in $(seq 1 15); do curl -fsS -o /dev/null http://127.0.0.1:8091/api/health && break; sleep 1; done
+
+            echo "=== Installation et compilation du site ==="
+            cd /var/www/portfolio
+            bun install
+            bun run --bun build
+
+            echo "=== Redémarrage du site ==="
+            sudo systemctl restart portfolio
+            for i in $(seq 1 15); do curl -fsS -o /dev/null http://127.0.0.1:3010/ && break; sleep 1; done
+
+            echo "=== Vérification ==="
+            curl --fail -sS -o /dev/null http://127.0.0.1:8091/api/health
+            curl --fail -sS -o /dev/null http://127.0.0.1:3010/
+            echo "=== Déploiement terminé ==="
