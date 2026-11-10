@@ -1,0 +1,19 @@
+---
+/* Pastille « Disponible pour un stage » : point bleu qui « pulse »
+   (animate-ping = un halo qui grandit et disparaît en boucle,
+   coupé si l'utilisateur a demandé à réduire les animations).
+   Utilisée dans le hero, le menu mobile et la page Contact. La taille du texte vient du parent (class). */
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<span class:list={["inline-flex items-center gap-[0.6em] rounded-full border border-ink/15 bg-white px-[0.9em] py-[0.4em] font-display leading-tight text-ink shadow-[0_2px_8px_rgba(0,0,0,0.08)]", className]}>
+  <span class="relative flex size-[0.55em] shrink-0" aria-hidden="true">
+    <span class="absolute inset-0 animate-ping rounded-full bg-electric opacity-60"></span>
+    <span class="relative size-full rounded-full bg-electric"></span>
+  </span>
+  <span><strong class="font-bold">Disponible pour un stage</strong> · du 29 mars au 4 juin 2027</span>
+</span>

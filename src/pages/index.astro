@@ -9,7 +9,7 @@ import ProjectsPreview from "../components/ProjectsPreview.astro";
 
 <Layout
   title="Matias Verguet--Bailly — Designer graphique"
-  description="Portfolio de Matias Verguet--Bailly, étudiant en BUT MMI et designer graphique : UI/UX, graphisme, développement web et identité de marque. À la recherche d'un stage du 29 mars au 4 juin 2026."
+  description="Portfolio de Matias Verguet--Bailly, étudiant en BUT MMI et designer graphique : UI/UX, graphisme, développement web et identité de marque. À la recherche d'un stage du 29 mars au 4 juin 2027."
 >
   <!-- Le hero prend toute la largeur de l'écran -->
   <Hero />
@@ -19,8 +19,8 @@ import ProjectsPreview from "../components/ProjectsPreview.astro";
   <ProjectsPreview sombre />
 
   <!-- Le reste est limité à 1440px (largeur de la maquette) et centré sur les grands écrans -->
-  <!-- pt : espace entre le dossier noir et les compétences -->
-  <div class="mx-auto max-w-[1440px] pt-[min(5vw,72px)]">
+  <!-- pt-section : espace entre le dossier noir et les compétences (échelle commune, global.css) -->
+  <div class="mx-auto max-w-[1440px] pt-section">
     <Skills />
     <AboutPreview />
   </div>

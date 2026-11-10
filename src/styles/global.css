@@ -18,6 +18,11 @@
   --font-serif: "Instrument Serif", Georgia, serif;        /* « Designer graphique » */
   --font-sans: "Inter", system-ui, sans-serif;             /* texte courant (par défaut) */
 
+  /* Échelle d'espacement commune (classes pt-section, mt-titre, etc.)
+     section : entre deux sections · titre : entre un titre H2 et son contenu */
+  --spacing-section: min(8vw, 115px);
+  --spacing-titre: clamp(1.25rem, 2.5vw, 2.25rem);
+
   /* Animation de flottement des dossiers : classe animate-float */
   --animate-float: float 6s ease-in-out infinite;
 

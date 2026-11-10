@@ -46,9 +46,16 @@ for (const section of projet.sections) {
 }
 ---
 
-<Layout title={`${projet.titre} — Matias Verguet--Bailly`} description={`${projet.titre} : ${projet.sous_titre}. ${projet.contexte}`}>
-  <article class="mx-auto max-w-[1440px] px-[8%] pt-[min(4vw,57px)] pb-[min(10vw,144px)]">
-    <a href="/projets" class="text-[clamp(0.85rem,1vw,0.95rem)] font-semibold hover:text-electric">
+<!-- image : aperçu de partage propre au projet (généré par pages/og/[slug].png.ts) -->
+<Layout
+  title={`${projet.titre} — Matias Verguet--Bailly`}
+  description={`${projet.titre} : ${projet.sous_titre}. ${projet.contexte}`}
+  image={`/og/${projet.slug}.png`}
+  imageAlt={`${projet.titre} : visuel du projet sortant d'un dossier bleu`}
+>
+  <article class="mx-auto max-w-[1440px] px-[8%] pt-[min(4vw,57px)] max-sm:pt-10 pb-[min(10vw,144px)]">
+    <!-- Pastille de retour : zone cliquable d'au moins 44px de haut (min-h-11) -->
+    <a href="/projets" class="inline-flex min-h-11 items-center gap-2 rounded-full border border-ink px-4 text-[clamp(0.9rem,1vw,0.95rem)] font-semibold transition-colors hover:bg-ink hover:text-white">
       <span aria-hidden="true">←</span> Tous les projets
     </a>
 
@@ -57,14 +64,14 @@ for (const section of projet.sections) {
       <div>
         <!-- view-transition-name : même nom que sur la carte projet → animation entre les deux pages -->
         <h1 style={`view-transition-name: projet-titre-${projet.slug}`} class="font-display text-[clamp(2.5rem,4.6vw,4.2rem)] leading-none font-bold uppercase">{projet.titre}</h1>
-        <p class="mt-[0.3em] text-[clamp(0.85rem,1.05vw,1rem)] font-bold">{projet.sous_titre}</p>
+        <p class="mt-[0.3em] text-[clamp(1rem,1.25vw,1.15rem)] font-bold">{projet.sous_titre}</p>
 
-        <dl class="mt-[min(2.5vw,36px)] space-y-[min(1.6vw,23px)]">
+        <dl class="mt-titre space-y-[min(2vw,28px)]">
           {
             rubriques.map((r) => (
               <div>
-                <dt class="font-display text-[clamp(1.3rem,2vw,1.8rem)] leading-tight uppercase">{r.titre}</dt>
-                <dd class="text-[clamp(0.85rem,1.05vw,0.95rem)] leading-snug">{r.texte}</dd>
+                <dt class="font-display text-[clamp(1.4rem,2.3vw,2.1rem)] leading-tight uppercase">{r.titre}</dt>
+                <dd class="mt-[0.15em] text-[clamp(1rem,1.2vw,1.1rem)] leading-snug">{r.texte}</dd>
               </div>
             ))
           }
@@ -72,7 +79,7 @@ for (const section of projet.sections) {
       </div>
 
       <div class="flex flex-col gap-6">
-        <p class="flex items-center justify-end gap-3 text-[clamp(1.1rem,1.8vw,1.6rem)] font-bold uppercase">
+        <p class="flex items-center justify-start gap-3 text-[clamp(1.1rem,1.8vw,1.6rem)] font-bold uppercase sm:justify-end">
           [{projet.categorie}]
           {projet.logo_outil && <img src={`/img/${projet.logo_outil}.svg`} alt="" class="h-[1.3em] w-auto" />}
         </p>
@@ -93,10 +100,12 @@ for (const section of projet.sections) {
       )
     }
 
-    <!-- ===== Mention légale : projet étudiant, marques de tiers ===== -->
-    <p class="mt-[min(6vw,86px)] max-w-[52rem] border-l-4 border-electric pl-4 text-[clamp(0.8rem,0.95vw,0.9rem)] leading-snug text-ink/80">
-      Projet réalisé dans le cadre de ma formation en BUT MMI : exercice pédagogique, non commandé par
-      les organismes cités. Les noms, logos et marques de tiers restent la propriété de leurs
+    <!-- ===== Mention légale : projet étudiant ou personnel (étiquette « Perso »), marques de tiers ===== -->
+    <p class="mt-[min(6vw,86px)] max-w-[52rem] border-l-4 border-electric pl-4 text-[clamp(0.85rem,1vw,0.95rem)] leading-snug text-ink/80">
+      {projet.tags.includes("Perso")
+        ? "Projet personnel, réalisé de ma propre initiative : il n'a pas été commandé par les organismes cités."
+        : "Projet réalisé dans le cadre de ma formation en BUT MMI : exercice pédagogique, non commandé par les organismes cités."}{" "}
+      Les noms, logos, photos et marques de tiers restent la propriété de leurs
       détenteurs. <a href="/mentions-legales#propriete" class="underline hover:text-electric">En savoir plus</a>
     </p>
 
@@ -114,4 +123,55 @@ for (const section of projet.sections) {
       )
     }
   </article>
+
+  <!-- ===== Lightbox : image agrandie =====
+       <dialog> + showModal() : le navigateur gère le fond sombre, le piège du focus et la touche Échap.
+       Le script recopie l'image cliquée dedans. -->
+  <dialog id="lightbox" aria-label="Image agrandie" class="m-auto max-h-none max-w-none bg-transparent p-0 backdrop:bg-ink/85">
+    <div class="flex h-dvh w-screen items-center justify-center p-4 sm:p-10" data-lightbox-fond>
+      <img data-lightbox-image src="" alt="" class="max-h-[85dvh] max-w-[min(100%,1100px)] rounded-xl object-contain shadow-2xl" />
+    </div>
+    <button type="button" data-lightbox-fermer class="absolute top-4 right-4 grid size-11 place-items-center rounded-full bg-white text-ink hover:bg-electric hover:text-white" aria-label="Fermer l'image">
+      <svg class="size-5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" /></svg>
+    </button>
+  </dialog>
 </Layout>
+
+<script>
+  /* Lightbox : clic sur une image de projet → on l'affiche en grand dans le <dialog>.
+     On ferme avec la croix, Échap (géré par le navigateur) ou un clic à côté de l'image. */
+  const lightbox = document.querySelector<HTMLDialogElement>("#lightbox");
+  const grande = lightbox?.querySelector<HTMLImageElement>("[data-lightbox-image]");
+
+  document.querySelectorAll<HTMLButtonElement>("[data-agrandir]").forEach((bouton) => {
+    bouton.addEventListener("click", () => {
+      const image = bouton.querySelector("img");
+      if (!lightbox || !grande || !image) return;
+      grande.src = image.currentSrc || image.src;
+      grande.alt = image.alt;
+      // Image transparente (logo, PNG détouré…) : on reprend la couleur de sa carte (blanc, bleu nuit…),
+      // sinon elle flotterait seule sur le fond sombre. Pas de carte : pas de fond.
+      let carte: HTMLElement | null = bouton.parentElement;
+      let couleur = "";
+      while (carte && !carte.matches("section, main")) {
+        const fond = getComputedStyle(carte).backgroundColor;
+        if (fond && fond !== "transparent" && !fond.endsWith(", 0)")) {
+          couleur = fond;
+          break;
+        }
+        carte = carte.parentElement;
+      }
+      grande.style.backgroundColor = couleur;
+      grande.style.padding = couleur ? "clamp(1rem, 4vw, 3rem)" : "";
+      lightbox.showModal();
+    });
+  });
+
+  lightbox?.querySelector("[data-lightbox-fermer]")?.addEventListener("click", () => lightbox.close());
+  // Clic sur le fond (pas sur l'image) : on ferme
+  lightbox?.querySelector("[data-lightbox-fond]")?.addEventListener("click", (e) => {
+    if (e.target === e.currentTarget) lightbox.close();
+  });
+  // On vide l'image à la fermeture (évite de revoir l'ancienne une fraction de seconde)
+  lightbox?.addEventListener("close", () => grande?.removeAttribute("src"));
+</script>

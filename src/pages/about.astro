@@ -1,5 +1,5 @@
 ---
-/* Page About : présentation, compétences (même composant que l'accueil),
+/* Page About : présentation, compétences (même composant que l'accueil, en cartes ouvertes),
    parcours scolaire, outils et méthode de travail. */
 import Layout from "../layouts/Layout.astro";
 import AboutIntro from "../components/AboutIntro.astro";
@@ -21,8 +21,8 @@ import Process from "../components/Process.astro";
   <!-- Compétences en version « dossier noir », sur toute la largeur (comme sur l'accueil) -->
   <Skills sombre />
 
-  <!-- pt : espace entre le dossier noir et la suite -->
-  <div class="mx-auto max-w-[1440px] pt-[min(9vw,130px)]">
+  <!-- pt-section : espace entre le dossier noir et la suite (échelle commune, global.css) -->
+  <div class="mx-auto max-w-[1440px] pt-section">
     <Education />
     <Tools />
     <Process />

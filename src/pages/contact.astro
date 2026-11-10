@@ -4,6 +4,7 @@
    (script en bas de page) ; je le lis ensuite dans l'interface de PocketBase. */
 import Layout from "../layouts/Layout.astro";
 import SocialLinks from "../components/SocialLinks.astro";
+import Pastille from "../components/Pastille.astro";
 import { PB_URL } from "../lib/pocketbase.js";
 
 // Types de demande (boutons radio en forme d'étiquettes).
@@ -24,25 +25,24 @@ const champ = "mt-[0.4em] w-full rounded-xl border border-ink bg-white px-[0.8em
 
 <Layout
   title="Contact — Matias Verguet--Bailly"
-  description="Contactez Matias Verguet--Bailly, designer graphique disponible pour un stage du 29 mars au 4 juin 2026, à Belfort, Montbéliard et alentours."
+  description="Contactez Matias Verguet--Bailly, designer graphique disponible pour un stage du 29 mars au 4 juin 2027, à Belfort, Montbéliard et alentours."
 >
-  <div class="mx-auto max-w-[1440px] px-[6%] pt-[min(5vw,72px)] pb-[min(8vw,115px)]">
+  <div class="mx-auto max-w-[1440px] px-[6%] pt-[min(5vw,72px)] max-sm:pt-12 pb-[min(8vw,115px)]">
     <h1 class="text-center font-display text-[clamp(2.5rem,9vw,8.1rem)] leading-none font-bold uppercase">
       Discutons d'un projet
     </h1>
 
-    <div class="mx-auto mt-[min(7vw,100px)] grid max-w-[72.6vw] gap-[min(3.7vw,53px)] max-sm:max-w-none sm:grid-cols-2">
+    <div class="mx-auto mt-[min(5vw,72px)] grid max-w-[min(80vw,1150px)] gap-[min(3.7vw,53px)] max-sm:max-w-none sm:grid-cols-2">
       <!-- ===== Coordonnées ===== -->
       <section class={carte} aria-labelledby="coord-title">
         <h2 id="coord-title" class={titre}>Coordonnées</h2>
 
         <!-- Liste de définitions : chaque info = un terme (dt) + sa valeur (dd) -->
-        <dl class="mt-[min(1.5vw,21px)] mr-[6%]">
+        <dl class="mt-titre mr-[6%]">
           <div class="border-b border-ink/70 pb-[0.6em]">
             <dt class={libelle}>Statut</dt>
-            <dd class="mt-[0.4em] inline-block rounded-xl bg-electric px-[0.6em] py-[0.35em] font-display text-[clamp(0.95rem,1.75vw,1.6rem)] text-white uppercase">
-              Disponible pour un stage du 29/03 au 04/06/2026
-            </dd>
+            <!-- Même pastille que dans le hero et le menu mobile -->
+            <dd class="mt-[0.5em]"><Pastille class="text-[clamp(0.95rem,1.4vw,1.25rem)]" /></dd>
           </div>
           <div class="border-b border-ink/70 py-[0.6em]">
             <dt class={libelle}>Email</dt>
@@ -67,7 +67,7 @@ const champ = "mt-[0.4em] w-full rounded-xl border border-ink bg-white px-[0.8em
 
         <!-- required + type="email" : le navigateur vérifie lui-même les champs avant l'envoi -->
         <!-- data-pb : adresse de PocketBase, transmise au script depuis la partie serveur -->
-        <form data-contact data-pb={PB_URL} class="mt-[min(0.6vw,9px)] flex flex-col gap-[min(1.4vw,20px)]">
+        <form data-contact data-pb={PB_URL} class="mt-titre flex flex-col gap-[min(1.4vw,20px)]">
           <label class={libelle}>
             Votre nom
             <input type="text" name="nom" autocomplete="name" required minlength="2" maxlength="100" class={champ} />
@@ -107,8 +107,9 @@ const champ = "mt-[0.4em] w-full rounded-xl border border-ink bg-white px-[0.8em
           </div>
 
           <!-- Information RGPD au moment de la collecte -->
-          <p class="text-[clamp(0.75rem,0.9vw,0.85rem)] leading-snug text-ink/75">
-            Vos informations servent uniquement à vous répondre et sont conservées 12 mois au maximum.
+          <!-- {" "} : espace forcé entre la phrase et le lien (Astro supprime le retour à la ligne) -->
+          <p class="text-[clamp(0.85rem,0.95vw,0.9rem)] leading-snug text-ink/75">
+            Vos informations servent uniquement à vous répondre et sont conservées 12 mois au maximum.{" "}
             <a href="/mentions-legales#donnees" class="underline hover:text-electric">Données personnelles</a>
           </p>
 

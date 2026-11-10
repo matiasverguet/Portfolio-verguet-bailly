@@ -13,12 +13,12 @@ const styles = [
 ];
 ---
 
-<section class="px-[7%] pb-[min(8vw,115.2px)]" aria-labelledby="process-title">
+<section class="px-[7%] pb-section" aria-labelledby="process-title">
   <h2 id="process-title" class="ml-[2%] font-display text-[clamp(2rem,4.9vw,4.4rem)] leading-none font-bold uppercase">
     Concevoir avec créativité
   </h2>
 
-  <ol class="mt-[min(3vw,43.2px)] grid gap-[min(2.5vw,36px)] sm:grid-cols-3">
+  <ol class="mt-titre grid gap-[min(2.5vw,36px)] sm:grid-cols-3">
     {
       etapes.map((etape, index) => (
         <li class:list={["rounded-2xl p-[clamp(1.25rem,2vw,1.8rem)]", styles[index]]}>
@@ -28,11 +28,34 @@ const styles = [
           <h3 class="mt-[min(1.5vw,21.6px)] font-display text-[clamp(1.1rem,2vw,1.8rem)] leading-tight font-bold uppercase">
             {etape.titre}
           </h3>
-          <p class:list={["mt-[0.6em] text-[clamp(0.8rem,1.1vw,1rem)] leading-snug", index === 3 && "max-w-[90ch]"]}>
+          <!-- Mobile : texte replié sur 4 lignes, bouton « Lire la suite » pour le déplier.
+               data-replie est posé par le script : sans JavaScript, le texte reste entier. -->
+          <p data-etape-texte id={`etape-${index + 1}`} class:list={["mt-[0.6em] text-left text-[clamp(0.95rem,1.15vw,1.05rem)] leading-relaxed max-sm:data-[replie]:line-clamp-4", index === 3 && "max-w-[90ch]"]}>
             {etape.texte}
           </p>
+          <button type="button" data-etape-bouton aria-controls={`etape-${index + 1}`} aria-expanded="false" hidden class="mt-2 min-h-11 font-bold underline underline-offset-4 sm:hidden">
+            Lire la suite
+          </button>
         </li>
       ))
     }
   </ol>
 </section>
+
+<script>
+  /* Mobile : on replie le texte de chaque étape (4 lignes) et on affiche « Lire la suite ».
+     Sur ordinateur, le bouton est caché (sm:hidden) et le repli ne s'applique pas (max-sm:). */
+  document.querySelectorAll<HTMLButtonElement>("[data-etape-bouton]").forEach((bouton) => {
+    const texte = document.getElementById(bouton.getAttribute("aria-controls") ?? "");
+    if (!texte) return;
+    texte.dataset.replie = "";
+    bouton.hidden = false;
+    bouton.addEventListener("click", () => {
+      const ouvert = bouton.getAttribute("aria-expanded") === "true";
+      bouton.setAttribute("aria-expanded", String(!ouvert));
+      bouton.textContent = ouvert ? "Lire la suite" : "Réduire";
+      if (ouvert) texte.dataset.replie = "";
+      else delete texte.dataset.replie;
+    });
+  });
+</script>

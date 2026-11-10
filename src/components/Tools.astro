@@ -33,10 +33,11 @@ const pastilles = ["#ff5f57", "#ff9f0a", "#ffcc00", "#28c840", "#0533ff", "#8e8e
       >
         Outils
       </h2>
-      <ul class="mt-[0.3em] font-display text-[clamp(0.95rem,1.6vw,1.45rem)]">
+      <ul class="mt-[0.3em] font-display text-[clamp(0.95rem,1.6vw,1.45rem)] max-sm:flex max-sm:flex-wrap max-sm:gap-x-5 max-sm:gap-y-1 max-sm:uppercase">
         {
           outils.map((outil, index) => (
-            <li class="border-b border-ink/15 py-[0.1em]">
+            <li class="border-b border-ink/15 py-[0.1em] whitespace-nowrap max-sm:border-0">
+              <!-- whitespace-nowrap : un nom d'outil ne se coupe jamais sur deux lignes (ex. DaVinci Resolve) -->
               <!-- Un bouton : accessible au clavier (Tab) et au clic sur mobile.
                    aria-expanded indique aux lecteurs d'écran si la fiche est affichée ;
                    la classe aria-expanded:bg-electric le colore en bleu dans ce cas. -->

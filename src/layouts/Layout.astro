@@ -23,9 +23,10 @@ interface Props {
   title: string;
   description: string;
   image?: string; // image de partage (Open Graph), par défaut /og-image.jpg
+  imageAlt?: string; // description de cette image
 }
 
-const { title, description, image = "/og-image.jpg" } = Astro.props;
+const { title, description, image = "/og-image.jpg", imageAlt = "Matias Verguet--Bailly, designer graphique" } = Astro.props;
 
 // Adresses absolues (obligatoires pour l'Open Graph et l'adresse canonique).
 // Astro.site vient de « site » dans astro.config.mjs.
@@ -62,7 +63,7 @@ const imagePartage = new URL(image, Astro.site);
     <meta property="og:image" content={imagePartage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Matias Verguet--Bailly, designer graphique" />
+    <meta property="og:image:alt" content={imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
   </head>
   <!-- overflow-x-clip : un dossier qui dépasse sur le côté ne crée pas de barre de défilement horizontale

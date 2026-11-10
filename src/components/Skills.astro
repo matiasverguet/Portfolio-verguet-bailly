@@ -1,13 +1,15 @@
 ---
-/* Compétences : accordéon fait avec <details> / <summary>.
-   Le navigateur gère seul l'ouverture et la fermeture (pas de JavaScript)
-   et c'est accessible au clavier par défaut.
-   Le chevron pointe vers le bas, puis vers le haut quand l'élément est ouvert
-   (classe Tailwind group-open:rotate-180).
+/* Compétences, en deux versions :
 
-   Prop « sombre » (accueil) : la section devient un grand dossier noir avec un onglet
-   en haut à gauche, sur lequel est posé le personnage du hero.
-   Sans la prop (page About) : version claire, sur la grille. */
+   - Accueil (sans prop) : version claire, sur la grille. Titre + phrase à gauche,
+     accordéon à droite (2 colonnes sur ordinateur, pour ne pas laisser de vide).
+     L'accordéon est fait avec <details> / <summary> : le navigateur gère seul l'ouverture
+     (pas de JavaScript) et c'est accessible au clavier. Le chevron se retourne quand
+     l'élément est ouvert (group-open:rotate-180).
+
+   - Page About (prop « sombre ») : grand dossier noir avec un onglet en haut à gauche.
+     Les 4 compétences sont affichées ouvertes, en cartes (pas d'accordéon) :
+     la page About ne répète donc pas l'accueil. */
 import { skills } from "../data/skills.js";
 
 interface Props {
@@ -15,6 +17,9 @@ interface Props {
 }
 
 const { sombre = false } = Astro.props;
+
+const intro =
+  "Je combine créativité et maîtrise technique pour développer des projets en web design, UX/UI et identité de marque.";
 ---
 
 <section
@@ -24,45 +29,77 @@ const { sombre = false } = Astro.props;
   ]}
   aria-labelledby="skills-title"
 >
-  <!-- Onglet du dossier (version sombre) : collé au-dessus de la section, à gauche -->
   {
-    sombre && (
-      <div class="absolute bottom-[calc(100%-1px)] left-0 h-[clamp(3rem,5.5vw,5rem)] w-[40%] rounded-t-[2.5rem] bg-night" aria-hidden="true" />
+    sombre ? (
+      <>
+        <!-- Onglet du dossier : collé au-dessus de la section, à gauche -->
+        <div class="absolute bottom-[calc(100%-1px)] left-0 h-[clamp(3rem,5.5vw,5rem)] w-[40%] rounded-t-[2.5rem] bg-night" aria-hidden="true" />
+
+        <!-- Contenu limité à 1440px et centré, même si le dossier prend toute la largeur -->
+        <div class="mx-auto max-w-[1440px] px-[9%] max-sm:px-[7%] pt-[min(5vw,72px)] pb-section">
+          <h2 id="skills-title" class="font-display text-[clamp(2.25rem,5.4vw,4.9rem)] leading-none font-bold uppercase">
+            Mes compétences
+          </h2>
+          <p class="mt-[0.6em] max-w-[min(56vw,806.4px)] text-[clamp(0.95rem,1.5vw,1.35rem)] leading-snug max-sm:max-w-none">{intro}</p>
+
+          <!-- 4 cartes : 1 par ligne sur mobile, 2 sur tablette, 4 sur grand écran -->
+          <ul class="mt-titre grid gap-[min(2vw,28px)] sm:grid-cols-2 lg:grid-cols-4">
+            {
+              skills.map((skill, index) => (
+                <li class="rounded-2xl border border-white/15 bg-white/[0.04] p-[clamp(1.1rem,1.8vw,1.6rem)]">
+                  <!-- Bleu clair des dossiers : bien lisible sur le noir (le bleu électrique serait trop sombre) -->
+                  <p class="font-display text-[clamp(2rem,3.4vw,3rem)] leading-none font-bold text-folder" aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </p>
+                  <h3 class="mt-[0.5em] font-display text-[clamp(1.3rem,2vw,1.8rem)] leading-tight font-bold uppercase">{skill.title}</h3>
+                  <ul class="mt-[0.9em] flex flex-col gap-[0.7em] text-[clamp(0.9rem,1.05vw,1rem)] leading-snug text-white/85">
+                    {skill.items.map((item) => (
+                      <li class="flex gap-[0.6em]">
+                        <span class="mt-[0.55em] size-[0.4em] shrink-0 rounded-full bg-folder" aria-hidden="true" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </>
+    ) : (
+      <div class="mx-auto grid max-w-[1440px] gap-titre px-[9%] max-sm:px-[7%] sm:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] sm:gap-x-[min(6vw,86px)]">
+        <div>
+          <h2 id="skills-title" class="font-display text-[clamp(2.25rem,5.4vw,4.9rem)] leading-none font-bold uppercase">
+            Mes compétences
+          </h2>
+          <p class="mt-[0.6em] text-[clamp(0.95rem,1.5vw,1.35rem)] leading-snug">{intro}</p>
+        </div>
+
+        <!-- Accordéon : un trait sépare chaque compétence -->
+        <div class="border-t border-ink/20 sm:mt-[0.4em]">
+          {
+            skills.map((skill, index) => (
+              <details class="group border-b border-ink/20">
+                <!-- Survol : bleu électrique de la charte -->
+                <summary class="flex cursor-pointer items-center justify-between gap-4 py-[clamp(0.7rem,1.4vw,1.25rem)] font-display text-[clamp(1.25rem,2.6vw,2.4rem)] leading-none font-bold hover:text-electric">
+                  <span class="flex gap-[0.4em]">
+                    <span>{index + 1}.</span>
+                    <span>{skill.title}</span>
+                  </span>
+                  <svg class="w-[0.6em] shrink-0 transition-transform group-open:rotate-180" viewBox="0 0 24 14" aria-hidden="true">
+                    <path d="M2 2l10 10 10-10" fill="none" stroke="currentColor" stroke-width="2" />
+                  </svg>
+                </summary>
+
+                <!-- Le retrait (padding-left) aligne la liste sur le titre, après le numéro -->
+                <ul class="flex flex-col gap-[clamp(0.6rem,1.2vw,1rem)] pb-[min(2vw,28px)] pl-[clamp(1.9rem,4.5vw,4rem)] text-[clamp(0.9rem,1.2vw,1.1rem)] leading-snug font-semibold">
+                  {skill.items.map((item) => <li>{item}</li>)}
+                </ul>
+              </details>
+            ))
+          }
+        </div>
+      </div>
     )
   }
-
-  <!-- Contenu limité à 1440px et centré, même si le dossier prend toute la largeur -->
-  <div class="mx-auto max-w-[1440px] px-[9%] pt-[min(5vw,72px)] pb-[min(10vw,144px)]">
-    <h2 id="skills-title" class="font-display text-[clamp(2.25rem,5.4vw,4.9rem)] leading-none font-bold uppercase">
-      Mes compétences
-    </h2>
-    <p class="mt-[min(1.5vw,21.6px)] max-w-[min(56vw,806.4px)] text-[clamp(0.95rem,1.85vw,1.65rem)] leading-snug">
-      Je combine créativité et maîtrise technique pour développer des projets en web design, UX/UI et
-      identité de marque.
-    </p>
-
-    <div class="mt-[min(3vw,43.2px)] max-w-[clamp(18rem,52vw,47rem)] sm:ml-[4.5%]">
-      {
-        skills.map((skill, index) => (
-          <details class="group">
-            <!-- Survol : bleu électrique de la charte, sur les deux versions -->
-            <summary class="flex cursor-pointer items-center justify-between gap-4 py-[clamp(0.45rem,1.3vw,1.2rem)] font-display text-[clamp(1.25rem,3vw,2.7rem)] leading-none font-bold hover:text-electric">
-              <span class="flex gap-[0.4em]">
-                <span>{index + 1}.</span>
-                <span>{skill.title}</span>
-              </span>
-              <svg class="w-[0.6em] shrink-0 transition-transform group-open:rotate-180" viewBox="0 0 24 14" aria-hidden="true">
-                <path d="M2 2l10 10 10-10" fill="none" stroke="currentColor" stroke-width="2" />
-              </svg>
-            </summary>
-
-            <!-- Le retrait (padding-left) aligne la liste sur le titre, après le numéro -->
-            <ul class="flex flex-col gap-[clamp(0.6rem,1.4vw,1.25rem)] pt-[min(0.5vw,7.2px)] pb-[min(2.5vw,36px)] pl-[clamp(1.9rem,5.2vw,4.7rem)] text-[clamp(0.85rem,1.4vw,1.25rem)] leading-snug font-semibold">
-              {skill.items.map((item) => <li>{item}</li>)}
-            </ul>
-          </details>
-        ))
-      }
-    </div>
-  </div>
 </section>

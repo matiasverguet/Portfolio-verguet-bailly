@@ -5,8 +5,6 @@
 // - à la construction (npm run build), elles sont lues une fois et figées dans le HTML.
 // On utilise simplement fetch() sur l'API REST de PocketBase (pas besoin de bibliothèque).
 // =========================================================
-import { projets as projetsSecours } from "../data/projets.js";
-
 // Adresse de PocketBase : variable d'environnement PB_URL, sinon le serveur local
 export const PB_URL = import.meta.env.PB_URL ?? "http://127.0.0.1:8090";
 
@@ -53,16 +51,16 @@ function normaliser(record) {
 }
 
 // Tous les projets, triés par « ordre ».
-// Si PocketBase est éteint, on utilise les données de secours (data/projets.js)
-// pour que le site s'affiche quand même.
+// PocketBase doit être lancé (en local : pocketbase/pocketbase.exe serve).
+// S'il ne répond pas, on arrête avec un message clair plutôt que d'afficher un site vide.
 export async function getProjets() {
+  let reponse;
   try {
-    const reponse = await fetch(`${PB_URL}/api/collections/projets/records?sort=ordre&perPage=200`);
-    if (!reponse.ok) throw new Error(`réponse ${reponse.status}`);
-    const donnees = await reponse.json();
-    return donnees.items.map(normaliser);
+    reponse = await fetch(`${PB_URL}/api/collections/projets/records?sort=ordre&perPage=200`);
   } catch (erreur) {
-    console.warn(`[PocketBase] indisponible (${erreur.message}) : données de secours utilisées.`);
-    return projetsSecours;
+    throw new Error(`[PocketBase] injoignable à ${PB_URL} (${erreur.message}). Lance PocketBase avant le site.`);
   }
+  if (!reponse.ok) throw new Error(`[PocketBase] erreur ${reponse.status} sur ${PB_URL}`);
+  const donnees = await reponse.json();
+  return donnees.items.map(normaliser);
 }

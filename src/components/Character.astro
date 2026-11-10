@@ -29,7 +29,7 @@ const { class: className = "" } = Astro.props;
     poster="/video/perso-face.webp"
     muted
     playsinline
-    preload="auto"
+    preload="none"
     aria-hidden="true"
     class="size-full origin-bottom will-change-transform"
   >
@@ -44,6 +44,12 @@ const { class: className = "" } = Astro.props;
 
   document.querySelectorAll<HTMLElement>("[data-perso]").forEach((perso) => {
     const video = perso.querySelector<HTMLVideoElement>("[data-perso-video]")!;
+
+    // Le personnage est caché sur mobile : on ne télécharge la vidéo que sur un écran large
+    // (preload="none" dans le HTML, puis chargement ici).
+    if (!window.matchMedia("(min-width: 640px)").matches) return;
+    video.preload = "auto";
+    video.load();
 
     let cible = TEMPS_FACE; // instant voulu, d'après la souris
     let actuel = TEMPS_FACE; // instant lissé : il rattrape la cible petit à petit

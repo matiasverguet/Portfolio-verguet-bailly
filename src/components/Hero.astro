@@ -7,6 +7,7 @@
    - Les dossiers sont placés en % du cadre : ils restent autour de lui à toutes les largeurs. */
 import Folder from "./Folder.astro";
 import Character from "./Character.astro";
+import Pastille from "./Pastille.astro";
 
 // Les 4 poignées carrées aux coins du cadre
 const handles = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -left-1.5", "-bottom-1.5 -right-1.5"];
@@ -19,29 +20,35 @@ const size = "w-[clamp(4.5rem,11vw,12.5rem)] h-[clamp(3.3rem,8.2vw,9.3rem)]";
      (2 × son padding + la hauteur du logo + 1px de bordure).
      Pas de marge en bas pour le personnage : il touche le dossier noir de la section Compétences. -->
 <section
-  class="relative flex flex-col justify-center pt-[clamp(5rem,10vw,9rem)] sm:min-h-[calc(100svh-2*clamp(0.75rem,1.6vw,1.5rem)-clamp(1.4rem,2.6vw,2.35rem)-1px)] sm:pt-[clamp(5rem,9vw,9rem)] sm:pb-[clamp(5rem,9vw,9rem)]"
+  class="relative flex flex-col justify-center pt-12 pb-28 sm:min-h-[calc(100svh-2*clamp(0.75rem,1.6vw,1.5rem)-clamp(1.4rem,2.6vw,2.35rem)-1px)] sm:pt-[clamp(5rem,9vw,9rem)] sm:pb-[clamp(5rem,9vw,9rem)]"
   aria-labelledby="hero-title"
 >
   <!-- Bloc de gauche : w-fit = aussi large que son contenu (le nom) -->
-  <div class="relative ml-[5%] w-fit">
+  <!-- Mobile : toute la largeur, avec une marge de 8 % de chaque côté -->
+  <div class="relative ml-[5%] w-fit max-sm:mx-[8%] max-sm:w-auto">
     <!-- Dossiers autour du cadre (positions en % du cadre) -->
-    <Folder class={`-top-[22%] -left-[1%] z-10 -rotate-3 ${size}`} />
+    <Folder class={`-top-[22%] -left-[1%] z-10 hidden -rotate-3 sm:block ${size}`} />
     <!-- Dossier avec les logos de mes outils qui dépassent -->
-    <Folder class={`-top-[23%] right-[6%] z-10 rotate-6 ${size}`} delay="-1.5s">
+    <!-- Sur mobile : plus grand, en haut à droite du nom (comme la maquette) -->
+    <Folder class={`-top-[23%] right-[6%] z-10 rotate-6 ${size} max-sm:-top-3 max-sm:right-0 max-sm:h-[4.4rem] max-sm:w-[6rem]`} delay="-1.5s">
       <img src="/img/affinity.svg" alt="" class="absolute -top-[12%] left-[14%] w-[50%] -rotate-12" />
       <img src="/img/figma.svg" alt="" class="absolute -top-[20%] left-[62%] w-[26%] rotate-[18deg]" />
     </Folder>
     <Folder class={`top-[78%] left-[12%] z-10 hidden rotate-[10deg] sm:block ${size}`} delay="-4.5s" />
 
     <!-- Cadre de sélection : pointillés épais (3px) -->
-    <div class="relative border-[3px] border-dotted border-electric px-[min(2.3vw,44px)] pt-[min(3.5vw,67px)] pb-[min(2.2vw,42px)]">
+    <!-- Sur mobile, pas de cadre : le nom prend toute la place -->
+    <div class="relative border-[3px] border-dotted border-electric px-[min(2.3vw,44px)] pt-[min(3.5vw,67px)] pb-[min(2.2vw,42px)] max-sm:border-0 max-sm:p-0">
       {handles.map((pos) => (
-        <span class:list={["absolute size-3 border-2 border-electric bg-white", pos]} aria-hidden="true" />
+        <span class:list={["absolute size-3 border-2 border-electric bg-white max-sm:hidden", pos]} aria-hidden="true" />
       ))}
 
-      <h1 id="hero-title" class="font-heavy text-[clamp(1.4rem,5.8vw,7rem)] leading-[0.92] font-black whitespace-nowrap uppercase">
+      <!-- « Portfolio-2026 » : dans le header sur ordinateur, ici sur mobile -->
+      <p class="mb-1 text-sm font-bold text-electric uppercase sm:hidden">Portfolio-2026</p>
+      <h1 id="hero-title" class="font-heavy text-[clamp(1.4rem,5.8vw,7rem)] leading-[0.92] font-black whitespace-nowrap uppercase max-sm:text-[11vw]">
         <span class="block text-electric">Matias</span>
-        <span class="block">Verguet--Bailly</span>
+        <!-- Sur mobile, le nom passe sur deux lignes après les tirets -->
+        <span class="block">Verguet--<br class="sm:hidden" />Bailly</span>
       </h1>
       <p class="font-serif text-[clamp(1.1rem,2.7vw,3.25rem)] leading-tight">Designer graphique</p>
 
@@ -49,22 +56,15 @@ const size = "w-[clamp(4.5rem,11vw,12.5rem)] h-[clamp(3.3rem,8.2vw,9.3rem)]";
            top-full / left-full : le coin haut-gauche du SVG est placé sur le coin du cadre.
            La pointe de la flèche est à (14, 14) dans un SVG de 40 × 40, soit 35 % :
            on recule donc le SVG de 35 % pour que la pointe tombe pile sur la poignée. -->
-      <svg class="absolute top-full left-full z-20 w-[clamp(1.75rem,5vw,5.5rem)] -translate-x-[35%] -translate-y-[35%] text-electric" viewBox="0 0 40 40" aria-hidden="true">
+      <svg class="absolute top-full left-full z-20 w-[clamp(1.75rem,5vw,5.5rem)] max-sm:hidden -translate-x-[35%] -translate-y-[35%] text-electric" viewBox="0 0 40 40" aria-hidden="true">
         <path d="M14 14l22 9-9 3-3 10z" fill="currentColor" />
         <path d="M8 6l3 4M4 12l4 1M13 3l1 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
       </svg>
     </div>
 
-    <!-- Pastille de disponibilité : point bleu qui « pulse » (animate-ping = un halo qui grandit
-         et disparaît en boucle, coupé si l'utilisateur a demandé à réduire les animations) -->
-    <p class="mt-[min(2.5vw,36px)] flex justify-end pr-[4%]">
-      <span class="inline-flex items-center gap-[0.6em] rounded-full border border-ink/15 bg-white px-[0.9em] py-[0.4em] font-display text-[clamp(0.9rem,1.7vw,2rem)] leading-tight shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
-        <span class="relative flex size-[0.55em] shrink-0" aria-hidden="true">
-          <span class="absolute inset-0 animate-ping rounded-full bg-electric opacity-60"></span>
-          <span class="relative size-full rounded-full bg-electric"></span>
-        </span>
-        <span><strong class="font-bold">Disponible pour un stage</strong> · du 29 mars au 4 juin 2026</span>
-      </span>
+    <!-- Pastille de disponibilité (composant Pastille) -->
+    <p class="mt-[min(2.5vw,36px)] flex pr-[4%] max-sm:mt-6 sm:justify-end">
+      <Pastille class="text-[clamp(0.85rem,1.7vw,2rem)] max-sm:text-[0.74rem]" />
     </p>
   </div>
 
@@ -74,5 +74,6 @@ const size = "w-[clamp(4.5rem,11vw,12.5rem)] h-[clamp(3.3rem,8.2vw,9.3rem)]";
        Son sweat noir se fond dans le dossier noir juste en dessous.
        -bottom-[6px] : il passe de 6px sous le dossier (affiché par-dessus), pour qu'aucune
        ligne claire n'apparaisse à la jonction (arrondis au pixel, bord adouci par la compression). -->
-  <Character class="mx-auto mt-10 w-[70%] sm:absolute sm:right-[2%] sm:-bottom-[6px] sm:mt-0 sm:h-[min(70svh,38vw,48rem)] sm:w-auto" />
+  <!-- Pas de personnage sur mobile (pas de souris pour le faire bouger) -->
+  <Character class="hidden sm:absolute sm:right-[2%] sm:-bottom-[6px] sm:block sm:h-[min(70svh,38vw,48rem)] sm:w-auto" />
 </section>

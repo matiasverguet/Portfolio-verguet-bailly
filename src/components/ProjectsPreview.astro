@@ -13,8 +13,8 @@ interface Props {
 
 const { sombre = false } = Astro.props;
 
-// Sur l'accueil, on montre les 3 premiers projets
-const projets = (await getProjets()).slice(0, 3);
+// Sur l'accueil : les 4 premiers projets sur mobile (2 par 2), les 3 premiers sur ordinateur
+const projets = (await getProjets()).slice(0, 4);
 ---
 
 <section
@@ -31,16 +31,17 @@ const projets = (await getProjets()).slice(0, 3);
   <!-- Contenu limité à 1440px et centré, même si le dossier prend toute la largeur -->
   <div
     class:list={[
-      "mx-auto max-w-[1440px] pr-[6%] pl-[9.6%]",
-      sombre ? "pt-[min(5vw,72px)] pb-[min(10vw,144px)]" : "pt-[min(8vw,115px)] pb-[min(13vw,187.2px)]",
+      "mx-auto max-w-[1440px] pr-[6%] pl-[9.6%] max-sm:px-[7%]",
+      sombre ? "pt-[min(3.5vw,50px)] pb-[min(6vw,86px)]" : "pt-[min(8vw,115px)] pb-[min(13vw,187.2px)]",
     ]}
   >
     <h2 id="projects-title" class="ml-[2%] font-display text-[clamp(2.25rem,5vw,4.5rem)] leading-none font-bold uppercase">
       Mes projets
     </h2>
 
-    <div class="mt-[clamp(2.5rem,6vw,5.4rem)] grid gap-x-[min(4vw,57.6px)] gap-y-10 sm:grid-cols-3">
-      {projets.map((projet) => <ProjectCard {...projet} />)}
+    <!-- Mobile : 2 par 2 · ordinateur : 3 par ligne (le 4e projet est caché) -->
+    <div class="mt-titre grid grid-cols-2 gap-x-5 gap-y-6 sm:grid-cols-3 sm:gap-x-[min(4vw,57.6px)] sm:gap-y-10">
+      {projets.map((projet, index) => <div class:list={[index === 3 && "sm:hidden"]}><ProjectCard {...projet} /></div>)}
     </div>
 
     <div class="mt-[min(4vw,57.6px)] text-right">
