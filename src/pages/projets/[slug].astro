@@ -57,8 +57,9 @@ for (const section of projet.sections) {
     <!-- ===== En-tête : texte à gauche, catégorie + image à droite ===== -->
     <header class="mt-[min(2.5vw,36px)] grid gap-10 sm:grid-cols-[1fr_1fr] sm:gap-[min(5vw,72px)]">
       <div>
-        <!-- view-transition-name : même nom que sur la carte projet → animation entre les deux pages -->
-        <h1 style={`view-transition-name: projet-titre-${projet.slug}`} class="font-display text-[clamp(2.5rem,4.6vw,4.2rem)] leading-none font-bold uppercase">{projet.titre}</h1>
+        <!-- view-transition-name : même nom que sur la carte projet → animation entre les deux pages.
+             w-fit : le cadre du titre colle au texte, comme sur la carte, pour qu'il grandisse sans se déformer -->
+        <h1 style={`view-transition-name: projet-titre-${projet.slug}; view-transition-class: titre`} class="w-fit font-display text-[clamp(2.5rem,4.6vw,4.2rem)] leading-none font-bold uppercase">{projet.titre}</h1>
         <p class="mt-[0.3em] text-[clamp(1rem,1.25vw,1.15rem)] font-bold">{projet.sous_titre}</p>
 
         <dl class="mt-titre space-y-[min(2vw,28px)]">
@@ -78,7 +79,7 @@ for (const section of projet.sections) {
           [{projet.categorie}]
           {projet.logo_outil && <img src={`/img/${projet.logo_outil}.svg`} alt="" class="h-[1.3em] w-auto" />}
         </p>
-        <PbImage src={projet.couverture} nom="couverture" style={`view-transition-name: projet-visuel-${projet.slug}`} alt={`${projet.titre} — visuel principal`} loading="eager" class="w-full" />
+        <PbImage src={projet.couverture} nom="couverture" style={`view-transition-name: projet-visuel-${projet.slug}; view-transition-class: visuel`} alt={`${projet.titre} — visuel principal`} loading="eager" class="w-full" />
       </div>
     </header>
 

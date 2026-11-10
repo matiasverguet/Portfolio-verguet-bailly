@@ -56,7 +56,7 @@ const spring = "transition-[translate,scale,rotate,filter] duration-[650ms] ease
       src={image}
       alt=""
       nom={slug}
-      style={`view-transition-name: projet-visuel-${slug}`}
+      style={`view-transition-name: projet-visuel-${slug}; view-transition-class: visuel`}
       class={[
         "absolute -top-[clamp(3.5rem,6.2vw,5.6rem)] max-sm:-top-11 left-1/2 h-[clamp(10rem,19vw,17rem)] w-[90%] -translate-x-1/2 origin-bottom scale-[0.85] -rotate-2 object-contain object-top",
         "group-hover:-translate-y-[10%] group-hover:scale-[1.02] group-hover:rotate-0 group-hover:drop-shadow-[0_10px_8px_rgba(0,0,0,0.2)] group-hover:delay-80",
@@ -65,8 +65,11 @@ const spring = "transition-[translate,scale,rotate,filter] duration-[650ms] ease
       ].join(" ")}
     />
 
-    <!-- Avant du dossier : il bascule vers nous en pivotant sur son bord bas -->
+    <!-- Avant du dossier : il bascule vers nous en pivotant sur son bord bas.
+         view-transition-name : pendant le changement de page, il reste devant le visuel,
+         qui sort donc de derrière lui (ouverture) ou rentre derrière lui (retour à la liste). -->
     <div
+      style={`view-transition-name: projet-avant-${slug}; view-transition-class: avant`}
       class:list={[
         "relative flex flex-1 origin-bottom flex-col rounded-xl bg-folder px-[clamp(1rem,1.8vw,1.6rem)] py-[clamp(0.75rem,1.3vw,1.2rem)] shadow-[-6px_8px_3px_rgba(0,0,0,0.12)]",
         "max-sm:px-3 max-sm:py-2.5",
@@ -76,7 +79,7 @@ const spring = "transition-[translate,scale,rotate,filter] duration-[650ms] ease
     >
       <p class="font-display text-[clamp(1.9rem,3.4vw,3rem)] leading-none max-sm:text-[1.5rem]">{num}</p>
       <span class="my-[clamp(0.35rem,0.6vw,0.55rem)] block h-[3px] w-[2em] bg-ink max-sm:h-[2px]" aria-hidden="true"></span>
-      <h3 style={`view-transition-name: projet-titre-${slug}`} class="max-w-[16em] font-display text-[clamp(1.05rem,1.85vw,1.65rem)] max-sm:text-[0.9rem] leading-tight font-bold uppercase">{titre}</h3>
+      <h3 style={`view-transition-name: projet-titre-${slug}; view-transition-class: titre`} class="w-fit max-w-[16em]font-display text-[clamp(1.05rem,1.85vw,1.65rem)] max-sm:text-[0.9rem] leading-tight font-bold uppercase">{titre}</h3>
       <!-- Mobile : étiquettes sur une seule ligne, 2 au maximum (l'année est cachée) → lisibles et dossiers moins hauts -->
       <ul class="mt-[clamp(0.4rem,0.7vw,0.65rem)] flex flex-wrap gap-1.5 max-sm:flex-nowrap max-sm:gap-1 max-sm:overflow-hidden">
         {tags.map((tag, index) => <li class:list={["rounded-full border border-ink px-[0.6em] py-[0.1em] text-[clamp(0.7rem,1.1vw,1rem)] max-sm:shrink-0 max-sm:px-[0.5em] max-sm:text-[0.65rem]", index >= 2 && "max-sm:hidden"]}>{tag}</li>)}

@@ -65,6 +65,45 @@ const imagePartage = new URL(image, Astro.site);
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Sens de la transition entre deux pages (animations dans global.css) :
+         on compare l'ancienne et la nouvelle adresse pour savoir si on ouvre un projet,
+         si on en revient, ou si on passe au projet suivant.
+         Script inline dans le <head> : il doit être prêt avant que la nouvelle page s'affiche
+         (événement pagereveal). Navigateurs sans support : il ne fait rien.
+         Seule la carte du projet ouvert (ou quitté) garde son view-transition-name : sinon toutes
+         les autres cartes de la liste resteraient figées par-dessus la nouvelle page pendant l'animation. -->
+    <script is:inline>
+      // slug du projet dans une adresse (/projets/la-cimade → "la-cimade"), sinon null
+      const slugDe = (url) => new URL(url).pathname.match(/^\/projets\/([^/]+)/)?.[1] ?? null;
+      const garderSeulement = (slug) =>
+        document.querySelectorAll('[style*="view-transition-name: projet-"]').forEach((el) => {
+          if (!slug || !el.style.viewTransitionName.endsWith("-" + slug)) el.style.viewTransitionName = "none";
+        });
+
+      // Ancienne page, juste avant de partir :
+      // - liste → projet : on ne garde que la carte du projet qu'on ouvre ;
+      // - projet → liste : on garde le visuel et le titre du projet qu'on quitte ;
+      // - projet → projet suivant : rien ne vole (slug différent), les pages glissent.
+      addEventListener("pageswap", (e) => {
+        if (!e.viewTransition || !e.activation?.entry?.url) return;
+        const ici = slugDe(location.href);
+        const destination = slugDe(e.activation.entry.url);
+        garderSeulement(ici && destination ? null : destination ?? ici);
+      });
+
+      // Nouvelle page, juste avant de s'afficher
+      addEventListener("pagereveal", (e) => {
+        const depart = window.navigation?.activation?.from?.url;
+        if (!e.viewTransition || !depart) return;
+        const avant = slugDe(depart);
+        const apres = slugDe(navigation.activation.entry.url);
+        const sens = avant && apres ? "projet-suivant" : apres ? "vers-projet" : avant ? "depuis-projet" : null;
+        if (sens) e.viewTransition.types.add(sens);
+        // Retour à la liste : seule la carte du projet qu'on vient de quitter reçoit le visuel
+        if (sens === "depuis-projet") garderSeulement(avant);
+      });
+    </script>
   </head>
   <!-- overflow-x-clip : un dossier qui dépasse sur le côté ne crée pas de barre de défilement horizontale
        (contrairement à overflow-hidden, ça ne casse pas le header sticky) -->

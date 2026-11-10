@@ -2,6 +2,8 @@
 node_modules/
 dist/
 .astro/
+# Images converties gardées en cache par le serveur (src/lib/image-cache.ts)
+cache/
 # PocketBase (base locale et fichiers envoyés : ne pas versionner)
 pb_data/
 pocketbase.exe

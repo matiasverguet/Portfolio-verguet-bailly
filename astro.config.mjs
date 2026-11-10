@@ -31,7 +31,10 @@ export default defineConfig({
 
   // Images distantes autorisées : celles de PocketBase (en local ou sur le VPS).
   // Astro les optimise (WebP, bonne taille) au moment où elles sont demandées.
+  // Sur le site construit, /_image passe par src/lib/image-cache.ts : chaque image n'est convertie
+  // qu'une fois, puis gardée en cache (sinon ~1,7 s de conversion par image à chaque visite).
   image: {
+    ...(process.argv.includes("build") && { endpoint: { entrypoint: "./src/lib/image-cache.ts" } }),
     remotePatterns: [
       { protocol: "http", hostname: "127.0.0.1", port: "8090" },
       { protocol: pb.protocol.replace(":", ""), hostname: pb.hostname },

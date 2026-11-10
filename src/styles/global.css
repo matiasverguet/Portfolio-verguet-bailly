@@ -80,10 +80,85 @@
   }
 
   ::view-transition-group(*) {
-    animation-duration: 0.5s;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-duration: 0.6s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); /* départ rapide, arrivée tout en douceur */
+  }
+
+  /* Visuel et titre du projet (view-transition-class : visuel / titre) :
+     par défaut, le navigateur étire l'ancienne et la nouvelle capture à la taille du cadre en mouvement
+     (image déformée, texte écrasé). object-fit: contain garde leurs proportions pendant tout le trajet. */
+  ::view-transition-old(.visuel),
+  ::view-transition-new(.visuel),
+  ::view-transition-old(.titre),
+  ::view-transition-new(.titre) {
+    height: 100%;
+    object-fit: contain;
+  }
+  ::view-transition-old(.titre),
+  ::view-transition-new(.titre) {
+    object-position: left top;
+  }
+  /* Ordre d'empilement pendant l'animation (du fond vers l'avant) :
+     page → visuel → avant du dossier de la carte → titre.
+     Le visuel vole au-dessus de la page, mais passe DERRIÈRE l'avant du dossier, comme sur la carte. */
+  ::view-transition-group(.visuel) {
+    z-index: 10;
+  }
+  ::view-transition-group(.avant) {
+    z-index: 11;
+  }
+  ::view-transition-group(.titre) {
+    z-index: 12;
+  }
+  /* L'avant du dossier n'existe que sur la liste : il part avec elle (ouverture)
+     ou arrive vite, avant que le visuel ne rentre derrière lui (retour) */
+  ::view-transition-old(.avant) {
+    animation: 0.3s ease-in 0.1s both vt-recule;
+  }
+  ::view-transition-new(.avant) {
+    animation: 0.25s ease-out both vt-apparait;
+  }
+  /* L'ancienne image (visuel de la carte) s'efface vite, la nouvelle (couverture du projet) arrive aussitôt :
+     on ne voit pas les deux images superposées */
+  ::view-transition-old(.visuel) {
+    animation: 0.25s ease-out both vt-disparait;
+  }
+  ::view-transition-new(.visuel) {
+    animation: 0.3s ease-out 0.08s both vt-apparait;
+  }
+
+  /* Le reste de la page (root) bouge selon le sens de la navigation.
+     Le sens (vers-projet, depuis-projet, projet-suivant) est donné par le petit script de Layout.astro. */
+
+  /* Ouvrir un projet : la liste recule et s'efface, puis le contenu du projet monte en place
+     pendant que le visuel sort du dossier et vient se poser en haut de la page. */
+  html:active-view-transition-type(vers-projet) {
+    &::view-transition-old(root) { animation: 0.3s ease-in both vt-recule; }
+    &::view-transition-new(root) { animation: 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both vt-monte; }
+  }
+
+  /* Revenir à la liste : la page du projet descend et s'efface, la liste revient doucement en place
+     et le visuel retourne dans son dossier. */
+  html:active-view-transition-type(depuis-projet) {
+    &::view-transition-old(root) { animation: 0.3s ease-in both vt-descend; }
+    &::view-transition-new(root) { animation: 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both vt-avance; }
+  }
+
+  /* Projet suivant : les pages glissent de droite à gauche, comme on tourne une page. */
+  html:active-view-transition-type(projet-suivant) {
+    &::view-transition-old(root) { animation: 0.35s ease-in both vt-vers-gauche; }
+    &::view-transition-new(root) { animation: 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both vt-depuis-droite; }
   }
 }
+
+@keyframes vt-disparait { to { opacity: 0; } }
+@keyframes vt-apparait { from { opacity: 0; } }
+@keyframes vt-recule { to { opacity: 0; scale: 0.96; } }
+@keyframes vt-monte { from { opacity: 0; translate: 0 60px; } }
+@keyframes vt-descend { to { opacity: 0; translate: 0 40px; } }
+@keyframes vt-avance { from { opacity: 0; scale: 0.97; } }
+@keyframes vt-vers-gauche { to { opacity: 0; translate: -80px 0; } }
+@keyframes vt-depuis-droite { from { opacity: 0; translate: 80px 0; } }
 
 /* Curseur personnalisé façon Figma (souris uniquement : pointer fine = pas sur écran tactile).
    Hors @layer : ces règles passent devant les classes Tailwind cursor-pointer.
