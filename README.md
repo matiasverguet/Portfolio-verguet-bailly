@@ -23,7 +23,7 @@ Portfolio de designer graphique (BUT MMI 2e année, IUT de Montbéliard).
    ```
    Puis ouvrir http://localhost:4321
 
-Si PocketBase est éteint, le site utilise les données de secours de `src/data/projets.js`.
+PocketBase doit tourner : sans lui, les pages qui affichent des projets renvoient une erreur.
 
 ## Construire le site (SSR)
 Le site est en rendu côté serveur (adaptateur `@astrojs/node`, mode standalone) :
@@ -41,20 +41,23 @@ src/
   components/              Header, Footer, Hero, Folder, Skills, AboutPreview, ProjectCard, ProjectsPreview
   pages/projets/[slug].astro  une page par projet (données PocketBase)
   lib/pocketbase.js        lecture de PocketBase (fetch sur l'API REST)
-  data/                    textes des compétences, de la page About, projets de secours
-  styles/global.css        Tailwind + charte graphique (@theme)
-public/img/                images (photo, logos, visuels de secours)
+  data/                    textes des compétences, de la page About, liens des réseaux
+  lib/image-cache.ts       cache des images converties (site en ligne)
+  middleware.ts            en-têtes de sécurité
+  styles/global.css        Tailwind + charte graphique (@theme) + transitions entre pages
+public/img/                images (photo, logos)
 public/video/              vidéo du personnage (WebM transparent + MP4 pour Safari)
 pocketbase/pb_migrations/  structure et contenu de départ de la base (versionnés)
 IA.md                      déclaration d'usage de l'IA
 JOURNAL.md                 journal de bord
+QUALITE.md                 démarche qualité (accessibilité, performance, SEO, sécurité, RGPD)
 ```
 
 ## Mise en ligne
-| Rôle | Service |
-|---|---|
+| Rôle                                     | Service                             |
+|------------------------------------------|-------------------------------------|
 | Nom de domaine `verguet-bailly.fr` (DNS) | Infomaniak |
-| Site Astro en SSR | VPS de l'IUT : service `portfolio` (Bun, port local 3010) derrière Apache, sur `https://verguet-bailly.fr` |
+| Site Astro en SSR                        | VPS de l'IUT : service `portfolio` (Bun, port local 3010) derrière Apache, sur `https://verguet-bailly.fr`    |
 | PocketBase (projets, images, messages du formulaire) | VPS de l'IUT : service `pb-portfolio` (port local 8091) derrière Apache, sur `https://api.verguet-bailly.fr` |
 
 ```
