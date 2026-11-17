@@ -47,7 +47,11 @@ const portrait: string | undefined = "/img/portrait.webp";
        origin-bottom-right : le zoom (scale-110) part de ce coin, donc le bas ne bouge pas. -->
   {
     portrait ? (
-      <img src={portrait} alt="Portrait de Matias Verguet--Bailly, pouce levé, avec un effet de lignes verticales" width="1198" height="1002" class="hidden w-full sm:block sm:origin-bottom-right sm:scale-110 sm:self-end" />
+      <div data-portrait class="relative hidden w-full sm:block sm:origin-bottom-right sm:scale-110 sm:self-end">
+        <img src={portrait} alt="Portrait de Matias Verguet--Bailly, pouce levé, avec un effet de lignes verticales" width="1198" height="1002" class="block w-full" />
+        <!-- Bandes verticales créées par le script : elles ondulent sous la souris -->
+        <div data-strips class="pointer-events-none absolute inset-0 flex" aria-hidden="true"></div>
+      </div>
     ) : (
       <div class="grid aspect-[5/6] w-full place-items-center rounded-xl border-2 border-dashed border-folder-dark font-display text-xl text-folder-dark uppercase" aria-hidden="true">
         Portrait
@@ -55,3 +59,53 @@ const portrait: string | undefined = "/img/portrait.webp";
     )
   }
 </section>
+
+<script>
+  /* Portrait animé : l'image est découpée en bandes verticales (même image en fond, décalée).
+     Au survol, les bandes s'écartent autour de la souris, comme une loupe qui suit le curseur.
+     Rien ne bouge si le visiteur a demandé moins d'animations, ou sur écran tactile. */
+  const box = document.querySelector<HTMLElement>("[data-portrait]");
+  const reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const souris = matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  if (box && !reduit && souris) {
+    const img = box.querySelector("img")!;
+    const zone = box.querySelector<HTMLElement>("[data-strips]")!;
+    const N = 48; // nombre de bandes
+    const bandes: HTMLElement[] = [];
+
+    for (let i = 0; i < N; i++) {
+      const b = document.createElement("span");
+      b.style.cssText = `flex:1 1 0;height:100%;
+        background:url("${img.currentSrc || img.src}") no-repeat;
+        background-size:${N * 100}% 100%;
+        background-position:${(i / (N - 1)) * 100}% 0;
+        transform-origin:center;will-change:transform;
+        transition:transform .6s cubic-bezier(.2,.8,.2,1)`;
+      zone.append(b);
+      bandes.push(b);
+    }
+    img.style.opacity = "0"; // l'image reste là pour sa taille et son texte alternatif
+
+    /* Effet « loupe » : les bandes s'écartent autour de la souris, comme des stores
+       qu'on entrouvre avec les doigts, et celle du centre s'élargit un peu. */
+    let x = 0, w = 0, prevu = false;
+    const dessiner = () => {
+      prevu = false;
+      bandes.forEach((b, i) => {
+        const d = (i + 0.5) - x * N;             // distance à la souris, en bandes
+        const f = Math.exp(-(d * d) / 50);       // 1 sous la souris, 0 loin
+        const ecart = d * w * 0.7 * f;           // poussée vers la gauche ou la droite
+        b.style.transform = `translateX(${ecart}px) scaleX(${1 + f * 0.6})`;
+      });
+    };
+
+    box.addEventListener("pointermove", (e) => {
+      const r = box.getBoundingClientRect();
+      x = (e.clientX - r.left) / r.width;
+      w = r.width / N; // largeur d'une bande
+      if (!prevu) { prevu = true; requestAnimationFrame(dessiner); }
+    });
+    box.addEventListener("pointerleave", () => bandes.forEach((b) => (b.style.transform = "")));
+  }
+</script>
