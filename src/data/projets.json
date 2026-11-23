@@ -1,0 +1,494 @@
+[
+  {
+    "id": "294vathpqoyx5ig",
+    "slug": "chorus-symphonia",
+    "titre": "Chorus Symphonia",
+    "ordre": 1,
+    "sous_titre": "Identité visuelle & UI/UX — Projet étudiant, BUT MMI 1re année",
+    "categorie": "UI/UX",
+    "logo_outil": "figma",
+    "tags": [
+      "Branding",
+      "UI",
+      "2025"
+    ],
+    "contexte": "Festival de musique symphonique fictif organisé à la Citadelle de Besançon.",
+    "objectif": "Créer une identité premium mais accessible, déclinable du print à une expérience mobile.",
+    "role": "Direction artistique · Identité visuelle · UI/UX · Prototypage",
+    "outils": "Figma · Affinity",
+    "visuel_carte": "carte_kks2qtpscc.webp",
+    "couverture": "affiche_abribus_rh561005zi.webp",
+    "galerie": [
+      "moodboard_hupzbq0e9k.webp",
+      "flyers_8b98a5ops6.webp",
+      "affiche_abribus_gb7bp9284u.webp",
+      "declinaisons_numeriques_pssg06wnld.webp",
+      "maquettes_mobile_2pxtwguzu0.webp"
+    ],
+    "sections": [
+      {
+        "images": [
+          "moodboard"
+        ],
+        "mise_en_page": "image-texte",
+        "texte": [
+          "Cette direction artistique s'articule autour de trois notions : patrimoine, musique et élégance. Le bleu nocturne évoque les concerts en soirée, tandis que les tons dorés rappellent la pierre de la Citadelle et apportent un caractère prestigieux.",
+          "Ces recherches m'ont conduit à associer la silhouette de la Citadelle aux courbes d'un violon, créant ainsi un langage graphique directement décliné sur l'affiche et les différents supports de communication."
+        ],
+        "titre": "Recherches & Intentions"
+      },
+      {
+        "images": [
+          "flyers",
+          "affiche-abribus"
+        ],
+        "mise_en_page": "images",
+        "titre": "Supports Print"
+      },
+      {
+        "images": [
+          "declinaisons-numeriques"
+        ],
+        "mise_en_page": "moitie",
+        "titre": "Déclinaisons Numériques & Réseaux Sociaux"
+      },
+      {
+        "images": [
+          "maquettes-mobile"
+        ],
+        "mise_en_page": "moitie",
+        "titre": "Expérience Mobile & Interface UI"
+      },
+      {
+        "legende": "Formats mobiles pour les réseaux et parcours utilisateur mobile axé sur la découverte des artistes, les lieux du festival et le compte à rebours de l'événement.",
+        "lien": {
+          "texte": "Explorer la maquette Figma",
+          "url": "https://www.figma.com/proto/usq1bz0cVckOY43GVjOnvh/SAE-105?node-id=1-920&p=f&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=1%3A920"
+        }
+      },
+      {
+        "liste": [
+          {
+            "gras": "Identité globale & cohérente",
+            "texte": "Déclinaison harmonieuse de la direction artistique du print (affiche, flyers) jusqu'aux supports numériques (réseaux sociaux, interface web)."
+          },
+          {
+            "gras": "Conception centrée utilisateur",
+            "texte": "Structuration d'une interface mobile ergonomique facilitant la consultation de la programmation et l'accès à la billetterie."
+          },
+          {
+            "gras": "Outils & Méthodologie",
+            "texte": "Maîtrise de Figma (composants, mise en page responsive) et préparation des assets graphiques pour le développement web."
+          }
+        ],
+        "mise_en_page": "liste",
+        "titre": "Résultats & Compétences acquises"
+      }
+    ]
+  },
+  {
+    "id": "7xt8viwcgzn1xdr",
+    "slug": "la-cimade",
+    "titre": "La Cimade",
+    "ordre": 2,
+    "sous_titre": "Refonte d'identité visuelle & Stratégie de marque — Projet étudiant",
+    "categorie": "Graphisme / Branding",
+    "logo_outil": "",
+    "tags": [
+      "Branding",
+      "Print",
+      "2025"
+    ],
+    "contexte": "Association historique (1939) de défense des droits et d'accueil des personnes réfugiées et migrantes.",
+    "objectif": "Moderniser une identité vieillissante et clivante (rouge/noir) pour affirmer un rôle d'accueil chaleureux, protecteur et lisible sur les supports actuels.",
+    "role": "Audit visuel, benchmark associatif, repositionnement graphique, création du logotype et de la charte.",
+    "outils": "Canva · Affinity",
+    "visuel_carte": "carte_vgsejs5glq.webp",
+    "couverture": "carte_5qz5m396mf.webp",
+    "galerie": [
+      "anciens_logos_txt1y7m889.webp",
+      "croquis_qermascfys.webp",
+      "logotype_cb3sbjswyk.webp",
+      "typographies_eiu0rnh8sw.webp",
+      "supports_communication_fxolmvpeiv.webp",
+      "pistes_etoile_5tup796076.webp",
+      "logo_rtnnf8y3bn.webp",
+      "declinaisons_logo_drqp74mmfh.webp"
+    ],
+    "sections": [
+      {
+        "images": [
+          "anciens-logos"
+        ],
+        "mise_en_page": "image-texte",
+        "texte": [
+          "L'analyse de l'identité d'origine a mis en évidence des freins majeurs : le contraste rouge et noir connotait une lutte agressive manquant de bienveillance pour l'accueil, tandis que les filets horizontaux alourdissaient le logo sur mobile et formats réduits. L'enjeu était de conserver l'ancrage militant historique tout en insufflant la sérénité et la clarté nécessaires à une structure d'entraide."
+        ],
+        "titre": "Audit & Problématique"
+      },
+      {
+        "cadre": true,
+        "images": [
+          "croquis",
+          "pistes-etoile"
+        ],
+        "mise_en_page": "texte-images",
+        "texte": [
+          "L'exploration s'est orientée vers la métaphore de la boussole et de l'étoile protectrice, symbole de guide et d'espoir dans le parcours d'exil. Le travail typographique et le tracé du monogramme « C » apportent une spontanéité humaine, rompant avec la froideur institutionnelle."
+        ],
+        "titre": "Recherches & Exploration du signe"
+      },
+      {
+        "cadre": true,
+        "couleurs": [
+          {
+            "cmjn": "72, 59, 0, 6 %",
+            "hex": "#4363F0",
+            "rgb": "67, 99, 240"
+          },
+          {
+            "cmjn": "54, 39, 0, 78 %",
+            "hex": "#1A2238",
+            "rgb": "26, 34, 56"
+          },
+          {
+            "cmjn": "0, 0, 0, 0 %",
+            "hex": "#FFFFFF",
+            "rgb": "255, 255, 255"
+          }
+        ],
+        "fonds": {
+          "logotype": "#1A2238"
+        },
+        "images": [
+          "logo",
+          "logotype"
+        ],
+        "images_bas": [
+          "declinaisons-logo",
+          "typographies"
+        ],
+        "mise_en_page": "images",
+        "titre": "Le Logotype & la Charte Graphique"
+      },
+      {
+        "images": [
+          "supports-communication"
+        ],
+        "mise_en_page": "texte-images",
+        "texte": [
+          "Déclinaison du système visuel sur des supports numériques (posts réseaux sociaux, bannières de sensibilisation) et print (dépliants d'accueil, affiches militantes), garantissant un impact immédiat sur le terrain."
+        ],
+        "titre": "Déclinaisons & Supports de Communication"
+      },
+      {
+        "liste": [
+          {
+            "gras": "Méthodologie de branding complète",
+            "texte": "De l'audit stratégique à la rédaction de la charte graphique et des règles d'utilisation."
+          },
+          {
+            "gras": "Sens du message & éthique",
+            "texte": "Savoir traduire des valeurs humaines et militantes sans tomber dans le misérabilisme."
+          },
+          {
+            "gras": "Déclinaison multi-supports",
+            "texte": "Adaptation d'un signe identitaire pour le print (brochures, papeterie) et le web responsive et les réseaux sociaux."
+          }
+        ],
+        "mise_en_page": "liste",
+        "titre": "Résultats & Compétences acquises"
+      }
+    ]
+  },
+  {
+    "id": "ue26nw4zi5wqqzl",
+    "slug": "affiches",
+    "titre": "Design d'affiche",
+    "ordre": 3,
+    "sous_titre": "Campagne d'affiches pour le Pays de Montbéliard — Exercice MMI",
+    "categorie": "Affiche / Illustration",
+    "logo_outil": "",
+    "tags": [
+      "Affiche",
+      "Édition",
+      "2025"
+    ],
+    "contexte": "Exercice de BUT MMI : concevoir une série d'affiches pour promouvoir le Pays de Montbéliard et son patrimoine.",
+    "objectif": "Inventer un slogan et le décliner sur plusieurs lieux emblématiques, avec des affiches entièrement réalisées en vectoriel.",
+    "role": "Conception du slogan · Illustration vectorielle · Mise en page · Déclinaison de la série",
+    "outils": "Affinity",
+    "visuel_carte": "carte_rprn4y5xym.webp",
+    "couverture": "carte_1ftqa44x9g.webp",
+    "galerie": [
+      "affiche_temple_3go5kjp8hk.webp",
+      "affiche_chateau_epurkvv0a4.webp",
+      "affiche_stade_45acra2wi5.webp"
+    ],
+    "sections": [
+      {
+        "mise_en_page": "texte-images",
+        "texte": [
+          "Le slogan « … bat plus fort ici » part d'une idée simple : chaque lieu emblématique du Pays de Montbéliard est un cœur qui fait vivre le territoire. La formule se décline d'une affiche à l'autre en changeant seulement son début, ce qui crée une série immédiatement reconnaissable.",
+          "J'ai choisi trois lieux qui racontent trois facettes du territoire : le temple Saint-Martin pour le patrimoine religieux, le château des Ducs de Wurtemberg pour l'histoire, et le stade Auguste-Bonal pour le sport et la ferveur populaire."
+        ],
+        "titre": "Le concept"
+      },
+      {
+        "mise_en_page": "texte-images",
+        "texte": [
+          "Contrainte de l'exercice : tout devait être réalisé en vectoriel. J'ai donc reconstruit chaque monument en aplats de couleur sur Affinity, en simplifiant les volumes (façades, toitures, tours) pour garder une lecture claire même de loin, tout en conservant les détails qui rendent chaque lieu identifiable.",
+          "Pour unifier la série, les trois affiches partagent la même construction : le monument au centre, mis en scène de nuit et éclairé par des faisceaux de lumière qui convergent vers lui comme des projecteurs, un pictogramme du lieu en haut, le slogan en capitales blanches, puis un bandeau commun avec les logos et le hashtag #EspritMontbeliard.",
+          "La palette repose sur un bleu nuit commun, réchauffé par les teintes propres à chaque lieu : les fenêtres orangées du temple, la pierre beige et les toits brun-rouge du château, la pelouse verte et les tribunes bleues du stade, rappel des couleurs du FC Sochaux-Montbéliard."
+        ],
+        "titre": "Démarche & choix graphiques"
+      },
+      {
+        "images": [
+          "affiche-temple",
+          "affiche-chateau",
+          "affiche-stade"
+        ],
+        "mise_en_page": "images",
+        "titre": "Les affiches"
+      },
+      {
+        "liste": [
+          {
+            "gras": "Concevoir une série cohérente",
+            "texte": "Décliner un même principe graphique (cadrage, lumière, bandeau) sur plusieurs sujets sans perdre l'unité."
+          },
+          {
+            "gras": "Illustration vectorielle",
+            "texte": "Dessiner des bâtiments complexes uniquement avec des formes vectorielles sur Affinity, pour une impression nette à toutes les tailles."
+          },
+          {
+            "gras": "Écrire un message",
+            "texte": "Trouver un slogan court et déclinable qui donne envie de (re)découvrir le patrimoine local."
+          }
+        ],
+        "mise_en_page": "liste",
+        "titre": "Résultats & Compétences acquises"
+      }
+    ]
+  },
+  {
+    "id": "27m8kciuh4hksk4",
+    "slug": "affiches-fcsm",
+    "titre": "Affiches FCSM",
+    "ordre": 4,
+    "sous_titre": "Série d'affiches au format story pour le FC Sochaux-Montbéliard — Projet personnel",
+    "categorie": "Affiche / Réseaux sociaux",
+    "logo_outil": "",
+    "tags": [
+      "Affiche",
+      "Perso",
+      "2026"
+    ],
+    "contexte": "Projet personnel : une série d'affiches pour les réseaux sociaux du FC Sochaux-Montbéliard, le club de ma région, autour de l'actualité de la saison 2026-2027 de Ligue 2.",
+    "objectif": "Créer des visuels qui donnent envie de venir au stade Bonal, avec une identité forte (jaune et bleu du club) mais un traitement différent pour chaque type de publication.",
+    "role": "Concept · Photomontage · Typographie · Mise en page",
+    "outils": "Affinity",
+    "visuel_carte": "eventail_mdqvwiu1jw.webp",
+    "couverture": "eventail_2h94stfru8.webp",
+    "galerie": [
+      "matchday_stade_0b576phf45.webp",
+      "matchday_celebration_8x8ext6rkd.webp",
+      "joueur_du_mois_576611mp3m.webp",
+      "maillot_rose_5mdawbm1f4.webp"
+    ],
+    "sections": [
+      {
+        "images": [
+          "matchday-stade",
+          "matchday-celebration"
+        ],
+        "meme_hauteur": true,
+        "mise_en_page": "texte-images",
+        "texte": [
+          "Deux propositions pour annoncer le même match du 9 octobre 2026 au stade Auguste-Bonal. La première joue sur l'échelle : un joueur géant, poings serrés, posé au-dessus du stade vu du ciel, au milieu des usines et de la ville.",
+          "La seconde mise sur l'émotion collective : une célébration de buts, encadrée par une vague jaune en pointillés, avec les logos des deux clubs en haut et le nom des équipes en grand."
+        ],
+        "titre": "Matchday : Sochaux vs Boulogne"
+      },
+      {
+        "images": [
+          "joueur-du-mois"
+        ],
+        "meme_hauteur": true,
+        "mise_en_page": "moitie",
+        "texte": [
+          "Une affiche pour mettre en avant le joueur du mois de septembre : le nom du joueur répété en contour sur tout le fond crée une texture typographique derrière la photo."
+        ],
+        "titre": "Joueur du mois"
+      },
+      {
+        "images": [
+          "maillot-rose"
+        ],
+        "meme_hauteur": true,
+        "mise_en_page": "moitie",
+        "texte": [
+          "Une affiche pour le maillot rose et blanc d'Octobre rose : la couleur de la campagne recouvre toute l'image, et le logo du club, répété en filigrane, sert de motif en bas."
+        ],
+        "titre": "L'histoire en rose et blanc"
+      },
+      {
+        "liste": [
+          {
+            "gras": "Photomontage",
+            "texte": "Détourer, intégrer et éclairer des joueurs dans un décor pour créer une image qui attire l'œil."
+          },
+          {
+            "gras": "Hiérarchie typographique",
+            "texte": "Rendre lisibles en un coup d'œil le match, la date et le lieu, sur un format vertical vu sur téléphone."
+          },
+          {
+            "gras": "Décliner une identité",
+            "texte": "Garder les codes du club (couleurs, logo) tout en changeant de traitement selon le message."
+          }
+        ],
+        "mise_en_page": "liste",
+        "titre": "Résultats & Compétences acquises"
+      }
+    ]
+  },
+  {
+    "id": "lj5evvxllstrzei",
+    "slug": "chaleur-en-ville",
+    "titre": "Chaleur en ville",
+    "ordre": 5,
+    "sous_titre": "Data visualisation & site Astro — SAÉ 303, BUT MMI 2e année, en binôme avec Valentin Deroo",
+    "categorie": "Data visualisation",
+    "logo_outil": "",
+    "tags": [
+      "Dataviz",
+      "Web",
+      "2026"
+    ],
+    "contexte": "SAÉ 303 : répondre en binôme à un défi de l'Open Data University (association Latitudes) avec des données ouvertes réelles. Nous avons choisi le défi « Prévention des risques à Bordeaux Métropole ».",
+    "objectif": "Faire comprendre à un habitant de la métropole si sa commune est exposée aux îlots de chaleur, et si les plus fragiles le sont davantage, avec un récit en 4 temps et une méthode vérifiable.",
+    "role": "Exploration et nettoyage des données · Visualisations · Intégration du site · Rédaction du récit et de la page Méthode",
+    "outils": "Observable · Observable Plot · Astro · Tailwind CSS · mapshaper · Netlify",
+    "visuel_carte": "mockup_site_76fmk9o6dq.webp",
+    "couverture": "mockup_site_3gcs8ru3zc.webp",
+    "galerie": [
+      "mockup_carte_7ceo24szin.webp",
+      "mockup_ma_commune_k1zpvl3nht.webp",
+      "mockup_ages_2caqunmv1u.webp",
+      "mockup_fiche_commune_0devvskodh.webp",
+      "mockup_methode_s097lpj2n3.webp"
+    ],
+    "sections": [
+      {
+        "liens": [
+          {
+            "texte": "Le défi sur data.gouv.fr",
+            "url": "https://defis.data.gouv.fr/defis/prevention-des-risques-a-bordeaux-metropole"
+          }
+        ],
+        "mise_en_page": "texte-images",
+        "texte": [
+          "Le 11 juillet 2022, un satellite a mesuré la température de surface de toute la métropole de Bordeaux : environ 31 % de sa surface était à +3 °C ou plus au-dessus de la moyenne. C'est ce que Bordeaux Métropole appelle un îlot de chaleur.",
+          "Une zone chaude n'est pas encore un risque. Nous avons construit le récit sur la formule risque = aléa × enjeu × vulnérabilité : la chaleur, les habitants qui y vivent, et ceux qui auront le plus de mal à y faire face (les 80 ans et plus, les ménages pauvres). Le site suit une structure en 4 temps : contexte, exploration, révélation, conclusion."
+        ],
+        "titre": "Le défi et la question"
+      },
+      {
+        "images": [
+          "mockup-carte"
+        ],
+        "mise_en_page": "moitie",
+        "texte": [
+          "Compter les habitants avantagerait toujours les grandes communes : Bordeaux aura toujours plus de monde concerné qu'Ambès. La carte montre donc une part : sur 100 habitants de la commune, combien vivent en îlot de chaleur. Résultat : de 1 % à 95 % selon la commune.",
+          "Cinq classes de 20 points plutôt qu'un dégradé continu, pour pouvoir dire « ma commune est dans la tranche la plus haute ». La carte est la même pour tout le monde : elle est calculée à la construction du site (SVG statique, sans JavaScript)."
+        ],
+        "titre": "Une part, pas un nombre"
+      },
+      {
+        "images": [
+          "mockup-ma-commune"
+        ],
+        "mise_en_page": "moitie",
+        "texte": [
+          "Le lecteur choisit sa commune et la situe parmi les 28 de la métropole. Ce graphique change selon le choix : il est donc calculé dans le navigateur, avec un premier rendu fait à la construction pour rester lisible sans JavaScript.",
+          "La ligne de référence est le taux de toute la métropole (69,2 %), calculé sur tous ses habitants, et non la moyenne des 28 taux (46,3 %), qui donnerait autant de poids à une commune de 927 habitants qu'à Bordeaux."
+        ],
+        "titre": "Ma commune est-elle plus exposée ?"
+      },
+      {
+        "images": [
+          "mockup-ages"
+        ],
+        "mise_en_page": "moitie",
+        "texte": [
+          "Pour chaque commune, nous comparons la part des 80 ans et plus vivant en îlot de chaleur à celle de l'ensemble des habitants. Sur toute la métropole : 70,5 % contre 69,2 %, et l'écart change de sens d'une commune à l'autre.",
+          "Les ménages pauvres, eux, sont plus souvent en îlot de chaleur que l'ensemble des ménages : 76,3 % contre 71,6 %. Nous présentons un constat, sans inventer de cause."
+        ],
+        "titre": "Les plus fragiles sont-ils plus exposés ?"
+      },
+      {
+        "images": [
+          "mockup-fiche-commune"
+        ],
+        "mise_en_page": "moitie",
+        "texte": [
+          "Chaque commune a sa propre fiche, générée à la construction du site avec getStaticPaths d'Astro : 28 pages statiques, partageables et indexables, sans calcul chez le lecteur.",
+          "On y retrouve la part des habitants en îlot de chaleur, le rang de la commune, l'écart à la métropole, les 80 ans et plus, les ménages pauvres, et une carte où la commune est entourée."
+        ],
+        "titre": "Une page par commune"
+      },
+      {
+        "images": [
+          "mockup-methode"
+        ],
+        "liens": [
+          {
+            "texte": "Voir le site",
+            "url": "https://sae303-verguet-deroo.netlify.app/"
+          },
+          {
+            "texte": "Notebook Observable",
+            "url": "https://observablehq.com/@mmi-montbeliard/sae-303-gr-02"
+          },
+          {
+            "texte": "Code sur GitHub",
+            "url": "https://github.com/matiasverguet/SAE_303_Verguet-Bailly_Deroo"
+          },
+          {
+            "texte": "Réutilisation data.gouv.fr",
+            "url": "https://www.data.gouv.fr/reuses/chaleur-en-ville-qui-vit-dans-les-ilots-de-chaleur-de-bordeaux-metropole"
+          }
+        ],
+        "mise_en_page": "texte-images",
+        "texte": [
+          "Les données viennent de Bordeaux Métropole (îlots de chaleur 2022, contours des communes) et de l'Insee (Filosofi 2019, carreaux de 200 m). Le fichier national de l'Insee (2 287 884 carreaux, 454 Mo) a été réduit aux 6 751 carreaux des 28 communes ; seul un fichier préfiltré d'une ligne par commune est publié.",
+          "La page Méthode détaille les sources, les licences, les traitements et les limites : une température du sol et non de l'air, un seul jour de relevé, des habitants absents de Filosofi (résidents d'EHPAD, étudiants en résidence). Les données sont téléchargeables en CSV et en JSON, et le site est publié comme réutilisation sur data.gouv.fr."
+        ],
+        "titre": "Une méthode vérifiable"
+      },
+      {
+        "liste": [
+          {
+            "gras": "Préparer des données réelles",
+            "texte": "Filtrer un fichier national de 454 Mo, rattacher chaque carreau à sa commune et contrôler ce qui tombe à côté des jointures."
+          },
+          {
+            "gras": "Choisir la bonne représentation",
+            "texte": "Garder le bon dénominateur (une part plutôt qu'un nombre), une référence honnête et une carte seulement pour répondre à un « où ? »."
+          },
+          {
+            "gras": "Intégrer des visualisations dans Astro",
+            "texte": "Choisir pour chaque graphique sa route d'export : à la construction, dans le navigateur ou une page par valeur."
+          },
+          {
+            "gras": "Accessibilité et transparence",
+            "texte": "Figures légendées, textes alternatifs, page Méthode, données téléchargeables et publication sur data.gouv.fr."
+          }
+        ],
+        "mise_en_page": "liste",
+        "titre": "Résultats & Compétences acquises"
+      }
+    ]
+  }
+]

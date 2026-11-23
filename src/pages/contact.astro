@@ -1,14 +1,14 @@
 ---
 /* Page Contact : coordonnées à gauche, formulaire à droite.
-   Le formulaire envoie le message dans la collection « messages » de PocketBase
-   (script en bas de page) ; je le lis ensuite dans l'interface de PocketBase. */
+   Le formulaire est géré par Netlify Forms : Netlify repère le formulaire (data-netlify)
+   au moment de publier le site, enregistre les messages et me les envoie par email.
+   Pas de serveur à moi : le script en bas de page envoie le message sans recharger la page. */
 import Layout from "../layouts/Layout.astro";
 import SocialLinks from "../components/SocialLinks.astro";
 import Pastille from "../components/Pastille.astro";
-import { PB_URL } from "../lib/pocketbase.js";
 
 // Types de demande (boutons radio en forme d'étiquettes).
-// valeur = ce qui est enregistré dans PocketBase (doit correspondre aux choix du champ « sujet »)
+// valeur = ce qui apparaît dans le message reçu
 const sujets = [
   { label: "Stage/Alternance", valeur: "Stage/Alternance" },
   { label: "Identité visuelle", valeur: "Identité visuelle" },
@@ -66,8 +66,10 @@ const champ = "mt-[0.4em] w-full rounded-xl border border-ink bg-white px-[0.8em
         <h2 id="form-title" class:list={[titre, "mt-[0.3em]"]}>Contactez-moi</h2>
 
         <!-- required + type="email" : le navigateur vérifie lui-même les champs avant l'envoi -->
-        <!-- data-pb : adresse de PocketBase, transmise au script depuis la partie serveur -->
-        <form data-contact data-pb={PB_URL} class="mt-titre flex flex-col gap-[min(1.4vw,20px)]">
+        <!-- name + data-netlify : Netlify reconnaît le formulaire ; netlify-honeypot : nom du champ piège à robots.
+             form-name (caché) : Netlify en a besoin pour savoir à quel formulaire rattacher le message. -->
+        <form name="contact" method="POST" data-netlify="true" netlify-honeypot="site_web" data-contact class="mt-titre flex flex-col gap-[min(1.4vw,20px)]">
+          <input type="hidden" name="form-name" value="contact" />
           <label class={libelle}>
             Votre nom
             <input type="text" name="nom" autocomplete="name" required minlength="2" maxlength="100" class={champ} />
@@ -129,9 +131,9 @@ const champ = "mt-[0.4em] w-full rounded-xl border border-ink bg-white px-[0.8em
 </Layout>
 
 <script>
-  /* Envoi du formulaire dans PocketBase avec fetch (sans recharger la page).
-     PocketBase reçoit un POST sur /api/collections/messages/records et vérifie lui-même
-     les champs (obligatoires, email valide, longueurs) avant d'enregistrer. */
+  /* Envoi du formulaire à Netlify Forms avec fetch (sans recharger la page).
+     Netlify attend un POST sur la page elle-même, au format d'un formulaire classique
+     (application/x-www-form-urlencoded), avec le champ caché form-name. */
   const form = document.querySelector<HTMLFormElement>("[data-contact]");
   const statut = document.querySelector<HTMLElement>("[data-statut]");
   const bouton = form?.querySelector<HTMLButtonElement>("button[type=submit]");
@@ -158,18 +160,12 @@ const champ = "mt-[0.4em] w-full rounded-xl border border-ink bg-white px-[0.8em
     afficher("Envoi en cours…");
 
     try {
-      const reponse = await fetch(`${form.dataset.pb}/api/collections/messages/records`, {
+      const reponse = await fetch("/", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nom: donnees.get("nom"),
-          email: donnees.get("email"),
-          sujet: donnees.get("sujet"),
-          message: donnees.get("message"),
-        }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(donnees as unknown as Record<string, string>).toString(),
       });
 
-      if (reponse.status === 429) throw new Error("trop de messages"); // limite anti-spam atteinte
       if (!reponse.ok) throw new Error(`réponse ${reponse.status}`);
 
       form.reset();

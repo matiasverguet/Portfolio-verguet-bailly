@@ -6,11 +6,16 @@
    grille grise du site + grand dossier bleu, avec le visuel du projet qui en dépasse,
    comme sur les cartes projets. Format conseillé : 1200 × 630.
 
-   Les images viennent de PocketBase : rien à faire à la main, une image par projet est créée
-   (mise en cache une heure par le navigateur et par Apache). */
+   Site statique : getStaticPaths() fait fabriquer une image PNG par projet au moment
+   de construire le site, à partir du visuel de la carte (src/assets/projets/). */
 import type { APIRoute } from "astro";
 import sharp from "sharp";
-import { getProjets } from "../../lib/pocketbase.js";
+import { readFile } from "node:fs/promises";
+import { getProjets } from "../../lib/projets.js";
+
+export function getStaticPaths() {
+  return getProjets().map((projet) => ({ params: { slug: projet.slug } }));
+}
 
 const L = 1200;
 const H = 630;
@@ -54,17 +59,16 @@ const avant = `<svg xmlns="http://www.w3.org/2000/svg" width="${L}" height="${H}
 </svg>`;
 
 export const GET: APIRoute = async ({ params }) => {
-  const projets = await getProjets();
-  const projet = projets.find((p) => p.slug === params.slug);
+  const projet = getProjets().find((p) => p.slug === params.slug);
   if (!projet) return new Response("Projet introuvable", { status: 404 });
-  const props = { visuel: projet.image ?? projet.couverture };
+  const props = { visuel: projet.visuelPartage };
   const couches: sharp.OverlayOptions[] = [];
 
   // Visuel du projet : redimensionné pour tenir dans le dossier, aligné en haut,
   // légèrement tourné (comme sur les cartes), puis caché en bas par l'avant du dossier
   if (props.visuel) {
     try {
-      const source = Buffer.from(await (await fetch(props.visuel)).arrayBuffer());
+      const source = await readFile(props.visuel);
       const visuel = await sharp(source)
         .resize({ width: dl - 120, height: 400, fit: "inside" })
         .rotate(-2, { background: { r: 0, g: 0, b: 0, alpha: 0 } })
@@ -80,5 +84,5 @@ export const GET: APIRoute = async ({ params }) => {
   couches.push({ input: Buffer.from(avant), left: 0, top: 0 });
 
   const png = await sharp(Buffer.from(fond)).composite(couches).png({ compressionLevel: 9 }).toBuffer();
-  return new Response(new Uint8Array(png), { headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=3600" } });
+  return new Response(new Uint8Array(png), { headers: { "Content-Type": "image/png" } });
 };

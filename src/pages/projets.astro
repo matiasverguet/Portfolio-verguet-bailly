@@ -3,14 +3,20 @@
    et grille de cartes (même composant ProjectCard que sur l'accueil). */
 import Layout from "../layouts/Layout.astro";
 import ProjectCard from "../components/ProjectCard.astro";
-import { getProjets } from "../lib/pocketbase.js";
+import { getProjets } from "../lib/projets.js";
 
 // Tous les projets, lus dans PocketBase
 const projets = await getProjets();
 
-// Catégories du filtre : toutes les étiquettes des projets, sans les années (ex. "2025"),
-// sans doublon grâce à new Set().
-const filtres = [...new Set(projets.flatMap((projet) => projet.tags))].filter((tag) => !/^\d{4}$/.test(tag));
+// Catégories du filtre : 3 grandes familles plutôt qu'une pastille par étiquette
+// (8 pastilles pour 5 projets, c'était trop). Chaque famille regroupe plusieurs étiquettes
+// de PocketBase ; on n'affiche que les familles qui contiennent au moins un projet.
+const familles = [
+  { nom: "Identité visuelle", tags: ["Branding"] },
+  { nom: "Affiche & édition", tags: ["Affiche", "Print", "Édition"] },
+  { nom: "Web & UI", tags: ["UI", "Web", "Dataviz"] },
+];
+const filtres = familles.filter((f) => projets.some((p) => p.tags.some((t) => f.tags.includes(t))));
 ---
 
 <Layout
@@ -35,15 +41,15 @@ const filtres = [...new Set(projets.flatMap((projet) => projet.tags))].filter((t
       <div class="mt-titre" role="group" aria-label="Filtrer les projets par catégorie">
         <ul class="flex flex-wrap gap-2">
           {
-            ["Tous", ...filtres].map((filtre) => (
+            [{ nom: "Tous", tags: [] }, ...filtres].map((filtre) => (
               <li>
                 <button
                   type="button"
-                  data-filtre={filtre}
-                  aria-pressed={filtre === "Tous" ? "true" : "false"}
+                  data-filtre={filtre.tags.join("|")}
+                  aria-pressed={filtre.nom === "Tous" ? "true" : "false"}
                   class="min-h-11 rounded-full border border-ink px-[1.1em] font-display text-[clamp(1rem,1.4vw,1.25rem)] uppercase transition-colors hover:bg-white aria-pressed:border-electric aria-pressed:bg-electric aria-pressed:text-white"
                 >
-                  {filtre}
+                  {filtre.nom}
                 </button>
               </li>
             ))
@@ -75,20 +81,21 @@ const filtres = [...new Set(projets.flatMap((projet) => projet.tags))].filter((t
 
 <script>
   /* Filtre des projets : au clic sur une pastille, on cache (hidden) les cartes
-     dont les étiquettes ne la contiennent pas. */
+     qui n'ont aucune étiquette de la famille choisie.
+     data-filtre contient les étiquettes de la famille séparées par « | » (vide pour « Tous »). */
   const boutons = document.querySelectorAll<HTMLButtonElement>("[data-filtre]");
   const cartes = document.querySelectorAll<HTMLElement>("[data-tags]");
   const messageVide = document.querySelector<HTMLElement>("[data-vide]");
 
   boutons.forEach((bouton) => {
     bouton.addEventListener("click", () => {
-      const filtre = bouton.dataset.filtre ?? "Tous";
+      const famille = (bouton.dataset.filtre ?? "").split("|").filter(Boolean);
       let visibles = 0;
 
       // Affiche ou cache chaque carte
       cartes.forEach((carte) => {
         const tags = (carte.dataset.tags ?? "").split("|");
-        const garder = filtre === "Tous" || tags.includes(filtre);
+        const garder = famille.length === 0 || tags.some((t) => famille.includes(t));
         carte.hidden = !garder;
         if (garder) visibles++;
       });

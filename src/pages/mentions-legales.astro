@@ -3,10 +3,10 @@
    Obligatoires pour tout site édité en France (loi pour la confiance dans l'économie numérique,
    LCEN, art. 6) ; la partie « données personnelles » répond au RGPD (le formulaire de contact
    collecte un nom, un email et un message).
-   Hébergement : site (Astro en SSR) et PocketBase sur le VPS de l'IUT, domaine chez Infomaniak. */
+   Hébergement : site statique et formulaire sur Netlify, domaine chez Infomaniak. */
 import Layout from "../layouts/Layout.astro";
 
-const majLe = "10 novembre 2026"; // date de dernière mise à jour
+const majLe = "23 novembre 2026"; // date de dernière mise à jour
 const h2 = "mt-[min(4vw,56px)] font-display text-[clamp(1.5rem,2.6vw,2.3rem)] leading-tight font-bold uppercase";
 const p = "mt-[0.8em] max-w-[52rem] text-[clamp(0.95rem,1.15vw,1.05rem)] leading-relaxed";
 ---
@@ -37,9 +37,9 @@ const p = "mt-[0.8em] max-w-[52rem] text-[clamp(0.95rem,1.15vw,1.05rem)] leading
       <h2 id="hebergeur" class={h2}>Hébergement</h2>
       <!-- TODO : vérifier ces coordonnées (adresse, téléphone) sur les pages légales de chaque prestataire -->
       <p class={p}>
-        <strong>Site web, base de données et formulaire de contact</strong> : serveur privé virtuel (VPS)
-        de l'IUT Nord Franche-Comté, Université de Franche-Comté — 4 place Tharradin, 25200 Montbéliard,
-        France.
+        <strong>Site web et formulaire de contact</strong> : Netlify, Inc. — 512 2nd Street, Suite 200,
+        San Francisco, CA 94107, États-Unis —{" "}
+        <a href="https://www.netlify.com" target="_blank" rel="noopener" class="underline hover:text-electric">netlify.com</a>.
       </p>
       <p class={p}>
         <strong>Nom de domaine</strong> : Infomaniak Network SA — Rue Eugène-Marziano 25, 1227 Les Acacias
@@ -69,7 +69,7 @@ const p = "mt-[0.8em] max-w-[52rem] text-[clamp(0.95rem,1.15vw,1.05rem)] leading
       <h2 id="credits" class={h2}>Crédits</h2>
       <ul class:list={[p, "list-disc space-y-[0.4em] pl-[1.2em]"]}>
         <li>Conception, design et développement : Matias Verguet--Bailly.</li>
-        <li>Site construit avec Astro et Tailwind CSS ; contenus des projets gérés avec PocketBase.</li>
+        <li>Site statique construit avec Astro et Tailwind CSS, hébergé sur Netlify.</li>
         <li>
           Polices Antonio, Archivo, Inter et Instrument Serif, sous licence SIL Open Font License,
           hébergées sur ce site (paquets Fontsource).
@@ -91,8 +91,10 @@ const p = "mt-[0.8em] max-w-[52rem] text-[clamp(0.95rem,1.15vw,1.05rem)] leading
         vendues, ni cédées, ni utilisées à des fins publicitaires.
       </p>
       <p class={p}>
-        Elles sont enregistrées dans la base de données du site (PocketBase, hébergée sur le serveur de
-        l'IUT, en France), accessible uniquement par moi, et conservées <strong>12 mois</strong> au maximum avant d'être supprimées.
+        Elles sont enregistrées par Netlify Forms, le service de formulaires de l'hébergeur du site
+        (Netlify, Inc., aux États-Unis, encadré par les clauses contractuelles types de la Commission
+        européenne), accessibles uniquement par moi, et conservées <strong>12 mois</strong> au maximum
+        avant d'être supprimées.
       </p>
       <p class={p}>
         Conformément au RGPD, vous pouvez demander l'accès, la rectification ou la suppression de vos

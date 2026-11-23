@@ -1,7 +1,7 @@
 // sitemap.xml : la liste de toutes les pages pour les moteurs de recherche.
-// Fabriqué à chaque demande : les projets créés dans PocketBase y apparaissent tout de suite.
+// Fabriqué au moment de construire le site, avec la liste des projets de src/data/projets.json.
 import type { APIRoute } from "astro";
-import { getProjets } from "../lib/pocketbase.js";
+import { getProjets } from "../lib/projets.js";
 
 export const GET: APIRoute = async ({ site }) => {
   const projets = await getProjets();
