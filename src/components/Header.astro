@@ -31,7 +31,7 @@ const links = [
 <!-- view-transition-name : le header reste en place pendant le changement de page (pas de fondu) -->
 <header
   style="view-transition-name: entete"
-  class="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-y-3 border-b border-ink/40 bg-paper px-[3.7%] py-[clamp(0.75rem,1.6vw,1.5rem)] max-sm:px-[8%] max-sm:py-4"
+  class="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-y-3 sm:grid sm:grid-cols-[1fr_auto_1fr] border-b border-ink/40 bg-paper px-[3.7%] py-[clamp(0.75rem,1.6vw,1.5rem)] max-sm:px-[8%] max-sm:py-4"
 >
   <!-- Logo en SVG intégré : fill="currentColor" lui donne la couleur du texte du lien,
        donc il passe en bleu au survol comme les autres liens.
@@ -46,8 +46,11 @@ const links = [
     </svg>
   </a>
 
-  <nav aria-label="Navigation principale" class="hidden sm:block">
-    <ul class="flex items-center justify-between gap-[clamp(1.5rem,8vw,7rem)] text-[clamp(0.8rem,1.35vw,1.2rem)] font-bold uppercase">
+  <!-- Ordinateur : l'en-tête est une grille à 3 colonnes (1fr | auto | 1fr).
+       Le logo est dans la 1re ; la navigation occupe les 2 suivantes (sous-grille) :
+       Projets, About et CV au centre de l'écran, Contact calé à droite. -->
+  <nav aria-label="Navigation principale" class="hidden items-center text-[clamp(0.8rem,1.35vw,1.2rem)] font-bold uppercase sm:col-span-2 sm:grid sm:grid-cols-subgrid">
+    <ul class="flex items-center gap-[clamp(1.5rem,8vw,7rem)]">
       {
         links.map((link) => (
           <li>
@@ -70,6 +73,8 @@ const links = [
           </svg>
         </a>
       </li>
+    </ul>
+    <ul class="justify-self-end">
       <li>
         <!-- Sur la page Contact, le bouton reste noir et se souligne (comme les autres liens actifs) -->
         <a
