@@ -70,8 +70,9 @@ const size = "w-[clamp(4.5rem,11vw,12.5rem)] h-[clamp(3.3rem,8.2vw,9.3rem)]";
        Sur ordinateur : en position absolue, collé en bas à droite ; sa hauteur suit celle de l'écran
        (70 % de la hauteur visible), sans dépasser 38 % de la largeur (pour ne pas toucher le nom) ni 48rem.
        Son sweat noir se fond dans le dossier noir juste en dessous.
-       -bottom-[6px] : il passe de 6px sous le dossier (affiché par-dessus), pour qu'aucune
-       ligne claire n'apparaisse à la jonction (arrondis au pixel, bord adouci par la compression). -->
+       -bottom-[30px] : il passe de 30px sous le dossier (affiché par-dessus). Quand il tourne la tête,
+       la vidéo penche (jusqu'à 3°) et un coin du bas remonte : la marge le garde caché, et aucune
+       ligne claire n'apparaît à la jonction (arrondis au pixel, bord adouci par la compression). -->
   <!-- Pas de personnage sur mobile (pas de souris pour le faire bouger) -->
-  <Character class="hidden sm:absolute sm:right-[2%] sm:-bottom-[6px] sm:block sm:h-[min(70svh,38vw,48rem)] sm:w-auto" />
+  <Character class="hidden sm:absolute sm:right-[2%] sm:-bottom-[30px] sm:block sm:h-[min(70svh,38vw,48rem)] sm:w-auto" />
 </section>

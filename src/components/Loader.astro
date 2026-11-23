@@ -234,7 +234,7 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
     }
 
     const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const PAUSE = 1200; // temps passé avec le logo arrêté de face avant de partir
+    const PAUSE = 500; // temps passé avec le logo arrêté de face avant de partir
     const MAX = 7000; // durée maximale de l'écran, même si tout n'est pas chargé
     const scene = loader.querySelector<HTMLElement>(".scene")!;
     const logo = loader.querySelector<HTMLElement>(".logo3d")!;
