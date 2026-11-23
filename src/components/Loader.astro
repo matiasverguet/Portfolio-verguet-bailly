@@ -1,14 +1,16 @@
 ---
 /* Écran de chargement : logo « MB » en 3D qui tourne, affiché à la première visite.
    Inspiré de l'intro de cubistudio.fr, refait avec ma charte :
-   1. les 4 poignées d'un cadre de sélection (comme dans le hero) partent du centre et s'écartent ;
+   1. les 4 poignées noires d'un cadre de sélection partent du centre et s'écartent ;
    2. le cadre se remplit d'un coup (flash noir, logo clair), puis redevient vide ;
-   3. mon nom s'écrit lettre par lettre sous le logo ;
-   4. pendant tout ce temps, le logo épais tourne sur lui-même (un tour en 6 s).
+   3. les poignées clignotent puis disparaissent une par une ;
+   4. mon nom s'écrit lettre par lettre sous le logo ;
+   5. pendant tout ce temps, le logo épais tourne sur lui-même (un tour en TOUR ms).
    Pendant ce temps, le navigateur charge toutes les images de la page (même celles
    en lazy) et la vidéo du personnage : ensuite, le site défile sans saccade.
 
-   - Durée : au moins 2,6 s (le temps de l'intro), au plus 5 s si la connexion est lente.
+   - Durée : l'écran part à la fin d'un tour complet du logo, une fois tout chargé
+     (au moins 1 tour ; si la connexion est lente, on n'attend pas plus de 2 tours).
    - Une seule fois par visite (sessionStorage) : en changeant de page, pas de nouvel écran.
    - Le relief 3D est fait en CSS, sans librairie : COUCHES copies du logo empilées
      en profondeur (translateZ), de la plus claire (fond) à la plus foncée (face avant).
@@ -36,7 +38,7 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
     <!-- Cadre de sélection : les poignées sont dans ses coins -->
     <div class="cadre relative grid place-items-center" aria-hidden="true">
       <div class="fond-flash absolute inset-0 bg-ink"></div>
-      {poignees.map((pos) => <span class:list={["poignee absolute size-3 border-2 border-electric bg-white", pos]} />)}
+      {poignees.map((pos) => <span class:list={["poignee absolute size-3 bg-ink", pos]} />)}
 
       <div class="scene">
         <div class="logo3d">
@@ -67,24 +69,34 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
     height: calc(var(--w) * 1.2);
   }
 
-  /* 1. Les poignées partent du centre du cadre et s'écartent jusqu'aux coins */
+  /* 1. Les poignées partent du centre du cadre et s'écartent jusqu'aux coins.
+     3. Après le flash, elles clignotent puis disparaissent, l'une après l'autre (--d). */
   .poignee {
-    animation: ouvrir 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation:
+      ouvrir 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both,
+      clignoter 0.5s step-end calc(1.3s + var(--d)) forwards;
   }
-  .poignee:nth-of-type(1) { --dx: calc(var(--w) * 0.95); --dy: calc(var(--w) * 0.6); }
-  .poignee:nth-of-type(2) { --dx: calc(var(--w) * -0.95); --dy: calc(var(--w) * 0.6); }
-  .poignee:nth-of-type(3) { --dx: calc(var(--w) * 0.95); --dy: calc(var(--w) * -0.6); }
-  .poignee:nth-of-type(4) { --dx: calc(var(--w) * -0.95); --dy: calc(var(--w) * -0.6); }
+  .poignee:nth-of-type(1) { --dx: calc(var(--w) * 0.95); --dy: calc(var(--w) * 0.6); --d: 0s; }
+  .poignee:nth-of-type(2) { --dx: calc(var(--w) * -0.95); --dy: calc(var(--w) * 0.6); --d: 0.24s; }
+  .poignee:nth-of-type(3) { --dx: calc(var(--w) * 0.95); --dy: calc(var(--w) * -0.6); --d: 0.08s; }
+  .poignee:nth-of-type(4) { --dx: calc(var(--w) * -0.95); --dy: calc(var(--w) * -0.6); --d: 0.16s; }
   @keyframes ouvrir {
     from {
       transform: translate(var(--dx), var(--dy));
     }
   }
+  @keyframes clignoter {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    40% { opacity: 0; }
+    60% { opacity: 1; }
+    80%, 100% { opacity: 0; }
+  }
 
   /* 2. Flash : le cadre se remplit de noir et le logo passe en clair, un court instant */
   .fond-flash {
     opacity: 0;
-    animation: flash 0.3s steps(1) 0.7s forwards;
+    animation: flash 0.45s steps(1) 0.7s forwards;
   }
   @keyframes flash {
     0% {
@@ -95,7 +107,7 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
     }
   }
   .couche {
-    animation: couleur 0.3s steps(1) 0.7s forwards;
+    animation: couleur 0.45s steps(1) 0.7s forwards;
   }
   @keyframes couleur {
     0% {
@@ -119,7 +131,7 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
     width: var(--w);
     aspect-ratio: 67 / 33;
     transform-style: preserve-3d;
-    animation: tourner 6s linear infinite;
+    animation: tourner 3.2s linear infinite; /* durée d'un tour : le script s'en sert pour partir pile à la fin d'un tour */
   }
   .couche {
     position: absolute;
@@ -184,11 +196,12 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
     }
 
     const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const DUREE_MIN = reduit ? 300 : 2600;
-    const DUREE_MAX = 5000;
-    const debut = performance.now();
 
-    // 3. Le nom s'écrit lettre par lettre, juste après le flash
+    // Animation de rotation du logo, et durée d'un tour (lue dans le CSS : 3,2 s)
+    const rotation = document.querySelector<HTMLElement>(".logo3d")?.getAnimations()[0];
+    const TOUR = Number(rotation?.effect?.getTiming().duration) || 3200;
+
+    // 4. Le nom s'écrit lettre par lettre, une fois les poignées disparues
     if (zoneTexte) {
       const texte = zoneTexte.dataset.texte ?? "";
       if (reduit) {
@@ -198,7 +211,7 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
         setTimeout(function lettre() {
           zoneTexte.textContent = texte.slice(0, ++n);
           if (n < texte.length) setTimeout(lettre, 45);
-        }, 1050);
+        }, 1700);
       }
     }
 
@@ -235,15 +248,27 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
     document.documentElement.style.overflow = "hidden";
 
     const tout = Promise.all([...images.map(attendreImage), ...(video ? [attendreVideo(video)] : [])]);
-    const auPlusTard = new Promise((r) => setTimeout(r, DUREE_MAX));
+    // Si la connexion est lente, on n'attend pas plus de 2 tours
+    const auPlusTard = new Promise((r) => setTimeout(r, reduit ? 3000 : TOUR * 2 - 100));
 
     Promise.race([tout, auPlusTard]).then(() => {
-      const reste = Math.max(0, DUREE_MIN - (performance.now() - debut));
-      setTimeout(() => {
+      // L'écran part à la fin du tour en cours (au moins un tour complet).
+      // currentTime de l'animation = temps écoulé depuis le vrai début de la rotation
+      // (elle peut démarrer un peu après ce script, d'où la vérification à chaque image).
+      const ecoule = Number(rotation?.currentTime ?? 0);
+      const finDuTour = Math.max(1, Math.ceil(ecoule / TOUR)) * TOUR;
+      const attendreFinDuTour = (partir: () => void) => {
+        if (reduit || !rotation) return partir();
+        (function verifier() {
+          if (Number(rotation.currentTime ?? 0) >= finDuTour) partir();
+          else requestAnimationFrame(verifier);
+        })();
+      };
+      attendreFinDuTour(() => {
         loader.classList.add("sortie");
         document.documentElement.style.overflow = "";
         loader.addEventListener("transitionend", () => loader.remove(), { once: true });
-      }, reste);
+      });
     });
   } else {
     loader?.remove();
