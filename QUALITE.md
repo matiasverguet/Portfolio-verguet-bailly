@@ -44,15 +44,13 @@ Mobile :
 
 ## 2. Performance et éco-conception
 
+- **Site statique** : les pages sont fabriquées une seule fois, au build ; le visiteur reçoit
+  du HTML déjà prêt, sans serveur ni base de données à interroger.
 - **Poids des pages** : de 26 à 63 Ko de HTML par page.
-- **Temps de réponse** : de 0,15 à 0,45 s par page.
 - **Images** :
-  - converties en WebP et à la bonne taille par Astro ;
-  - chargées seulement quand on s'en approche en faisant défiler (`loading="lazy"`) ;
-  - gardées en cache sur le serveur après leur première conversion (`src/lib/image-cache.ts`) :
-    environ 5 ms au lieu de 1,7 s.
-- **Cache du navigateur** : les images et les fichiers CSS/JS sont gardés un an.
-- **Données** : la liste des projets est gardée 30 s en mémoire, donc PocketBase n'est pas interrogé à chaque visite.
+  - converties en WebP et à la bonne taille par Astro, au build ;
+  - chargées seulement quand on s'en approche en faisant défiler (`loading="lazy"`).
+- **Cache du navigateur** : les images et les fichiers CSS/JS (`/_astro/`) sont gardés un an (`netlify.toml`).
 - **JavaScript** : 
   - L'accordéon des compétences utilise `<details>`, sans JS.
   - Les transitions entre les pages sont faites par le navigateur, en CSS.
@@ -69,26 +67,21 @@ Mobile :
 - **robots.txt** : autorise tout et indique où est le sitemap.
 - **Page 404** : vraie erreur 404 pour une adresse inconnue, y compris pour un projet qui n'existe pas.
 - **Partage sur les réseaux** : balises Open Graph, et une image de partage générée pour chaque projet (`/og/<projet>.png`).
-- **HTTPS** : certificat Let's Encrypt ; `http://` est redirigé vers `https://`.
+- **HTTPS** : certificat Let's Encrypt créé par Netlify ; `http://` est redirigé vers `https://`.
 
 
 ## 4. Sécurité
 
-- **En-têtes HTTP** (`src/middleware.ts`) :
+- **Site statique** : pas de serveur applicatif ni de base de données en ligne, donc beaucoup moins
+  de points d'attaque possibles.
+- **En-têtes HTTP** (`netlify.toml`) :
   - `X-Frame-Options: DENY` : le site ne peut pas être affiché dans une iframe ;
   - `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`.
-- **Serveur** : le site et PocketBase n'écoutent qu'en local (127.0.0.1) ;
-  depuis Internet, on passe forcément par Apache, en HTTPS.
-- **Images** : le cache n'accepte que les images de mon PocketBase (une autre adresse renvoie une erreur 403).
-- **Formulaire** :
-  - PocketBase vérifie les champs (obligatoires, email valide, longueurs) ;
-  - un champ invisible piège les robots (« honeypot ») ;
-  - les messages ne sont lisibles que par moi (administrateur).
-- **Déploiement** :
-  - clé SSH réservée à GitHub ;
-  - secrets stockés dans GitHub, jamais dans le code ;
-  - `sudo` sans mot de passe limité au redémarrage des deux services.
-- **Fichiers sensibles** : `.env`, la base PocketBase (`pb_data/`) et le cache ne sont pas envoyés sur GitHub (`.gitignore`).
+- **Formulaire** (Netlify Forms) :
+  - le navigateur vérifie les champs (obligatoires, email valide, longueurs) ;
+  - un champ invisible piège les robots (« honeypot »), et Netlify filtre aussi le spam ;
+  - les messages ne sont lisibles que par moi, dans Netlify et par email.
+- **Fichiers sensibles** : `.env` et l'ancienne base locale (`pocketbase/pb_data/`) ne sont pas envoyés sur GitHub (`.gitignore`).
 
 
 ## 5. Aspects légaux (LCEN, RGPD)
@@ -105,22 +98,24 @@ Mobile :
 
 - **Composants Astro** réutilisables (header, footer, cartes, sections de projet).
 - **Charte graphique** déclarée à un seul endroit : `src/styles/global.css`.
-- **Contenu dans PocketBase** : j'ajoute ou je modifie un projet depuis l'interface d'administration, sans toucher au code.
-- **Base versionnée** dans Git (migrations dans `pocketbase/pb_migrations/`) :
-  elle se recrée à l'identique en local ou sur le serveur.
+- **Contenu séparé du code** : les projets sont dans `src/data/projets.json` et leurs images dans
+  `src/assets/projets/` ; une page par projet est générée automatiquement.
+- **Tout est versionné** dans Git : contenu, images et code.
 - **Code commenté** en français ; le `README.md` explique comment lancer, construire et déployer le site.
-- **Déploiement automatique** (GitHub Actions, `.github/workflows/deploy.yml`) :
-  à la fin, le workflow vérifie que le site et PocketBase répondent, sinon il passe en rouge.
+- **Déploiement automatique** : Netlify reconstruit et publie le site à chaque push ;
+  si le build échoue, l'ancienne version reste en ligne.
 
 
 ## 7. Compatibilité
 
 - Testé sur ordinateur (1440 px) et sur mobile (390 px).
 - Testé par moi sur mon téléphone et sur un autre navigateur.
-- Formulaire de contact testé en ligne avec un vrai message : il arrive bien dans PocketBase.
+- Formulaire de contact : à retester en ligne avec un vrai message depuis le passage sur Netlify Forms.
 - Transitions entre les pages : Chrome, Edge et Safari récent.
 - Firefox affiche les pages normalement, sans animation.
 
 ## 8. Limites connues
 
-- La toute première visite d'une page dont les images n'ont jamais été converties reste lente (une conversion par image, ensuite gardée en cache).
+- Ajouter ou modifier un projet demande de modifier `projets.json` et de pousser sur GitHub
+  (il n'y a plus d'interface d'administration comme avec PocketBase).
+- Le formulaire dépend de Netlify Forms (100 messages par mois sur l'offre gratuite).

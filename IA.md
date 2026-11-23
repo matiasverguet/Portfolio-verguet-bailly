@@ -86,6 +86,17 @@ Chaque proposition de l'IA a été relue et testée ; plusieurs ont été corrig
 - **Ce que l'IA a fait** : la mise en forme de `IA.md`, du journal et de `QUALITE.md`.
 - **Mon rôle** : écriture des contenus a mettre dans journal, qualité et IA.md.
 
+23/11/2026 — Retours de soutenance et passage en statique (Claude Code)
+
+- **Ce que l'IA a fait** : la réécriture des textes de positionnement et des fiches outils, le regroupement
+  des filtres, le passage du site en statique (export du contenu de PocketBase, pages générées au build,
+  formulaire sur Netlify Forms), la mise à jour de la documentation, et les commandes pour retirer
+  l'ancien site du VPS.
+- **Mon rôle** : j'ai décidé ce qu'il fallait changer à partir des retours du jury, choisi de passer en
+  site statique sur Netlify, validé les niveaux d'outils, et fait moi-même les réglages DNS et la
+  suppression sur le VPS, en vérifiant chaque commande avant de la lancer (par exemple pour ne pas
+  toucher aux sites de mes autres projets).
+
 
 ## Ce que j'en retiens
 

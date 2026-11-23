@@ -3,70 +3,59 @@
 Portfolio de designer graphique (BUT MMI 2e année, IUT de Montbéliard).
 
 ## Technologies
-- [Astro](https://astro.build) : génération du site, découpage en composants
+- [Astro](https://astro.build) : génération du site en statique, découpage en composants
 - [Tailwind CSS v4](https://tailwindcss.com) : styles (charte déclarée dans `src/styles/global.css`)
 - JavaScript : seulement si nécessaire (l'accordéon des compétences utilise `<details>`, sans JS)
-- PocketBase : base de données des projets et de leurs images
+- [Netlify](https://www.netlify.com) : hébergement et formulaire de contact (Netlify Forms)
 
 ## Lancer le site en local
-1. Mettre `pocketbase.exe` dans le dossier `pocketbase/` (non versionné), puis dans un premier terminal :
-   ```
-   npm run pb
-   ```
-   Interface d'administration : http://127.0.0.1:8090/_/
-   Au premier lancement, les migrations de `pocketbase/pb_migrations/` créent la collection
-   `projets` et la remplissent avec mes projets.
-2. Dans un second terminal :
-   ```
-   npm install
-   npm run dev
-   ```
-   Puis ouvrir http://localhost:4321
-
-PocketBase doit tourner : sans lui, les pages qui affichent des projets renvoient une erreur.
-
-## Construire le site (SSR)
-Le site est en rendu côté serveur (adaptateur `@astrojs/node`, mode standalone) :
-chaque page est fabriquée à la visite avec les données de PocketBase.
 ```
-npm run build                          # ou : bun run --bun build
-PORT=3000 bun ./dist/server/entry.mjs  # lance le serveur du site
+npm install
+npm run dev
 ```
+Puis ouvrir http://localhost:4321
+
+## Construire le site
+Le site est **statique** : toutes les pages sont fabriquées en HTML au moment du build,
+sans serveur ni base de données en ligne.
+```
+npm run build     # le site est dans dist/
+npm run preview   # aperçu local du site construit
+```
+
+## Modifier les projets
+- Textes et sections : `src/data/projets.json`.
+- Images : `src/assets/projets/{id du projet}/` ; Astro les convertit en WebP à la bonne taille au build.
+- Le contenu vient à l'origine de PocketBase (première version du site) ; il a été exporté une fois
+  avec `scripts/exporter-pocketbase.mjs`.
 
 ## Arborescence
 ```
 src/
-  pages/index.astro        accueil (assemble les sections)
-  layouts/Layout.astro     <head>, header, footer communs
-  components/              Header, Footer, Hero, Folder, Skills, AboutPreview, ProjectCard, ProjectsPreview
-  pages/projets/[slug].astro  une page par projet (données PocketBase)
-  lib/pocketbase.js        lecture de PocketBase (fetch sur l'API REST)
-  data/                    textes des compétences, de la page About, liens des réseaux
-  lib/image-cache.ts       cache des images converties (site en ligne)
-  middleware.ts            en-têtes de sécurité
-  styles/global.css        Tailwind + charte graphique (@theme) + transitions entre pages
-public/img/                images (photo, logos)
-public/video/              vidéo du personnage (WebM transparent + MP4 pour Safari)
-pocketbase/pb_migrations/  structure et contenu de départ de la base (versionnés)
-IA.md                      déclaration d'usage de l'IA
-JOURNAL.md                 journal de bord
-QUALITE.md                 démarche qualité (accessibilité, performance, SEO, sécurité, RGPD)
+  pages/index.astro           accueil (assemble les sections)
+  pages/projets/[slug].astro  une page par projet (getStaticPaths)
+  pages/og/[slug].png.ts      image de partage de chaque projet, générée au build
+  layouts/Layout.astro        <head>, header, footer communs
+  components/                 Header, Footer, Hero, Folder, Skills, ProjectCard, ProjectSection…
+  lib/projets.js              lecture des projets (JSON + images)
+  data/                       projets, compétences, textes de la page About, liens des réseaux
+  assets/projets/             images des projets
+  styles/global.css           Tailwind + charte graphique (@theme) + transitions entre pages
+public/img/                   images (photo, logos)
+public/video/                 vidéo du personnage (WebM transparent + MP4 pour Safari)
+pocketbase/medias/            fichiers sources des visuels (SVG, WebP)
+netlify.toml                  build Netlify et en-têtes de sécurité
+IA.md                         déclaration d'usage de l'IA
+JOURNAL.md                    journal de bord
+QUALITE.md                    démarche qualité (accessibilité, performance, SEO, sécurité, RGPD)
 ```
 
 ## Mise en ligne
-| Rôle                                     | Service                             |
-|------------------------------------------|-------------------------------------|
+| Rôle                                     | Service    |
+|------------------------------------------|------------|
 | Nom de domaine `verguet-bailly.fr` (DNS) | Infomaniak |
-| Site Astro en SSR                        | VPS de l'IUT : service `portfolio` (Bun, port local 3010) derrière Apache, sur `https://verguet-bailly.fr`    |
-| PocketBase (projets, images, messages du formulaire) | VPS de l'IUT : service `pb-portfolio` (port local 8091) derrière Apache, sur `https://api.verguet-bailly.fr` |
+| Site statique et formulaire de contact   | Netlify    |
 
-```
-Internet → Apache :443 ─┬─ verguet-bailly.fr     → Astro SSR  127.0.0.1:3010
-                        └─ api.verguet-bailly.fr → PocketBase 127.0.0.1:8091
-```
-
-- Sur le VPS, le fichier `/var/www/portfolio/.env` contient `PB_URL=https://api.verguet-bailly.fr` (voir `.env.example`).
-- Une modification faite dans l'interface de PocketBase apparaît sur le site sans rien reconstruire
-  (les projets sont gardés 30 secondes en mémoire).
-- Déploiement automatique : `.github/workflows/deploy.yml` (GitHub Actions) se connecte au VPS en SSH
-  à chaque push sur `main`, met à jour PocketBase (migrations, images), reconstruit le site et redémarre les services.
+- À chaque push sur `main`, Netlify reconstruit le site (`npm run build`) et publie le dossier `dist/`.
+- Les messages du formulaire sont enregistrés par Netlify Forms et envoyés par email.
+- Les en-têtes de sécurité et le cache des fichiers sont réglés dans `netlify.toml`.
