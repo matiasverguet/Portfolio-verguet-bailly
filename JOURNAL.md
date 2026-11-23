@@ -94,3 +94,29 @@ Aucun cookie ni outil de statistiques, donc pas besoin de bandeau de consentemen
 - Test du site sur mon téléphone et sur un autre navigateur.
 - Ajout d'un projet directement dans l'interface de PocketBase, sans toucher au code.
 - Rédaction de `QUALITE.md` (démarche qualité et vérifications), mise à jour de `IA.md` et de ce journal.
+
+## Semaine du 23/11/2026 — Retours de la soutenance et passage en site statique
+Retours du jury : direction artistique, études de cas, `QUALITE.md` et processus validés.
+À améliorer : un positionnement qui oscille entre graphisme et développement, des niveaux d'outils
+surévalués, une présence LinkedIn trop légère et des commits pas assez fréquents.
+
+- **Positionnement** : une seule phrase reprise partout (description Google, accueil, À propos) :
+  designer graphique d'abord, l'intégration web en plus. L'accordéon des compétences met le graphisme
+  en premier ; « Développement web » devient « Intégration web ».
+- **Outils** : chaque fiche décrit ce que j'ai vraiment fait, avec une échelle honnête
+  (Quotidien, Régulier, En apprentissage, Bases) au lieu de « maîtrise complète ».
+- **Page Projets** : 3 familles de filtres (Identité visuelle, Affiche & édition, Web & UI)
+  au lieu de 8 étiquettes pour 5 projets.
+- Mention « Portfolio-2026 » retirée de l'en-tête.
+- **Passage en site statique sur Netlify** :
+  - le contenu des projets est exporté de PocketBase une fois pour toutes (`scripts/exporter-pocketbase.mjs`)
+    dans `src/data/projets.json`, et les images dans `src/assets/projets/` ;
+  - Astro fabrique toutes les pages en HTML au moment du build (`getStaticPaths` pour les pages projets
+    et les images de partage) ;
+  - le formulaire de contact passe par Netlify Forms (message envoyé par email) ;
+  - en-têtes de sécurité déplacés dans `netlify.toml` ; mentions légales mises à jour (hébergeur Netlify).
+
+**Pourquoi** : un portfolio change peu ; un site statique est plus simple à héberger, plus rapide
+et ne dépend plus d'un serveur ni d'une base de données à maintenir.
+
+**Ce que j'ai décidé** : faire un commit par modification pour que l'historique montre mieux l'avancement.
