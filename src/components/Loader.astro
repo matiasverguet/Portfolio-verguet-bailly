@@ -1,25 +1,29 @@
 ---
-/* Écran de chargement : logo « MB » en 3D qui tourne, affiché à la première visite.
-   Inspiré de l'intro de cubistudio.fr, refait avec ma charte :
+/* Écran de chargement, affiché à la première visite. Inspiré de l'intro de cubistudio.fr,
+   refait avec ma charte :
    1. les 4 poignées noires d'un cadre de sélection partent du centre et s'écartent ;
    2. le cadre se remplit d'un coup (flash noir, logo clair), puis redevient vide ;
    3. les poignées clignotent puis disparaissent une par une ;
    4. mon nom s'écrit lettre par lettre sous le logo ;
-   5. pendant tout ce temps, le logo épais tourne sur lui-même (un tour en TOUR ms).
-   Pendant ce temps, le navigateur charge toutes les images de la page (même celles
+   5. pendant ce temps, le logo épais fait un tour complet et s'arrête de face ;
+   6. pause d'environ 1 s, puis le logo s'aplatit et vole jusqu'au logo de l'en-tête
+      pendant que le fond s'efface : on arrive sur la page.
+   Pendant tout ce temps, le navigateur charge toutes les images de la page (même celles
    en lazy) et la vidéo du personnage : ensuite, le site défile sans saccade.
 
-   - Durée : l'écran part à la fin d'un tour complet du logo, une fois tout chargé
-     (au moins 1 tour ; si la connexion est lente, on n'attend pas plus de 2 tours).
+   - Les animations ne démarrent qu'une fois l'écran réellement affiché (classe .go),
+     sinon le début (les poignées qui s'écartent) se jouerait avant d'être visible.
+   - Si la connexion est lente, le logo reste de face jusqu'à ce que tout soit chargé
+     (7 s au maximum depuis le début).
    - Une seule fois par visite (sessionStorage) : en changeant de page, pas de nouvel écran.
    - Le relief 3D est fait en CSS, sans librairie : COUCHES copies du logo empilées
      en profondeur (translateZ), de la plus claire (fond) à la plus foncée (face avant).
-   - « Réduire les animations » : rien ne bouge, le texte est affiché d'un coup.
+   - « Réduire les animations » : rien ne bouge, l'écran disparaît en fondu dès que tout est chargé.
    - Sans JavaScript : l'écran est caché (balise noscript dans Layout.astro). */
 const COUCHES = 24;
 const TEXTE = "Matias Verguet--Bailly";
 
-// Gris de chaque couche : #111 pour la face avant, jusqu'à #4a4a4a au fond.
+// Gris de chaque couche : #111 pour la face avant (comme le logo de l'en-tête), jusqu'à #4a4a4a au fond.
 // En flash (cadre rempli de noir), les couches passent en clair : de #e3e3e3 à #b5b5b5.
 const gris = (de: number, a: number, i: number) => {
   const v = Math.round(a + ((de - a) * i) / (COUCHES - 1));
@@ -33,8 +37,11 @@ const couches = Array.from({ length: COUCHES }, (_, i) => ({
 const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -left-1.5", "-bottom-1.5 -right-1.5"];
 ---
 
-<div data-loader role="status" aria-label="Chargement du site" class="loader fixed inset-0 z-[100] grid place-items-center bg-paper">
-  <div class="flex flex-col items-center gap-[clamp(1.5rem,3vw,2.5rem)]">
+<div data-loader role="status" aria-label="Chargement du site" class="loader fixed inset-0 z-[100] grid place-items-center">
+  <!-- Fond gris séparé : il s'efface à la fin pendant que le logo rejoint l'en-tête -->
+  <div class="voile absolute inset-0 bg-paper" aria-hidden="true"></div>
+
+  <div class="relative flex flex-col items-center gap-[clamp(1.5rem,3vw,2.5rem)]">
     <!-- Cadre de sélection : les poignées sont dans ses coins -->
     <div class="cadre relative grid place-items-center" aria-hidden="true">
       <div class="fond-flash absolute inset-0 bg-ink"></div>
@@ -54,7 +61,7 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
     </div>
 
     <!-- Mon nom, écrit lettre par lettre (le texte complet est déjà là pour les lecteurs d'écran) -->
-    <p class="h-[1.2em] text-[clamp(1.1rem,2.2vw,1.75rem)] font-semibold tracking-tight">
+    <p class="nom h-[1.2em] text-[clamp(1.1rem,2.2vw,1.75rem)] font-semibold tracking-tight">
       <span data-loader-texte data-texte={TEXTE} aria-hidden="true"></span>
       <span class="sr-only">{TEXTE}</span>
     </p>
@@ -69,20 +76,31 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
     height: calc(var(--w) * 1.2);
   }
 
-  /* 1. Les poignées partent du centre du cadre et s'écartent jusqu'aux coins.
-     3. Après le flash, elles clignotent puis disparaissent, l'une après l'autre (--d). */
+  /* Avant .go : poignées regroupées au centre, logo et flash cachés */
   .poignee {
+    transform: translate(var(--dx), var(--dy));
+  }
+  .scene {
+    opacity: 0;
+  }
+  .fond-flash {
+    opacity: 0;
+  }
+
+  /* 1. Les poignées s'écartent du centre jusqu'aux coins.
+     3. Après le flash, elles clignotent puis disparaissent, l'une après l'autre (--d). */
+  .go .poignee {
     animation:
-      ouvrir 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both,
-      clignoter 0.5s step-end calc(1.3s + var(--d)) forwards;
+      ouvrir 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s forwards,
+      clignoter 0.5s step-end calc(1.5s + var(--d)) forwards;
   }
   .poignee:nth-of-type(1) { --dx: calc(var(--w) * 0.95); --dy: calc(var(--w) * 0.6); --d: 0s; }
   .poignee:nth-of-type(2) { --dx: calc(var(--w) * -0.95); --dy: calc(var(--w) * 0.6); --d: 0.24s; }
   .poignee:nth-of-type(3) { --dx: calc(var(--w) * 0.95); --dy: calc(var(--w) * -0.6); --d: 0.08s; }
   .poignee:nth-of-type(4) { --dx: calc(var(--w) * -0.95); --dy: calc(var(--w) * -0.6); --d: 0.16s; }
   @keyframes ouvrir {
-    from {
-      transform: translate(var(--dx), var(--dy));
+    to {
+      transform: translate(0, 0);
     }
   }
   @keyframes clignoter {
@@ -94,44 +112,39 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
   }
 
   /* 2. Flash : le cadre se remplit de noir et le logo passe en clair, un court instant */
-  .fond-flash {
-    opacity: 0;
-    animation: flash 0.45s steps(1) 0.7s forwards;
+  .go .fond-flash {
+    animation: flash 0.45s steps(1) 0.9s forwards;
   }
   @keyframes flash {
-    0% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
+    0% { opacity: 1; }
+    100% { opacity: 0; }
   }
-  .couche {
-    animation: couleur 0.45s steps(1) 0.7s forwards;
+  .go .couche {
+    animation: couleur 0.45s steps(1) 0.9s forwards;
   }
   @keyframes couleur {
-    0% {
-      fill: var(--clair);
-    }
-    100% {
-      fill: var(--sombre);
-    }
+    0% { fill: var(--clair); }
+    100% { fill: var(--sombre); }
   }
 
-  /* 4. Logo en 3D : les couches sont empilées en profondeur, le tout tourne autour de l'axe vertical.
-     Épaisseur totale ≈ 20 % de la largeur du logo. */
-  /* L'apparition (zoom + fondu) est sur .scene et pas sur .logo3d :
+  /* 5. Logo en 3D : couches empilées en profondeur (épaisseur ≈ 20 % de la largeur).
+     Un seul tour, qui ralentit à la fin pour s'arrêter bien de face.
+     L'apparition (zoom + fondu) est sur .scene et pas sur .logo3d :
      une opacité sur l'élément en 3D l'aplatirait. */
   .scene {
     perspective: 1000px;
-    animation: apparaitre 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .go .scene {
+    animation: apparaitre 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s forwards;
   }
   .logo3d {
     position: relative;
     width: var(--w);
     aspect-ratio: 67 / 33;
     transform-style: preserve-3d;
-    animation: tourner 3.2s linear infinite; /* durée d'un tour : le script s'en sert pour partir pile à la fin d'un tour */
+  }
+  .go .logo3d {
+    animation: tourner 3.4s cubic-bezier(0.45, 0, 0.2, 1) 0.1s forwards;
   }
   .couche {
     position: absolute;
@@ -146,35 +159,61 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
       scale: 0.4;
       opacity: 0;
     }
+    to {
+      scale: 1;
+      opacity: 1;
+    }
   }
   @keyframes tourner {
-    from {
-      transform: rotateY(0deg);
-    }
-    to {
-      transform: rotateY(-360deg);
-    }
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(-360deg); }
   }
 
-  /* Sortie : fondu, puis l'élément est retiré de la page */
-  .loader {
-    transition: opacity 0.5s ease, visibility 0.5s;
+  /* 6. Sortie : le logo s'aplatit (couches ramenées à plat) et vole jusqu'au logo de l'en-tête
+     (déplacement calculé par le script), le fond s'efface, le cadre et le nom disparaissent. */
+  .scene {
+    transition: transform 0.9s cubic-bezier(0.7, 0, 0.2, 1);
   }
-  .loader.sortie {
+  .couche {
+    transition: transform 0.35s ease;
+  }
+  .sortie .couche {
+    transform: translateZ(0);
+  }
+  .voile {
+    transition: opacity 0.6s ease 0.35s;
+  }
+  .sortie .voile {
     opacity: 0;
-    visibility: hidden;
+  }
+  .nom {
+    transition: opacity 0.3s ease;
+  }
+  .sortie .nom {
+    opacity: 0;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .poignee,
-    .fond-flash,
-    .couche,
-    .scene {
+    .go .poignee,
+    .go .fond-flash,
+    .go .couche,
+    .go .scene,
+    .go .logo3d {
       animation: none;
     }
-    .logo3d {
-      animation: none;
-      transform: rotateY(-25deg);
+    .poignee {
+      transform: none;
+      opacity: 0;
+    }
+    .scene {
+      opacity: 1;
+      transition: none;
+    }
+    .loader {
+      transition: opacity 0.3s;
+    }
+    .loader.sortie {
+      opacity: 0;
     }
   }
 
@@ -186,7 +225,6 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
 
 <script>
   const loader = document.querySelector<HTMLElement>("[data-loader]");
-  const zoneTexte = document.querySelector<HTMLElement>("[data-loader-texte]");
 
   if (loader && !document.documentElement.classList.contains("deja-charge")) {
     try {
@@ -196,26 +234,16 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
     }
 
     const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const PAUSE = 1200; // temps passé avec le logo arrêté de face avant de partir
+    const MAX = 7000; // durée maximale de l'écran, même si tout n'est pas chargé
+    const scene = loader.querySelector<HTMLElement>(".scene")!;
+    const logo = loader.querySelector<HTMLElement>(".logo3d")!;
+    const zoneTexte = loader.querySelector<HTMLElement>("[data-loader-texte]");
 
-    // Animation de rotation du logo, et durée d'un tour (lue dans le CSS : 3,2 s)
-    const rotation = document.querySelector<HTMLElement>(".logo3d")?.getAnimations()[0];
-    const TOUR = Number(rotation?.effect?.getTiming().duration) || 3200;
+    // Pas de défilement de la page derrière l'écran de chargement
+    document.documentElement.style.overflow = "hidden";
 
-    // 4. Le nom s'écrit lettre par lettre, une fois les poignées disparues
-    if (zoneTexte) {
-      const texte = zoneTexte.dataset.texte ?? "";
-      if (reduit) {
-        zoneTexte.textContent = texte;
-      } else {
-        let n = 0;
-        setTimeout(function lettre() {
-          zoneTexte.textContent = texte.slice(0, ++n);
-          if (n < texte.length) setTimeout(lettre, 45);
-        }, 1700);
-      }
-    }
-
-    // Toutes les images de la page, même celles prévues en lazy : on les charge maintenant
+    // ===== Chargement : toutes les images de la page (même en lazy) et la vidéo =====
     const images = [...document.images];
     images.forEach((img) => (img.loading = "eager"));
 
@@ -244,32 +272,61 @@ const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -lef
             if (v.networkState === v.NETWORK_EMPTY) v.load(); // pas encore commencée : on la lance
           });
 
-    // Pas de défilement de la page derrière l'écran de chargement
-    document.documentElement.style.overflow = "hidden";
+    const attendre = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const toutCharge = Promise.race([
+      Promise.all([...images.map(attendreImage), ...(video ? [attendreVideo(video)] : [])]),
+      attendre(MAX),
+    ]);
 
-    const tout = Promise.all([...images.map(attendreImage), ...(video ? [attendreVideo(video)] : [])]);
-    // Si la connexion est lente, on n'attend pas plus de 2 tours
-    const auPlusTard = new Promise((r) => setTimeout(r, reduit ? 3000 : TOUR * 2 - 100));
-
-    Promise.race([tout, auPlusTard]).then(() => {
-      // L'écran part à la fin du tour en cours (au moins un tour complet).
-      // currentTime de l'animation = temps écoulé depuis le vrai début de la rotation
-      // (elle peut démarrer un peu après ce script, d'où la vérification à chaque image).
-      const ecoule = Number(rotation?.currentTime ?? 0);
-      const finDuTour = Math.max(1, Math.ceil(ecoule / TOUR)) * TOUR;
-      const attendreFinDuTour = (partir: () => void) => {
-        if (reduit || !rotation) return partir();
-        (function verifier() {
-          if (Number(rotation.currentTime ?? 0) >= finDuTour) partir();
-          else requestAnimationFrame(verifier);
-        })();
-      };
-      attendreFinDuTour(() => {
-        loader.classList.add("sortie");
+    // ===== Sortie : le logo rejoint celui de l'en-tête, le fond s'efface =====
+    function partir() {
+      const cible = document.querySelector("header a svg")?.getBoundingClientRect();
+      const depart = scene.getBoundingClientRect();
+      if (cible && !reduit) {
+        const dx = cible.left + cible.width / 2 - (depart.left + depart.width / 2);
+        const dy = cible.top + cible.height / 2 - (depart.top + depart.height / 2);
+        scene.style.transform = `translate(${dx}px, ${dy}px) scale(${cible.width / depart.width})`;
+      }
+      loader!.classList.add("sortie");
+      const fin = () => {
         document.documentElement.style.overflow = "";
-        loader.addEventListener("transitionend", () => loader.remove(), { once: true });
-      });
-    });
+        loader!.remove();
+      };
+      setTimeout(fin, reduit ? 300 : 1000);
+    }
+
+    if (reduit) {
+      if (zoneTexte) zoneTexte.textContent = zoneTexte.dataset.texte ?? "";
+      toutCharge.then(partir);
+    } else {
+      // On attend que l'écran soit vraiment affiché (2 images) avant de lancer les animations
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          loader.classList.add("go");
+
+          // 4. Le nom s'écrit lettre par lettre, une fois les poignées disparues
+          if (zoneTexte) {
+            const texte = zoneTexte.dataset.texte ?? "";
+            let n = 0;
+            setTimeout(function lettre() {
+              zoneTexte.textContent = texte.slice(0, ++n);
+              if (n < texte.length) setTimeout(lettre, 45);
+            }, 1900);
+          }
+
+          // 5-6. Fin du tour (logo de face) → pause → sortie, une fois tout chargé
+          // (animationend remonte aussi depuis les couches : on ne garde que la rotation du logo)
+          const finDuTour = new Promise<void>((r) => {
+            logo.addEventListener("animationend", function fin(e) {
+              if (e.target !== logo) return;
+              logo.removeEventListener("animationend", fin);
+              r();
+            });
+          });
+          Promise.all([finDuTour.then(() => attendre(PAUSE)), toutCharge]).then(partir);
+        }),
+      );
+    }
   } else {
     loader?.remove();
   }
