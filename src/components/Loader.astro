@@ -1,0 +1,165 @@
+---
+/* Écran de chargement : logo « MB » en 3D qui tourne, affiché à la première visite.
+   Pendant ce temps, le navigateur charge toutes les images de la page (même celles
+   en lazy) et la vidéo du personnage : ensuite, le site défile sans saccade.
+
+   - Durée : au moins 2 s, au plus 5 s (si la connexion est lente, on n'attend pas plus).
+   - Une seule fois par visite (sessionStorage) : en changeant de page, pas de nouvel écran.
+   - Le relief 3D est fait en CSS, sans librairie : COUCHES copies du logo empilées
+     en profondeur (translateZ), le tout tourne avec rotateY.
+   - « Réduire les animations » : le logo ne tourne pas et l'écran part dès que c'est chargé.
+   - Sans JavaScript : l'écran est caché (balise noscript dans Layout.astro). */
+const COUCHES = 18;
+const couches = Array.from({ length: COUCHES }, (_, i) => i);
+---
+
+<div data-loader role="status" aria-label="Chargement du site" class="loader fixed inset-0 z-[100] grid place-items-center bg-paper">
+  <div class="flex flex-col items-center gap-[clamp(1.5rem,4vw,3rem)]">
+    <div class="scene" aria-hidden="true">
+      <div class="logo3d">
+        {
+          couches.map((i) => (
+            <svg viewBox="8 21 67 33" style={`--i:${i}`} class:list={["couche", i === COUCHES - 1 && "face"]}>
+              <use href="#logo-mb" />
+            </svg>
+          ))
+        }
+      </div>
+    </div>
+    <!-- Barre de progression : sa largeur suit le nombre d'images déjà chargées -->
+    <div class="h-[3px] w-[clamp(8rem,18vw,14rem)] overflow-hidden rounded-full bg-ink/15" aria-hidden="true">
+      <div data-loader-barre class="h-full w-0 bg-electric transition-[width] duration-300"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .scene {
+    perspective: 900px;
+  }
+  .logo3d {
+    position: relative;
+    width: clamp(7rem, 16vw, 12rem);
+    aspect-ratio: 67 / 33;
+    transform-style: preserve-3d;
+    animation: tourner 2.4s linear infinite;
+  }
+  /* Chaque couche est une copie du logo, décalée en profondeur (0,7 px par couche).
+     Les couches du fond sont un peu plus claires : on voit l'épaisseur quand le logo tourne. */
+  .couche {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: #3a3a3a;
+    transform: translateZ(calc((var(--i) - 9) * 0.7px));
+  }
+  .couche.face {
+    fill: var(--color-ink);
+  }
+  @keyframes tourner {
+    from {
+      transform: rotateX(-12deg) rotateY(0deg);
+    }
+    to {
+      transform: rotateX(-12deg) rotateY(360deg);
+    }
+  }
+  /* Sortie : fondu et léger zoom, puis l'élément est retiré de la page */
+  .loader {
+    transition: opacity 0.5s ease, visibility 0.5s;
+  }
+  .loader.sortie {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .loader.sortie .scene {
+    transform: scale(1.15);
+    transition: transform 0.5s ease;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .logo3d {
+      animation: none;
+      transform: rotateX(-12deg) rotateY(-25deg);
+    }
+  }
+  /* Déjà vu pendant cette visite (classe posée dans le <head>) : pas d'écran */
+  :global(html.deja-charge) .loader {
+    display: none;
+  }
+</style>
+
+<script>
+  const loader = document.querySelector<HTMLElement>("[data-loader]");
+  const barre = document.querySelector<HTMLElement>("[data-loader-barre]");
+
+  if (loader && !document.documentElement.classList.contains("deja-charge")) {
+    try {
+      sessionStorage.setItem("mvb-charge", "1");
+    } catch {
+      // navigation privée stricte : l'écran s'affichera à chaque page, ce n'est pas grave
+    }
+
+    const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const DUREE_MIN = reduit ? 300 : 2000;
+    const DUREE_MAX = 5000;
+    const debut = performance.now();
+
+    // Toutes les images de la page, même celles prévues en lazy : on les charge maintenant
+    const images = [...document.images];
+    images.forEach((img) => (img.loading = "eager"));
+
+    // Vidéo du personnage (seulement sur écran large, comme dans Character.astro)
+    const video = window.matchMedia("(min-width: 640px)").matches
+      ? document.querySelector<HTMLVideoElement>("[data-perso-video]")
+      : null;
+
+    const total = images.length + (video ? 1 : 0) || 1;
+    let charges = 0;
+    const unDePlus = () => {
+      charges++;
+      if (barre) barre.style.width = `${Math.round((charges / total) * 100)}%`;
+    };
+
+    // Une image est « prête » quand elle est chargée, ou en erreur (on ne bloque pas pour elle)
+    const attendreImage = (img: HTMLImageElement) =>
+      img.complete
+        ? Promise.resolve()
+        : new Promise((r) => {
+            img.addEventListener("load", r, { once: true });
+            img.addEventListener("error", r, { once: true });
+          });
+
+    // La vidéo est prête quand elle peut être lue jusqu'au bout sans pause
+    const attendreVideo = (v: HTMLVideoElement) =>
+      v.readyState >= 4
+        ? Promise.resolve()
+        : new Promise((r) => {
+            v.addEventListener("canplaythrough", r, { once: true });
+            v.addEventListener("error", r, { once: true });
+            v.preload = "auto";
+            if (v.networkState === v.NETWORK_EMPTY) v.load(); // pas encore commencée : on la lance
+          });
+
+    // Pas de défilement de la page derrière l'écran de chargement
+    document.documentElement.style.overflow = "hidden";
+
+    const tout = Promise.all([
+      ...images.map((img) => attendreImage(img).then(unDePlus)),
+      ...(video ? [attendreVideo(video).then(unDePlus)] : []),
+    ]);
+    const auPlusTard = new Promise((r) => setTimeout(r, DUREE_MAX));
+
+    Promise.race([tout, auPlusTard]).then(() => {
+      if (barre) barre.style.width = "100%";
+      const reste = Math.max(0, DUREE_MIN - (performance.now() - debut));
+      setTimeout(() => {
+        loader.classList.add("sortie");
+        document.documentElement.style.overflow = "";
+        loader.addEventListener("transitionend", () => loader.remove(), { once: true });
+      }, reste);
+    });
+  } else {
+    loader?.remove();
+  }
+</script>
