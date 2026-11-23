@@ -1,39 +1,37 @@
 // Contenu de l'accordéon des compétences (repris de ma maquette Figma).
 // Séparer les données du composant : pour changer un texte, on ne touche qu'à ce fichier.
+// Ordre : le graphisme d'abord (mon positionnement), l'intégration web en dernier (un atout en plus).
 export const skills = [
   {
-    title: "Design UI/UX",
+    title: "Identité de marque",
     items: [
-      "Wireframe & prototypage",
-      "Conception d'interfaces utilisateur pour sites web et applications",
-      "Tests d'utilisabilité et analyse des retours utilisateurs",
-      "Conception d'interactions et micro-animations",
+      "Conception de logos et de systèmes d'identité (La Cimade, Chorus Symphonia)",
+      "Choix des typographies et des palettes de couleurs",
+      "Déclinaison de l'identité sur supports imprimés et numériques",
     ],
   },
   {
     title: "Graphisme",
     items: [
-      "Conception de logo et d'identité de marque",
-      "Création de visuels pour réseaux sociaux et supports publicitaires",
+      "Affiches et supports de communication",
+      "Visuels pour les réseaux sociaux",
       "Infographies et visualisation de données",
-      "Illustrations et icônes personnalisées",
     ],
   },
   {
-    title: "Développement Web",
+    title: "Design UI/UX",
     items: [
-      "Conception et intégration de sites web responsives avec HTML, CSS et JavaScript.",
-      "Développement d'interfaces dynamiques et interactives avec MySQL pour la gestion des données.",
-      "Implémentation de composants interactifs et d'animations fluides pour améliorer l'engagement utilisateur.",
+      "Wireframes et maquettes d'interfaces web et mobiles",
+      "Prototypes interactifs sur Figma",
+      "Micro-animations et transitions",
     ],
   },
   {
-    // TODO : textes à remplacer par ceux de ma maquette (non fournis)
-    title: "Identité de marque",
+    title: "Intégration web",
     items: [
-      "Création de chartes graphiques complètes",
-      "Choix des typographies et des palettes de couleurs",
-      "Déclinaison de l'identité sur supports imprimés et numériques",
+      "Intégration de mes maquettes en HTML, CSS et JavaScript, en responsive",
+      "Sites avec Astro et Tailwind, contenus gérés dans PocketBase (ce portfolio)",
+      "Bases de l'accessibilité et de la performance web",
     ],
   },
 ];
