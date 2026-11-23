@@ -1,71 +1,150 @@
 ---
 /* Écran de chargement : logo « MB » en 3D qui tourne, affiché à la première visite.
+   Inspiré de l'intro de cubistudio.fr, refait avec ma charte :
+   1. les 4 poignées d'un cadre de sélection (comme dans le hero) partent du centre et s'écartent ;
+   2. le cadre se remplit d'un coup (flash noir, logo clair), puis redevient vide ;
+   3. mon nom s'écrit lettre par lettre sous le logo ;
+   4. pendant tout ce temps, le logo épais tourne sur lui-même (un tour en 6 s).
    Pendant ce temps, le navigateur charge toutes les images de la page (même celles
    en lazy) et la vidéo du personnage : ensuite, le site défile sans saccade.
 
-   - Durée : au moins 2 s, au plus 5 s (si la connexion est lente, on n'attend pas plus).
+   - Durée : au moins 2,6 s (le temps de l'intro), au plus 5 s si la connexion est lente.
    - Une seule fois par visite (sessionStorage) : en changeant de page, pas de nouvel écran.
    - Le relief 3D est fait en CSS, sans librairie : COUCHES copies du logo empilées
-     en profondeur (translateZ), le tout tourne avec rotateY.
-   - « Réduire les animations » : le logo ne tourne pas et l'écran part dès que c'est chargé.
+     en profondeur (translateZ), de la plus claire (fond) à la plus foncée (face avant).
+   - « Réduire les animations » : rien ne bouge, le texte est affiché d'un coup.
    - Sans JavaScript : l'écran est caché (balise noscript dans Layout.astro). */
-const COUCHES = 18;
-const couches = Array.from({ length: COUCHES }, (_, i) => i);
+const COUCHES = 24;
+const TEXTE = "Matias Verguet--Bailly";
+
+// Gris de chaque couche : #111 pour la face avant, jusqu'à #4a4a4a au fond.
+// En flash (cadre rempli de noir), les couches passent en clair : de #e3e3e3 à #b5b5b5.
+const gris = (de: number, a: number, i: number) => {
+  const v = Math.round(a + ((de - a) * i) / (COUCHES - 1));
+  return `rgb(${v},${v},${v})`;
+};
+const couches = Array.from({ length: COUCHES }, (_, i) => ({
+  i,
+  sombre: gris(0x11, 0x4a, i),
+  clair: gris(0xe3, 0xb5, i),
+}));
+const poignees = ["-top-1.5 -left-1.5", "-top-1.5 -right-1.5", "-bottom-1.5 -left-1.5", "-bottom-1.5 -right-1.5"];
 ---
 
 <div data-loader role="status" aria-label="Chargement du site" class="loader fixed inset-0 z-[100] grid place-items-center bg-paper">
-  <div class="flex flex-col items-center gap-[clamp(1.5rem,4vw,3rem)]">
-    <div class="scene" aria-hidden="true">
-      <div class="logo3d">
-        {
-          couches.map((i) => (
-            <svg viewBox="8 21 67 33" style={`--i:${i}`} class:list={["couche", i === COUCHES - 1 && "face"]}>
-              <use href="#logo-mb" />
-            </svg>
-          ))
-        }
+  <div class="flex flex-col items-center gap-[clamp(1.5rem,3vw,2.5rem)]">
+    <!-- Cadre de sélection : les poignées sont dans ses coins -->
+    <div class="cadre relative grid place-items-center" aria-hidden="true">
+      <div class="fond-flash absolute inset-0 bg-ink"></div>
+      {poignees.map((pos) => <span class:list={["poignee absolute size-3 border-2 border-electric bg-white", pos]} />)}
+
+      <div class="scene">
+        <div class="logo3d">
+          {
+            couches.map((c) => (
+              <svg viewBox="8 21 67 33" class="couche" style={`--i:${c.i};--sombre:${c.sombre};--clair:${c.clair}`}>
+                <use href="#logo-mb" />
+              </svg>
+            ))
+          }
+        </div>
       </div>
     </div>
-    <!-- Barre de progression : sa largeur suit le nombre d'images déjà chargées -->
-    <div class="h-[3px] w-[clamp(8rem,18vw,14rem)] overflow-hidden rounded-full bg-ink/15" aria-hidden="true">
-      <div data-loader-barre class="h-full w-0 bg-electric transition-[width] duration-300"></div>
-    </div>
+
+    <!-- Mon nom, écrit lettre par lettre (le texte complet est déjà là pour les lecteurs d'écran) -->
+    <p class="h-[1.2em] text-[clamp(1.1rem,2.2vw,1.75rem)] font-semibold tracking-tight">
+      <span data-loader-texte data-texte={TEXTE} aria-hidden="true"></span>
+      <span class="sr-only">{TEXTE}</span>
+    </p>
   </div>
 </div>
 
 <style>
+  /* --w : largeur du logo ; le cadre et l'épaisseur en dépendent */
+  .cadre {
+    --w: clamp(7rem, 16vw, 12rem);
+    width: calc(var(--w) * 1.9);
+    height: calc(var(--w) * 1.2);
+  }
+
+  /* 1. Les poignées partent du centre du cadre et s'écartent jusqu'aux coins */
+  .poignee {
+    animation: ouvrir 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .poignee:nth-of-type(1) { --dx: calc(var(--w) * 0.95); --dy: calc(var(--w) * 0.6); }
+  .poignee:nth-of-type(2) { --dx: calc(var(--w) * -0.95); --dy: calc(var(--w) * 0.6); }
+  .poignee:nth-of-type(3) { --dx: calc(var(--w) * 0.95); --dy: calc(var(--w) * -0.6); }
+  .poignee:nth-of-type(4) { --dx: calc(var(--w) * -0.95); --dy: calc(var(--w) * -0.6); }
+  @keyframes ouvrir {
+    from {
+      transform: translate(var(--dx), var(--dy));
+    }
+  }
+
+  /* 2. Flash : le cadre se remplit de noir et le logo passe en clair, un court instant */
+  .fond-flash {
+    opacity: 0;
+    animation: flash 0.3s steps(1) 0.7s forwards;
+  }
+  @keyframes flash {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  .couche {
+    animation: couleur 0.3s steps(1) 0.7s forwards;
+  }
+  @keyframes couleur {
+    0% {
+      fill: var(--clair);
+    }
+    100% {
+      fill: var(--sombre);
+    }
+  }
+
+  /* 4. Logo en 3D : les couches sont empilées en profondeur, le tout tourne autour de l'axe vertical.
+     Épaisseur totale ≈ 20 % de la largeur du logo. */
+  /* L'apparition (zoom + fondu) est sur .scene et pas sur .logo3d :
+     une opacité sur l'élément en 3D l'aplatirait. */
   .scene {
-    perspective: 900px;
+    perspective: 1000px;
+    animation: apparaitre 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   }
   .logo3d {
     position: relative;
-    width: clamp(7rem, 16vw, 12rem);
+    width: var(--w);
     aspect-ratio: 67 / 33;
     transform-style: preserve-3d;
-    animation: tourner 2.4s linear infinite;
+    animation: tourner 6s linear infinite;
   }
-  /* Chaque couche est une copie du logo, décalée en profondeur (0,7 px par couche).
-     Les couches du fond sont un peu plus claires : on voit l'épaisseur quand le logo tourne. */
   .couche {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    fill: #3a3a3a;
-    transform: translateZ(calc((var(--i) - 9) * 0.7px));
+    fill: var(--sombre);
+    transform: translateZ(calc((var(--i) - 11.5) * var(--w) * 0.0085));
   }
-  .couche.face {
-    fill: var(--color-ink);
+  @keyframes apparaitre {
+    from {
+      scale: 0.4;
+      opacity: 0;
+    }
   }
   @keyframes tourner {
     from {
-      transform: rotateX(-12deg) rotateY(0deg);
+      transform: rotateY(0deg);
     }
     to {
-      transform: rotateX(-12deg) rotateY(360deg);
+      transform: rotateY(-360deg);
     }
   }
-  /* Sortie : fondu et léger zoom, puis l'élément est retiré de la page */
+
+  /* Sortie : fondu, puis l'élément est retiré de la page */
   .loader {
     transition: opacity 0.5s ease, visibility 0.5s;
   }
@@ -73,16 +152,20 @@ const couches = Array.from({ length: COUCHES }, (_, i) => i);
     opacity: 0;
     visibility: hidden;
   }
-  .loader.sortie .scene {
-    transform: scale(1.15);
-    transition: transform 0.5s ease;
-  }
+
   @media (prefers-reduced-motion: reduce) {
+    .poignee,
+    .fond-flash,
+    .couche,
+    .scene {
+      animation: none;
+    }
     .logo3d {
       animation: none;
-      transform: rotateX(-12deg) rotateY(-25deg);
+      transform: rotateY(-25deg);
     }
   }
+
   /* Déjà vu pendant cette visite (classe posée dans le <head>) : pas d'écran */
   :global(html.deja-charge) .loader {
     display: none;
@@ -91,7 +174,7 @@ const couches = Array.from({ length: COUCHES }, (_, i) => i);
 
 <script>
   const loader = document.querySelector<HTMLElement>("[data-loader]");
-  const barre = document.querySelector<HTMLElement>("[data-loader-barre]");
+  const zoneTexte = document.querySelector<HTMLElement>("[data-loader-texte]");
 
   if (loader && !document.documentElement.classList.contains("deja-charge")) {
     try {
@@ -101,9 +184,23 @@ const couches = Array.from({ length: COUCHES }, (_, i) => i);
     }
 
     const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const DUREE_MIN = reduit ? 300 : 2000;
+    const DUREE_MIN = reduit ? 300 : 2600;
     const DUREE_MAX = 5000;
     const debut = performance.now();
+
+    // 3. Le nom s'écrit lettre par lettre, juste après le flash
+    if (zoneTexte) {
+      const texte = zoneTexte.dataset.texte ?? "";
+      if (reduit) {
+        zoneTexte.textContent = texte;
+      } else {
+        let n = 0;
+        setTimeout(function lettre() {
+          zoneTexte.textContent = texte.slice(0, ++n);
+          if (n < texte.length) setTimeout(lettre, 45);
+        }, 1050);
+      }
+    }
 
     // Toutes les images de la page, même celles prévues en lazy : on les charge maintenant
     const images = [...document.images];
@@ -113,13 +210,6 @@ const couches = Array.from({ length: COUCHES }, (_, i) => i);
     const video = window.matchMedia("(min-width: 640px)").matches
       ? document.querySelector<HTMLVideoElement>("[data-perso-video]")
       : null;
-
-    const total = images.length + (video ? 1 : 0) || 1;
-    let charges = 0;
-    const unDePlus = () => {
-      charges++;
-      if (barre) barre.style.width = `${Math.round((charges / total) * 100)}%`;
-    };
 
     // Une image est « prête » quand elle est chargée, ou en erreur (on ne bloque pas pour elle)
     const attendreImage = (img: HTMLImageElement) =>
@@ -144,14 +234,10 @@ const couches = Array.from({ length: COUCHES }, (_, i) => i);
     // Pas de défilement de la page derrière l'écran de chargement
     document.documentElement.style.overflow = "hidden";
 
-    const tout = Promise.all([
-      ...images.map((img) => attendreImage(img).then(unDePlus)),
-      ...(video ? [attendreVideo(video).then(unDePlus)] : []),
-    ]);
+    const tout = Promise.all([...images.map(attendreImage), ...(video ? [attendreVideo(video)] : [])]);
     const auPlusTard = new Promise((r) => setTimeout(r, DUREE_MAX));
 
     Promise.race([tout, auPlusTard]).then(() => {
-      if (barre) barre.style.width = "100%";
       const reste = Math.max(0, DUREE_MIN - (performance.now() - debut));
       setTimeout(() => {
         loader.classList.add("sortie");
